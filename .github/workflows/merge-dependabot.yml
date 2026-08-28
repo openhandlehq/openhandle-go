@@ -53,7 +53,7 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ inputs.pull_request }}
           REPOSITORY: ${{ github.repository }}
-        run: gh pr checks "$PR_NUMBER" --repo "$REPOSITORY" --fail-fast
+        run: gh pr checks "$PR_NUMBER" --repo "$REPOSITORY" --watch --fail-fast
 
       - name: Merge as SDK bot
         env:
