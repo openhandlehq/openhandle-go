@@ -53,7 +53,7 @@ jobs:
           case "$head_ref" in
             automation/api-*) test "$title" = 'feat: sync API contract' ;;
             release-please--branches--main--components--openhandle-go)
-              [[ "$title" == chore\(main\):\ release\ openhandle-go\ * ]]
+              [[ "$title" == chore\(main\):\ release\ * ]]
               open_sync_count="$(gh api "repos/$REPOSITORY/pulls?state=open&base=main&per_page=100" \
                 --jq '[.[] | select(.head.ref | startswith("automation/api-"))] | length')"
               if (( open_sync_count > 0 )); then
