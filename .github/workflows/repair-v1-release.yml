@@ -1,0 +1,44 @@
+name: Repair Go v1 release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Create SDK release token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.SDK_SYNC_APP_ID }}
+          private-key: ${{ secrets.SDK_SYNC_APP_PRIVATE_KEY }}
+          owner: openhandlehq
+          repositories: openhandle-go
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Create module-compatible release and close duplicate release PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          if ! gh release view v1.0.0 --repo "$REPOSITORY" >/dev/null 2>&1; then
+            notes="$(gh release view openhandle-go-v1.0.0 --repo "$REPOSITORY" --json body --jq '.body')"
+            gh release create v1.0.0 \
+              --repo "$REPOSITORY" \
+              --verify-tag \
+              --title 'v1.0.0' \
+              --notes "$notes"
+          fi
+
+          if test "$(gh pr view 4 --repo "$REPOSITORY" --json state --jq '.state')" = 'OPEN'; then
+            gh pr close 4 \
+              --repo "$REPOSITORY" \
+              --comment 'Closed by SDK automation after creating the module-compatible v1.0.0 release.'
+          fi
