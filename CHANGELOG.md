@@ -1,12 +1,5 @@
 # Changelog
 
-## [1.0.1](https://github.com/openhandlehq/openhandle-go/compare/v1.0.0...v1.0.1) (2026-08-28)
-
-
-### Bug Fixes
-
-* **ci:** accept module release pull requests ([011c163](https://github.com/openhandlehq/openhandle-go/commit/011c16370988a6b661314f0c456019f961e1e9b2))
-
 ## 1.0.0 (2026-08-28)
 
 

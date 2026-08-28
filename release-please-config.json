@@ -3,7 +3,13 @@
     ".": {
       "release-type": "go",
       "package-name": "openhandle-go",
-      "include-component-in-tag": false
+      "include-component-in-tag": false,
+      "exclude-paths": [
+        ".github",
+        ".release-please-manifest.json",
+        "CHANGELOG.md",
+        "release-please-config.json"
+      ]
     }
   }
 }
