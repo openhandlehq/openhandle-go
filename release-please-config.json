@@ -2,7 +2,8 @@
   "packages": {
     ".": {
       "release-type": "go",
-      "package-name": "openhandle-go"
+      "package-name": "openhandle-go",
+      "include-component-in-tag": false
     }
   }
 }
