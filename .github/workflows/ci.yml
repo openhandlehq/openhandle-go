@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.27.x'
+          cache: true
+      - name: Check formatting
+        run: |
+          gofmt -l . > /tmp/gofmt-files
+          test ! -s /tmp/gofmt-files
+      - name: Check generated output
+        run: go run ./internal/cmd/generate --check
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: go test -race ./...
