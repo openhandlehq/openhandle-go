@@ -3636,7 +3636,7 @@
   "info": {
     "description": "Read public social data through one API contract. API keys starting with oh_test_ use the deterministic synthetic dataset and record a $0.000 actual charge. Keys starting with oh_live_, plus legacy oh_ keys, use real public data and normal billing. Do not send an environment parameter or header.",
     "title": "Openhandle API",
-    "version": "1.0.0"
+    "version": "1.0.1"
   },
   "openapi": "3.1.0",
   "paths": {
@@ -80586,6 +80586,18 @@
       "language": "TypeScript",
       "package": "@openhandle/sdk",
       "repository": "https://github.com/openhandlehq/openhandle-typescript"
+    },
+    {
+      "documentation": "https://openhandle.dev/docs/sdks",
+      "language": "Go",
+      "package": "github.com/openhandlehq/openhandle-go",
+      "repository": "https://github.com/openhandlehq/openhandle-go"
+    },
+    {
+      "documentation": "https://openhandle.dev/docs/sdks",
+      "language": "Python",
+      "package": "openhandle",
+      "repository": "https://github.com/openhandlehq/openhandle-python"
     }
   ],
   "x-openhandle-test-data": {
