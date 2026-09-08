@@ -20,7 +20,7 @@ type Billing struct {
 type ResponseMetadata struct {
 	Platform   Platform  `json:"platform"`
 	Resource   Resource  `json:"resource"`
-	CapturedAt time.Time `json:"captured_at"`
+	CapturedAt time.Time `json:"capturedAt"`
 	Source     string    `json:"source"`
 	RequestID  string    `json:"-"`
 	Billing    Billing   `json:"-"`

@@ -143,7 +143,7 @@ API and transport failures return `*openhandle.Error`. Branch on `Code`, never
 ```go
 var apiError *openhandle.Error
 if errors.As(err, &apiError) {
-	log.Printf("code=%s request_id=%s retryable=%t", apiError.Code, apiError.RequestID, apiError.Retryable)
+	log.Printf("code=%s requestId=%s retryable=%t", apiError.Code, apiError.RequestID, apiError.Retryable)
 }
 ```
 

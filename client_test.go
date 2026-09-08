@@ -46,7 +46,7 @@ func TestInstagramProfileGet(t *testing.T) {
 		writer.Header().Set("X-Request-ID", "request_123")
 		writer.Header().Set("Openhandle-Cost", "0.000")
 		writer.Header().Set("Openhandle-Environment", "test")
-		_, _ = fmt.Fprint(writer, `{"platform":"instagram","resource":"profile","captured_at":"2026-08-27T12:00:00Z","source":"cache","data":{"id":"profile_1","handle":"northstar_forge_test","display_name":"Northstar","bio":"","is_business":false,"is_private":false,"is_verified":false,"metrics":{}}}`)
+		_, _ = fmt.Fprint(writer, `{"platform":"instagram","resource":"profile","capturedAt":"2026-08-27T12:00:00Z","source":"cache","data":{"id":"profile_1","handle":"northstar_forge_test","display_name":"Northstar","bio":"","is_business":false,"is_private":false,"is_verified":false,"metrics":{}}}`)
 	}))
 	defer server.Close()
 
@@ -99,10 +99,10 @@ func TestRetriesRetryableAPIError(t *testing.T) {
 		if attempt == 1 {
 			writer.Header().Set("Retry-After", "0.001")
 			writer.WriteHeader(http.StatusServiceUnavailable)
-			_, _ = fmt.Fprint(writer, `{"error":{"code":"UPSTREAM_UNAVAILABLE","message":"try again","request_id":"request_retry","retryable":true}}`)
+			_, _ = fmt.Fprint(writer, `{"error":{"code":"UPSTREAM_UNAVAILABLE","message":"try again","requestId":"request_retry","retryable":true}}`)
 			return
 		}
-		_, _ = fmt.Fprint(writer, `{"platform":"instagram","resource":"profile","captured_at":"2026-08-27T12:00:00Z","source":"live","data":{"id":"profile_1","handle":"openai","display_name":"OpenAI","bio":"","is_business":false,"is_private":false,"is_verified":true,"metrics":{}}}`)
+		_, _ = fmt.Fprint(writer, `{"platform":"instagram","resource":"profile","capturedAt":"2026-08-27T12:00:00Z","source":"live","data":{"id":"profile_1","handle":"openai","display_name":"OpenAI","bio":"","is_business":false,"is_private":false,"is_verified":true,"metrics":{}}}`)
 	}))
 	defer server.Close()
 	client, err := New("oh_live_key", WithBaseURL(server.URL), WithMaxRetries(1))
@@ -125,7 +125,7 @@ func TestAPIErrorFields(t *testing.T) {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.Header().Set("X-Request-ID", "request_header")
 		writer.WriteHeader(http.StatusBadRequest)
-		_, _ = fmt.Fprint(writer, `{"error":{"code":"INVALID_REFERENCE","message":"invalid","request_id":"request_body","retryable":false,"details":{"field":"identifier"}}}`)
+		_, _ = fmt.Fprint(writer, `{"error":{"code":"INVALID_REFERENCE","message":"invalid","requestId":"request_body","retryable":false,"details":{"field":"identifier"}}}`)
 	}))
 	defer server.Close()
 	client, err := New("oh_test_key", WithBaseURL(server.URL), WithMaxRetries(0))
@@ -288,7 +288,7 @@ func TestFetchDecodesConcreteVariant(t *testing.T) {
 			t.Errorf("body = %#v", body)
 		}
 		writer.Header().Set("Content-Type", "application/json")
-		_, _ = fmt.Fprint(writer, `{"platform":"instagram","resource":"profile","captured_at":"2026-08-27T12:00:00Z","source":"cache","data":{"id":"profile_1","handle":"openai","display_name":"OpenAI","bio":"","is_business":false,"is_private":false,"is_verified":true,"metrics":{}}}`)
+		_, _ = fmt.Fprint(writer, `{"platform":"instagram","resource":"profile","capturedAt":"2026-08-27T12:00:00Z","source":"cache","data":{"id":"profile_1","handle":"openai","display_name":"OpenAI","bio":"","is_business":false,"is_private":false,"is_verified":true,"metrics":{}}}`)
 	}))
 	defer server.Close()
 	client, err := New("oh_test_key", WithBaseURL(server.URL), WithMaxRetries(0))
@@ -310,5 +310,5 @@ func pageJSON(id, cursor, requestID string) string {
 	if cursor != "" {
 		next = fmt.Sprintf("%q", cursor)
 	}
-	return fmt.Sprintf(`{"platform":"instagram","resource":"post","captured_at":"2026-08-27T12:00:00Z","source":"cache","data":[{"id":%q}],"meta":{"cursors":{"next":%s}},"request_id":%q}`, id, next, requestID)
+	return fmt.Sprintf(`{"platform":"instagram","resource":"post","capturedAt":"2026-08-27T12:00:00Z","source":"cache","data":[{"id":%q}],"meta":{"cursors":{"next":%s}},"requestId":%q}`, id, next, requestID)
 }
