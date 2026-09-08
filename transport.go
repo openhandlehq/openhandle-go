@@ -26,7 +26,7 @@ type errorEnvelope struct {
 		Code      string         `json:"code"`
 		Details   map[string]any `json:"details"`
 		Message   string         `json:"message"`
-		RequestID string         `json:"request_id"`
+		RequestID string         `json:"requestId"`
 		Retryable bool           `json:"retryable"`
 	} `json:"error"`
 }

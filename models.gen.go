@@ -9,16 +9,16 @@ type Comment = CommentCore
 type CommentCore struct {
 	Author              PostAuthor     `json:"author"`
 	ID                  string         `json:"id"`
-	IsLikedByPostAuthor *bool          `json:"is_liked_by_post_author"`
-	IsPinned            *bool          `json:"is_pinned"`
+	IsLikedByPostAuthor *bool          `json:"isLikedByPostAuthor"`
+	IsPinned            *bool          `json:"isPinned"`
 	Media               []PostMedia    `json:"media"`
 	Metrics             CommentMetrics `json:"metrics"`
-	ParentID            *string        `json:"parent_id"`
-	PinnedPosition      *int64         `json:"pinned_position"`
-	PublishedAt         time.Time      `json:"published_at"`
-	ReplyPreview        []Comment      `json:"reply_preview,omitempty"`
+	ParentID            *string        `json:"parentId"`
+	PinnedPosition      *int64         `json:"pinnedPosition"`
+	PublishedAt         time.Time      `json:"publishedAt"`
+	ReplyPreview        []Comment      `json:"replyPreview,omitempty"`
 	Text                string         `json:"text"`
-	ThreadRootID        *string        `json:"thread_root_id"`
+	ThreadRootID        *string        `json:"threadRootId"`
 }
 
 type CommentMetrics struct {
@@ -57,7 +57,7 @@ type ErrorEnvelope struct {
 		Code      string         `json:"code"`
 		Details   map[string]any `json:"details,omitempty"`
 		Message   string         `json:"message"`
-		RequestID string         `json:"request_id"`
+		RequestID string         `json:"requestId"`
 		Retryable bool           `json:"retryable"`
 	} `json:"error"`
 }
@@ -81,10 +81,10 @@ type InstagramClipMetadata struct {
 	ID          string           `json:"id"`
 	Media       []PostMedia      `json:"media"`
 	Music       *PostMusic       `json:"music,omitempty"`
-	PlayCount   *int64           `json:"play_count,omitempty"`
-	PublishedAt *time.Time       `json:"published_at,omitempty"`
+	PlayCount   *int64           `json:"playCount,omitempty"`
+	PublishedAt *time.Time       `json:"publishedAt,omitempty"`
 	Title       *string          `json:"title,omitempty"`
-	ViewCount   *int64           `json:"view_count,omitempty"`
+	ViewCount   *int64           `json:"viewCount,omitempty"`
 	Width       *int64           `json:"width,omitempty"`
 }
 
@@ -93,19 +93,19 @@ type InstagramComment struct {
 }
 
 type InstagramCommentMetadata struct {
-	CanComment       *bool  `json:"can_comment,omitempty"`
-	CanViewMore      *bool  `json:"can_view_more,omitempty"`
-	CommentCount     *int64 `json:"comment_count,omitempty"`
-	CommentsDisabled *bool  `json:"comments_disabled,omitempty"`
+	CanComment       *bool  `json:"canComment,omitempty"`
+	CanViewMore      *bool  `json:"canViewMore,omitempty"`
+	CommentCount     *int64 `json:"commentCount,omitempty"`
+	CommentsDisabled *bool  `json:"commentsDisabled,omitempty"`
 	ID               string `json:"id"`
-	PreviewCount     *int64 `json:"preview_count,omitempty"`
+	PreviewCount     *int64 `json:"previewCount,omitempty"`
 }
 
 type InstagramCommentModeration struct {
 	ID          string   `json:"id"`
-	IsBullying  *bool    `json:"is_bullying,omitempty"`
-	IsOffensive *bool    `json:"is_offensive,omitempty"`
-	IsSpam      *bool    `json:"is_spam,omitempty"`
+	IsBullying  *bool    `json:"isBullying,omitempty"`
+	IsOffensive *bool    `json:"isOffensive,omitempty"`
+	IsSpam      *bool    `json:"isSpam,omitempty"`
 	Reasons     []string `json:"reasons"`
 	Score       *float64 `json:"score,omitempty"`
 	Text        *string  `json:"text,omitempty"`
@@ -118,7 +118,7 @@ type InstagramEntity struct {
 type InstagramHighlight struct {
 	Cover     *MediaReference  `json:"cover,omitempty"`
 	ID        string           `json:"id"`
-	ItemCount *int64           `json:"item_count,omitempty"`
+	ItemCount *int64           `json:"itemCount,omitempty"`
 	Items     []InstagramStory `json:"items"`
 	Owner     *EntityReference `json:"owner,omitempty"`
 	Title     *string          `json:"title,omitempty"`
@@ -129,7 +129,7 @@ type InstagramLocationGuide struct {
 	Description *string          `json:"description,omitempty"`
 	ID          string           `json:"id"`
 	Image       *MediaReference  `json:"image,omitempty"`
-	ItemCount   *int64           `json:"item_count,omitempty"`
+	ItemCount   *int64           `json:"itemCount,omitempty"`
 	Location    *PostLocation    `json:"location,omitempty"`
 	Title       *string          `json:"title,omitempty"`
 	URL         *string          `json:"url,omitempty"`
@@ -138,21 +138,21 @@ type InstagramLocationGuide struct {
 type InstagramMusicStream struct {
 	Bitrate   *int64     `json:"bitrate,omitempty"`
 	Duration  *float64   `json:"duration,omitempty"`
-	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 	ID        string     `json:"id"`
-	MimeType  *string    `json:"mime_type,omitempty"`
+	MimeType  *string    `json:"mimeType,omitempty"`
 	Page      *int64     `json:"page,omitempty"`
 	URL       *string    `json:"url,omitempty"`
 }
 
 type InstagramOEmbed struct {
-	AuthorName   *string         `json:"author_name,omitempty"`
-	AuthorURL    *string         `json:"author_url,omitempty"`
+	AuthorName   *string         `json:"authorName,omitempty"`
+	AuthorURL    *string         `json:"authorUrl,omitempty"`
 	Height       *int64          `json:"height,omitempty"`
 	Html         *string         `json:"html,omitempty"`
 	ID           string          `json:"id"`
-	ProviderName *string         `json:"provider_name,omitempty"`
-	ProviderURL  *string         `json:"provider_url,omitempty"`
+	ProviderName *string         `json:"providerName,omitempty"`
+	ProviderURL  *string         `json:"providerUrl,omitempty"`
 	Thumbnail    *MediaReference `json:"thumbnail,omitempty"`
 	Title        *string         `json:"title,omitempty"`
 	Type         *string         `json:"type,omitempty"`
@@ -169,24 +169,24 @@ type InstagramPost struct {
 	PostCore
 	Collaborators     []PostAuthor           `json:"collaborators"`
 	Extended          *InstagramPostExtended `json:"extended,omitempty"`
-	IsAd              *bool                  `json:"is_ad"`
-	IsPaidPartnership *bool                  `json:"is_paid_partnership"`
+	IsAd              *bool                  `json:"isAd"`
+	IsPaidPartnership *bool                  `json:"isPaidPartnership"`
 	Location          *PostLocation          `json:"location"`
 	Metrics           InstagramPostMetrics   `json:"metrics"`
 	Music             *PostMusic             `json:"music"`
 	Shortcode         *string                `json:"shortcode"`
 	Sponsors          []PostAuthor           `json:"sponsors"`
-	TaggedUsers       []PostAuthor           `json:"tagged_users"`
+	TaggedUsers       []PostAuthor           `json:"taggedUsers"`
 }
 
 type InstagramPostExtended struct {
-	AccessibilityCaption *string `json:"accessibility_caption"`
-	LikeCountsHidden     *bool   `json:"like_counts_hidden"`
-	ProductType          *string `json:"product_type"`
+	AccessibilityCaption *string `json:"accessibilityCaption"`
+	LikeCountsHidden     *bool   `json:"likeCountsHidden"`
+	ProductType          *string `json:"productType"`
 }
 
 type InstagramPostInsight struct {
-	AverageWatchTime *float64 `json:"average_watch_time,omitempty"`
+	AverageWatchTime *float64 `json:"averageWatchTime,omitempty"`
 	Comments         *int64   `json:"comments,omitempty"`
 	Follows          *int64   `json:"follows,omitempty"`
 	ID               string   `json:"id"`
@@ -194,17 +194,17 @@ type InstagramPostInsight struct {
 	Interactions     *int64   `json:"interactions,omitempty"`
 	Likes            *int64   `json:"likes,omitempty"`
 	Plays            *int64   `json:"plays,omitempty"`
-	ProfileVisits    *int64   `json:"profile_visits,omitempty"`
+	ProfileVisits    *int64   `json:"profileVisits,omitempty"`
 	Reach            *int64   `json:"reach,omitempty"`
 	Saves            *int64   `json:"saves,omitempty"`
 	Shares           *int64   `json:"shares,omitempty"`
 	Views            *int64   `json:"views,omitempty"`
-	WatchTime        *float64 `json:"watch_time,omitempty"`
+	WatchTime        *float64 `json:"watchTime,omitempty"`
 }
 
 type InstagramPostMetrics struct {
 	PostMetrics
-	PlayCountBreakdown *InstagramPlayCountBreakdown `json:"play_count_breakdown,omitempty"`
+	PlayCountBreakdown *InstagramPlayCountBreakdown `json:"playCountBreakdown,omitempty"`
 }
 
 type InstagramProfile struct {
@@ -216,41 +216,41 @@ type InstagramProfileAbout struct {
 	Bio                 *string    `json:"bio,omitempty"`
 	Category            *string    `json:"category,omitempty"`
 	Country             *string    `json:"country,omitempty"`
-	DisplayName         *string    `json:"display_name,omitempty"`
-	ExternalURL         *string    `json:"external_url,omitempty"`
-	FormerUsernameCount *int64     `json:"former_username_count,omitempty"`
+	DisplayName         *string    `json:"displayName,omitempty"`
+	ExternalURL         *string    `json:"externalUrl,omitempty"`
+	FormerUsernameCount *int64     `json:"formerUsernameCount,omitempty"`
 	Handle              *string    `json:"handle,omitempty"`
 	ID                  string     `json:"id"`
-	IsBusiness          *bool      `json:"is_business,omitempty"`
-	IsPrivate           *bool      `json:"is_private,omitempty"`
-	IsVerified          *bool      `json:"is_verified,omitempty"`
-	JoinedAt            *time.Time `json:"joined_at,omitempty"`
+	IsBusiness          *bool      `json:"isBusiness,omitempty"`
+	IsPrivate           *bool      `json:"isPrivate,omitempty"`
+	IsVerified          *bool      `json:"isVerified,omitempty"`
+	JoinedAt            *time.Time `json:"joinedAt,omitempty"`
 }
 
 type InstagramProfileExtended struct {
-	AccountTypeCode        *int64        `json:"account_type_code"`
-	AddressStreet          *string       `json:"address_street"`
-	BioLinks               []ProfileLink `json:"bio_links"`
-	BusinessContactMethod  *string       `json:"business_contact_method"`
+	AccountTypeCode        *int64        `json:"accountTypeCode"`
+	AddressStreet          *string       `json:"addressStreet"`
+	BioLinks               []ProfileLink `json:"bioLinks"`
+	BusinessContactMethod  *string       `json:"businessContactMethod"`
 	City                   *string       `json:"city"`
 	Latitude               *float64      `json:"latitude"`
 	Longitude              *float64      `json:"longitude"`
-	PostalCode             *string       `json:"postal_code"`
-	PublicEmail            *string       `json:"public_email"`
-	PublicPhoneCountryCode *string       `json:"public_phone_country_code"`
-	PublicPhoneNumber      *string       `json:"public_phone_number"`
+	PostalCode             *string       `json:"postalCode"`
+	PublicEmail            *string       `json:"publicEmail"`
+	PublicPhoneCountryCode *string       `json:"publicPhoneCountryCode"`
+	PublicPhoneNumber      *string       `json:"publicPhoneNumber"`
 }
 
 type InstagramProfileSummary struct {
 	Avatar      *MediaReference `json:"avatar,omitempty"`
 	Bio         *string         `json:"bio,omitempty"`
 	Category    *string         `json:"category,omitempty"`
-	DisplayName *string         `json:"display_name,omitempty"`
+	DisplayName *string         `json:"displayName,omitempty"`
 	Followers   *int64          `json:"followers,omitempty"`
 	Handle      *string         `json:"handle,omitempty"`
 	ID          string          `json:"id"`
-	IsPrivate   *bool           `json:"is_private,omitempty"`
-	IsVerified  *bool           `json:"is_verified,omitempty"`
+	IsPrivate   *bool           `json:"isPrivate,omitempty"`
+	IsVerified  *bool           `json:"isVerified,omitempty"`
 	URL         *string         `json:"url,omitempty"`
 }
 
@@ -268,17 +268,17 @@ type InstagramSearchResult struct {
 
 type InstagramStory struct {
 	Author        *EntityReference  `json:"author,omitempty"`
-	CanQuickReply *bool             `json:"can_quick_reply,omitempty"`
-	CanReply      *bool             `json:"can_reply,omitempty"`
-	CanReshare    *bool             `json:"can_reshare,omitempty"`
-	ExpiresAt     *time.Time        `json:"expires_at,omitempty"`
+	CanQuickReply *bool             `json:"canQuickReply,omitempty"`
+	CanReply      *bool             `json:"canReply,omitempty"`
+	CanReshare    *bool             `json:"canReshare,omitempty"`
+	ExpiresAt     *time.Time        `json:"expiresAt,omitempty"`
 	Hashtags      []string          `json:"hashtags"`
 	ID            string            `json:"id"`
 	Links         []StoryLink       `json:"links"`
 	Locations     []PostLocation    `json:"locations"`
 	Media         []PostMedia       `json:"media"`
 	Mentions      []EntityReference `json:"mentions"`
-	PublishedAt   *time.Time        `json:"published_at,omitempty"`
+	PublishedAt   *time.Time        `json:"publishedAt,omitempty"`
 	Shortcode     *string           `json:"shortcode,omitempty"`
 	Stickers      []StorySticker    `json:"stickers"`
 	Type          *string           `json:"type,omitempty"`
@@ -299,29 +299,24 @@ type Location struct {
 	Address     *string  `json:"address"`
 	Category    *string  `json:"category"`
 	City        *string  `json:"city"`
-	CountryCode *string  `json:"country_code"`
+	CountryCode *string  `json:"countryCode"`
 	ID          string   `json:"id"`
 	Latitude    *float64 `json:"latitude"`
 	Longitude   *float64 `json:"longitude"`
 	Name        string   `json:"name"`
 	Phone       *string  `json:"phone"`
-	PostalCode  *string  `json:"postal_code"`
+	PostalCode  *string  `json:"postalCode"`
 	Region      *string  `json:"region"`
 	Website     *string  `json:"website"`
 }
 
 type MediaReference struct {
-	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 	URL       string     `json:"url"`
 }
 
 type MessageEnvelope struct {
 	Message string `json:"message"`
-}
-
-type Money struct {
-	Amount   string  `json:"amount"`
-	Currency *string `json:"currency,omitempty"`
 }
 
 type Music struct {
@@ -331,9 +326,9 @@ type Music struct {
 	Audio        *MediaReference  `json:"audio"`
 	Duration     *float64         `json:"duration"`
 	ID           string           `json:"id"`
-	IsCommercial *bool            `json:"is_commercial"`
-	IsExplicit   *bool            `json:"is_explicit"`
-	IsOriginal   *bool            `json:"is_original"`
+	IsCommercial *bool            `json:"isCommercial"`
+	IsExplicit   *bool            `json:"isExplicit"`
+	IsOriginal   *bool            `json:"isOriginal"`
 	Metrics      struct {
 		Posts *int64 `json:"posts"`
 	} `json:"metrics"`
@@ -342,22 +337,22 @@ type Music struct {
 
 type PostAuthor struct {
 	Avatar      *MediaReference `json:"avatar"`
-	DisplayName *string         `json:"display_name"`
+	DisplayName *string         `json:"displayName"`
 	Handle      string          `json:"handle"`
 	ID          string          `json:"id"`
-	IsVerified  *bool           `json:"is_verified"`
+	IsVerified  *bool           `json:"isVerified"`
 }
 
 type PostCore struct {
 	Author           PostAuthor  `json:"author"`
 	Caption          *string     `json:"caption"`
-	CommentsDisabled *bool       `json:"comments_disabled"`
+	CommentsDisabled *bool       `json:"commentsDisabled"`
 	Format           string      `json:"format"`
 	Hashtags         []string    `json:"hashtags"`
 	ID               string      `json:"id"`
 	Media            []PostMedia `json:"media"`
 	Mentions         []string    `json:"mentions"`
-	PublishedAt      time.Time   `json:"published_at"`
+	PublishedAt      time.Time   `json:"publishedAt"`
 	Title            *string     `json:"title"`
 	Type             string      `json:"type"`
 	URL              string      `json:"url"`
@@ -367,21 +362,21 @@ type PostLocation struct {
 	Address     *string  `json:"address"`
 	Category    *string  `json:"category"`
 	City        *string  `json:"city"`
-	CountryCode *string  `json:"country_code"`
+	CountryCode *string  `json:"countryCode"`
 	ID          *string  `json:"id"`
 	Latitude    *float64 `json:"latitude"`
 	Longitude   *float64 `json:"longitude"`
 	Name        *string  `json:"name"`
 	Phone       *string  `json:"phone"`
-	PostalCode  *string  `json:"postal_code"`
+	PostalCode  *string  `json:"postalCode"`
 	Region      *string  `json:"region"`
 	Website     *string  `json:"website"`
 }
 
 type PostMedia struct {
-	AltText   *string            `json:"alt_text,omitempty"`
+	AltText   *string            `json:"altText,omitempty"`
 	Duration  *float64           `json:"duration,omitempty"`
-	ExpiresAt *time.Time         `json:"expires_at,omitempty"`
+	ExpiresAt *time.Time         `json:"expiresAt,omitempty"`
 	Height    *int64             `json:"height,omitempty"`
 	ID        *string            `json:"id,omitempty"`
 	Thumbnail *MediaReference    `json:"thumbnail,omitempty"`
@@ -393,9 +388,9 @@ type PostMedia struct {
 
 type PostMediaVariant struct {
 	Bitrate     *int64     `json:"bitrate,omitempty"`
-	ExpiresAt   *time.Time `json:"expires_at,omitempty"`
+	ExpiresAt   *time.Time `json:"expiresAt,omitempty"`
 	Height      *int64     `json:"height,omitempty"`
-	MimeType    *string    `json:"mime_type,omitempty"`
+	MimeType    *string    `json:"mimeType,omitempty"`
 	Role        *string    `json:"role,omitempty"`
 	URL         string     `json:"url"`
 	Watermarked *bool      `json:"watermarked,omitempty"`
@@ -418,9 +413,9 @@ type PostMusic struct {
 	Audio        *MediaReference  `json:"audio"`
 	Duration     *float64         `json:"duration"`
 	ID           string           `json:"id"`
-	IsCommercial *bool            `json:"is_commercial"`
-	IsExplicit   *bool            `json:"is_explicit"`
-	IsOriginal   *bool            `json:"is_original"`
+	IsCommercial *bool            `json:"isCommercial"`
+	IsExplicit   *bool            `json:"isExplicit"`
+	IsOriginal   *bool            `json:"isOriginal"`
 	Title        *string          `json:"title"`
 }
 
@@ -432,17 +427,17 @@ type PostMusicArtist struct {
 type Profile = ProfileCore
 
 type ProfileCore struct {
-	AccountType *string         `json:"account_type"`
+	AccountType *string         `json:"accountType"`
 	Avatar      *MediaReference `json:"avatar"`
 	Bio         string          `json:"bio"`
 	Category    *string         `json:"category"`
-	DisplayName string          `json:"display_name"`
-	ExternalURL *string         `json:"external_url"`
+	DisplayName string          `json:"displayName"`
+	ExternalURL *string         `json:"externalUrl"`
 	Handle      string          `json:"handle"`
 	ID          string          `json:"id"`
-	IsBusiness  bool            `json:"is_business"`
-	IsPrivate   bool            `json:"is_private"`
-	IsVerified  bool            `json:"is_verified"`
+	IsBusiness  bool            `json:"isBusiness"`
+	IsPrivate   bool            `json:"isPrivate"`
+	IsVerified  bool            `json:"isVerified"`
 	Metrics     ProfileMetrics  `json:"metrics"`
 }
 
@@ -467,7 +462,7 @@ type SearchResultMetrics struct {
 }
 
 type StoryLink struct {
-	DisplayURL *string  `json:"display_url,omitempty"`
+	DisplayURL *string  `json:"displayUrl,omitempty"`
 	Height     *float64 `json:"height,omitempty"`
 	Rotation   *float64 `json:"rotation,omitempty"`
 	Title      *string  `json:"title,omitempty"`
@@ -489,7 +484,7 @@ type StorySticker struct {
 }
 
 type SuccessEnvelope struct {
-	CapturedAt time.Time `json:"captured_at"`
+	CapturedAt time.Time `json:"capturedAt"`
 	Data       any       `json:"data"`
 	Meta       *struct {
 		Cursors struct {
@@ -564,76 +559,32 @@ type TikTokComment struct {
 }
 
 type TikTokEffect struct {
-	CreatedAt    *time.Time      `json:"created_at,omitempty"`
+	CreatedAt    *time.Time      `json:"createdAt,omitempty"`
 	Description  *string         `json:"description,omitempty"`
 	ID           string          `json:"id"`
 	Image        *MediaReference `json:"image,omitempty"`
-	IsCommercial *bool           `json:"is_commercial,omitempty"`
+	IsCommercial *bool           `json:"isCommercial,omitempty"`
 	Name         *string         `json:"name,omitempty"`
-	PostCount    *int64          `json:"post_count,omitempty"`
+	PostCount    *int64          `json:"postCount,omitempty"`
 	Type         *string         `json:"type,omitempty"`
 	URL          *string         `json:"url,omitempty"`
-	ViewCount    *int64          `json:"view_count,omitempty"`
+	ViewCount    *int64          `json:"viewCount,omitempty"`
 }
 
 type TikTokEntity struct {
 	EntityCore
 }
 
-type TikTokInsight struct {
-	GrowthRate      *float64 `json:"growth_rate,omitempty"`
-	ID              string   `json:"id"`
-	Keyword         *string  `json:"keyword,omitempty"`
-	Period          *string  `json:"period,omitempty"`
-	PostCount       *int64   `json:"post_count,omitempty"`
-	Rank            *int64   `json:"rank,omitempty"`
-	RelatedKeywords []string `json:"related_keywords"`
-	SearchVolume    *int64   `json:"search_volume,omitempty"`
-	Title           *string  `json:"title,omitempty"`
-	Trend           *string  `json:"trend,omitempty"`
-	ViewCount       *int64   `json:"view_count,omitempty"`
-}
-
-type TikTokLiveRanking struct {
-	ID    string           `json:"id"`
-	Rank  *int64           `json:"rank,omitempty"`
-	Score *int64           `json:"score,omitempty"`
-	User  *EntityReference `json:"user,omitempty"`
-}
-
-type TikTokLiveRoom struct {
-	Cover        *MediaReference  `json:"cover,omitempty"`
-	EndedAt      *time.Time       `json:"ended_at,omitempty"`
-	Host         *EntityReference `json:"host,omitempty"`
-	ID           string           `json:"id"`
-	LikeCount    *int64           `json:"like_count,omitempty"`
-	ProductCount *int64           `json:"product_count,omitempty"`
-	StartedAt    *time.Time       `json:"started_at,omitempty"`
-	Status       *string          `json:"status,omitempty"`
-	Title        *string          `json:"title,omitempty"`
-	URL          *string          `json:"url,omitempty"`
-	ViewerCount  *int64           `json:"viewer_count,omitempty"`
-}
-
-type TikTokOption struct {
-	Description *string `json:"description,omitempty"`
-	ID          string  `json:"id"`
-	IsSelected  *bool   `json:"is_selected,omitempty"`
-	Label       *string `json:"label,omitempty"`
-	Position    *int64  `json:"position,omitempty"`
-	Value       *string `json:"value,omitempty"`
-}
-
 type TikTokPlaylist struct {
 	Cover       *MediaReference  `json:"cover,omitempty"`
-	CreatedAt   *time.Time       `json:"created_at,omitempty"`
+	CreatedAt   *time.Time       `json:"createdAt,omitempty"`
 	Description *string          `json:"description,omitempty"`
 	ID          string           `json:"id"`
 	Name        *string          `json:"name,omitempty"`
 	Owner       *EntityReference `json:"owner,omitempty"`
-	PlayCount   *int64           `json:"play_count,omitempty"`
-	PostCount   *int64           `json:"post_count,omitempty"`
-	UpdatedAt   *time.Time       `json:"updated_at,omitempty"`
+	PlayCount   *int64           `json:"playCount,omitempty"`
+	PostCount   *int64           `json:"postCount,omitempty"`
+	UpdatedAt   *time.Time       `json:"updatedAt,omitempty"`
 	URL         *string          `json:"url,omitempty"`
 }
 
@@ -641,22 +592,22 @@ type TikTokPost struct {
 	PostCore
 	Collaborators     []PostAuthor        `json:"collaborators"`
 	Extended          *TikTokPostExtended `json:"extended,omitempty"`
-	IsAd              *bool               `json:"is_ad"`
-	IsPaidPartnership *bool               `json:"is_paid_partnership"`
+	IsAd              *bool               `json:"isAd"`
+	IsPaidPartnership *bool               `json:"isPaidPartnership"`
 	Location          *PostLocation       `json:"location"`
 	Metrics           TikTokPostMetrics   `json:"metrics"`
 	Music             *PostMusic          `json:"music"`
 	Sponsors          []PostAuthor        `json:"sponsors"`
-	TaggedUsers       []PostAuthor        `json:"tagged_users"`
+	TaggedUsers       []PostAuthor        `json:"taggedUsers"`
 }
 
 type TikTokPostExtended struct {
-	AiLabelType          *int64 `json:"ai_label_type,omitempty"`
-	AllowsDuet           *bool  `json:"allows_duet,omitempty"`
-	AllowsStitch         *bool  `json:"allows_stitch,omitempty"`
-	IsAiGenerated        *bool  `json:"is_ai_generated,omitempty"`
-	IsDownloadable       *bool  `json:"is_downloadable,omitempty"`
-	UsesPromotionalMusic *bool  `json:"uses_promotional_music,omitempty"`
+	AiLabelType          *int64 `json:"aiLabelType,omitempty"`
+	AllowsDuet           *bool  `json:"allowsDuet,omitempty"`
+	AllowsStitch         *bool  `json:"allowsStitch,omitempty"`
+	IsAiGenerated        *bool  `json:"isAiGenerated,omitempty"`
+	IsDownloadable       *bool  `json:"isDownloadable,omitempty"`
+	UsesPromotionalMusic *bool  `json:"usesPromotionalMusic,omitempty"`
 }
 
 type TikTokPostMetrics struct {
@@ -670,87 +621,10 @@ type TikTokProfile struct {
 }
 
 type TikTokProfileExtended struct {
-	HasCommerce       *bool   `json:"has_commerce"`
-	IsProAccount      *bool   `json:"is_pro_account"`
-	VerificationLabel *string `json:"verification_label"`
-	VerificationType  *int64  `json:"verification_type"`
-}
-
-type TikTokQRCode struct {
-	ExpiresAt *time.Time      `json:"expires_at,omitempty"`
-	Height    *int64          `json:"height,omitempty"`
-	ID        string          `json:"id"`
-	Image     *MediaReference `json:"image,omitempty"`
-	URL       *string         `json:"url,omitempty"`
-	Width     *int64          `json:"width,omitempty"`
-}
-
-type TikTokSearchResult struct {
-	Author      *EntityReference     `json:"author,omitempty"`
-	Description *string              `json:"description,omitempty"`
-	Handle      *string              `json:"handle,omitempty"`
-	ID          string               `json:"id"`
-	Image       *MediaReference      `json:"image,omitempty"`
-	Metrics     *SearchResultMetrics `json:"metrics,omitempty"`
-	Title       *string              `json:"title,omitempty"`
-	Type        *string              `json:"type,omitempty"`
-	URL         *string              `json:"url,omitempty"`
-}
-
-type TikTokShopCategory struct {
-	ID           string  `json:"id"`
-	Name         *string `json:"name,omitempty"`
-	ParentID     *string `json:"parent_id,omitempty"`
-	ProductCount *int64  `json:"product_count,omitempty"`
-}
-
-type TikTokShopProduct struct {
-	Description   *string          `json:"description,omitempty"`
-	Discount      *string          `json:"discount,omitempty"`
-	ID            string           `json:"id"`
-	Images        []MediaReference `json:"images"`
-	Name          *string          `json:"name,omitempty"`
-	OriginalPrice *Money           `json:"original_price,omitempty"`
-	Price         *Money           `json:"price,omitempty"`
-	Rating        *float64         `json:"rating,omitempty"`
-	ReviewCount   *int64           `json:"review_count,omitempty"`
-	Seller        *EntityReference `json:"seller,omitempty"`
-	Sold          *int64           `json:"sold,omitempty"`
-	Stock         *int64           `json:"stock,omitempty"`
-	URL           *string          `json:"url,omitempty"`
-}
-
-type TikTokShopReview struct {
-	Author      *EntityReference `json:"author,omitempty"`
-	Helpful     *int64           `json:"helpful,omitempty"`
-	ID          string           `json:"id"`
-	Images      []MediaReference `json:"images"`
-	PublishedAt *time.Time       `json:"published_at,omitempty"`
-	Rating      *float64         `json:"rating,omitempty"`
-	Text        *string          `json:"text,omitempty"`
-}
-
-type TikTokShopSeller struct {
-	Description *string         `json:"description,omitempty"`
-	Followers   *int64          `json:"followers,omitempty"`
-	Handle      *string         `json:"handle,omitempty"`
-	ID          string          `json:"id"`
-	Image       *MediaReference `json:"image,omitempty"`
-	Name        *string         `json:"name,omitempty"`
-	Products    *int64          `json:"products,omitempty"`
-	Rating      *float64        `json:"rating,omitempty"`
-	Region      *string         `json:"region,omitempty"`
-	Sold        *int64          `json:"sold,omitempty"`
-	URL         *string         `json:"url,omitempty"`
-}
-
-type TikTokSuggestion struct {
-	Highlighted *string          `json:"highlighted,omitempty"`
-	ID          string           `json:"id"`
-	Score       *float64         `json:"score,omitempty"`
-	Text        string           `json:"text"`
-	Type        *string          `json:"type,omitempty"`
-	User        *EntityReference `json:"user,omitempty"`
+	HasCommerce       *bool   `json:"hasCommerce"`
+	IsProAccount      *bool   `json:"isProAccount"`
+	VerificationLabel *string `json:"verificationLabel"`
+	VerificationType  *int64  `json:"verificationType"`
 }
 
 type TrendingCategory struct {
@@ -772,10 +646,10 @@ type TwitterEntity struct {
 }
 
 type TwitterList struct {
-	CreatedAt   *time.Time `json:"created_at"`
+	CreatedAt   *time.Time `json:"createdAt"`
 	Description *string    `json:"description"`
 	ID          string     `json:"id"`
-	IsPrivate   *bool      `json:"is_private"`
+	IsPrivate   *bool      `json:"isPrivate"`
 	Metrics     struct {
 		Followers *int64 `json:"followers"`
 		Members   *int64 `json:"members"`
@@ -788,17 +662,17 @@ type TwitterPost struct {
 	PostCore
 	Extended     *TwitterPostExtended `json:"extended,omitempty"`
 	Metrics      TwitterPostMetrics   `json:"metrics"`
-	QuotedPost   *TwitterPost         `json:"quoted_post,omitempty"`
-	RepostedPost *TwitterPost         `json:"reposted_post,omitempty"`
+	QuotedPost   *TwitterPost         `json:"quotedPost,omitempty"`
+	RepostedPost *TwitterPost         `json:"repostedPost,omitempty"`
 }
 
 type TwitterPostExtended struct {
-	ConversationID  *string `json:"conversation_id,omitempty"`
-	InReplyToPostID *string `json:"in_reply_to_post_id,omitempty"`
-	InReplyToUserID *string `json:"in_reply_to_user_id,omitempty"`
+	ConversationID  *string `json:"conversationId,omitempty"`
+	InReplyToPostID *string `json:"inReplyToPostId,omitempty"`
+	InReplyToUserID *string `json:"inReplyToUserId,omitempty"`
 	Language        *string `json:"language,omitempty"`
-	QuotedPostID    *string `json:"quoted_post_id,omitempty"`
-	RepostedPostID  *string `json:"reposted_post_id,omitempty"`
+	QuotedPostID    *string `json:"quotedPostId,omitempty"`
+	RepostedPostID  *string `json:"repostedPostId,omitempty"`
 }
 
 type TwitterPostMetrics struct {
@@ -814,12 +688,12 @@ type TwitterProfile struct {
 
 type TwitterProfileExtended struct {
 	Banner            *MediaReference `json:"banner"`
-	CreatedAt         *time.Time      `json:"created_at"`
+	CreatedAt         *time.Time      `json:"createdAt"`
 	Likes             *int64          `json:"likes"`
 	Location          *string         `json:"location"`
 	Media             *int64          `json:"media"`
-	PinnedPostIDs     []string        `json:"pinned_post_ids"`
-	WithheldCountries []string        `json:"withheld_countries"`
+	PinnedPostIDs     []string        `json:"pinnedPostIds"`
+	WithheldCountries []string        `json:"withheldCountries"`
 }
 
 type TwitterSuggestion struct {

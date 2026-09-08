@@ -2178,18 +2178,14 @@ type TikTokResource struct {
 	bindings     map[string]string
 	referenceErr error
 	Effects      *TikTokEffectsResource
-	Live         *TikTokLiveResource
 	Search       *TikTokSearchResource
-	Shop         *TikTokShopResource
 	Trending     *TikTokTrendingResource
 }
 
 func newTikTokResource(client *Client, bindings map[string]string, referenceErr error) *TikTokResource {
 	value := &TikTokResource{client: client, bindings: bindings, referenceErr: referenceErr}
 	value.Effects = newTikTokEffectsResource(client, bindings, referenceErr)
-	value.Live = newTikTokLiveResource(client, bindings, referenceErr)
 	value.Search = newTikTokSearchResource(client, bindings, referenceErr)
-	value.Shop = newTikTokShopResource(client, bindings, referenceErr)
 	value.Trending = newTikTokTrendingResource(client, bindings, referenceErr)
 	return value
 }
@@ -2270,19 +2266,6 @@ func (r *TikTokResource) Profile[T ProfileReference](reference T) *TikTokProfile
 		bindings["identifier"] = resolved
 	}
 	return newTikTokProfileResource(r.client, bindings, referenceErr)
-}
-
-func (r *TikTokResource) Story[T ResourceReference](reference T) *TikTokStoryResource {
-	bindings := cloneBindings(r.bindings)
-	referenceErr := r.referenceErr
-	resolved, err := resolveReference(reference, "tiktok", "story")
-	if referenceErr == nil && err != nil {
-		referenceErr = err
-	}
-	if err == nil {
-		bindings["identifier"] = resolved
-	}
-	return newTikTokStoryResource(r.client, bindings, referenceErr)
 }
 
 type TikTokEffectResource struct {
@@ -2485,253 +2468,6 @@ func (r *TikTokHashtagPostsResource) Items(options *TikTokHashtagPostsOptions) *
 		*iteratorOptions = *options
 	}
 	return newIterator(func(ctx context.Context) (*Page[TikTokPost], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokLiveResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-	Feed         *TikTokLiveFeedResource
-}
-
-func newTikTokLiveResource(client *Client, bindings map[string]string, referenceErr error) *TikTokLiveResource {
-	value := &TikTokLiveResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	value.Feed = newTikTokLiveFeedResource(client, bindings, referenceErr)
-	return value
-}
-
-func (r *TikTokLiveResource) Event[T ResourceReference](reference T) *TikTokLiveEventResource {
-	bindings := cloneBindings(r.bindings)
-	referenceErr := r.referenceErr
-	resolved, err := resolveReference(reference, "tiktok", "event")
-	if referenceErr == nil && err != nil {
-		referenceErr = err
-	}
-	if err == nil {
-		bindings["identifier"] = resolved
-	}
-	return newTikTokLiveEventResource(r.client, bindings, referenceErr)
-}
-
-func (r *TikTokLiveResource) Room[T ResourceReference](reference T) *TikTokLiveRoomResource {
-	bindings := cloneBindings(r.bindings)
-	referenceErr := r.referenceErr
-	resolved, err := resolveReference(reference, "tiktok", "room")
-	if referenceErr == nil && err != nil {
-		referenceErr = err
-	}
-	if err == nil {
-		bindings["identifier"] = resolved
-	}
-	return newTikTokLiveRoomResource(r.client, bindings, referenceErr)
-}
-
-type TikTokLiveEventResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokLiveEventResource(client *Client, bindings map[string]string, referenceErr error) *TikTokLiveEventResource {
-	value := &TikTokLiveEventResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokLiveEventResource) Get(ctx context.Context, options *TikTokLiveEventOptions) (*TikTokLiveEventResponse, error) {
-	path, err := bindPath("/v1/tiktok/live/events/{identifier}", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokLiveEventResponse{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-type TikTokLiveFeedResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokLiveFeedResource(client *Client, bindings map[string]string, referenceErr error) *TikTokLiveFeedResource {
-	value := &TikTokLiveFeedResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokLiveFeedResource) List(ctx context.Context, options *TikTokLiveFeedOptions) (*TikTokLiveFeedPage, error) {
-	path, err := bindPath("/v1/tiktok/live/feed", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokLiveFeedPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokLiveFeedOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokLiveRoom], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokLiveFeedResource) Items(options *TikTokLiveFeedOptions) *Iterator[TikTokLiveRoom] {
-	iteratorOptions := &TikTokLiveFeedOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokLiveRoom], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokLiveRoomResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-	RankingTypes *TikTokLiveRoomRankingTypesResource
-	Rankings     *TikTokLiveRoomRankingsResource
-}
-
-func newTikTokLiveRoomResource(client *Client, bindings map[string]string, referenceErr error) *TikTokLiveRoomResource {
-	value := &TikTokLiveRoomResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	value.RankingTypes = newTikTokLiveRoomRankingTypesResource(client, bindings, referenceErr)
-	value.Rankings = newTikTokLiveRoomRankingsResource(client, bindings, referenceErr)
-	return value
-}
-
-func (r *TikTokLiveRoomResource) Get(ctx context.Context, options *TikTokLiveRoomOptions) (*TikTokLiveRoomResponse, error) {
-	if options == nil {
-		return nil, errors.New("openhandle: operation options are required")
-	}
-	path, err := bindPath("/v1/tiktok/live/rooms/{identifier}", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokLiveRoomResponse{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-type TikTokLiveRoomRankingTypesResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokLiveRoomRankingTypesResource(client *Client, bindings map[string]string, referenceErr error) *TikTokLiveRoomRankingTypesResource {
-	value := &TikTokLiveRoomRankingTypesResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokLiveRoomRankingTypesResource) List(ctx context.Context, options *TikTokLiveRoomRankingTypesOptions) (*TikTokLiveRoomRankingTypesPage, error) {
-	if options == nil {
-		return nil, errors.New("openhandle: operation options are required")
-	}
-	path, err := bindPath("/v1/tiktok/live/rooms/{identifier}/ranking-types", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokLiveRoomRankingTypesPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokLiveRoomRankingTypesOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokOption], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokLiveRoomRankingTypesResource) Items(options *TikTokLiveRoomRankingTypesOptions) *Iterator[TikTokOption] {
-	iteratorOptions := &TikTokLiveRoomRankingTypesOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokOption], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokLiveRoomRankingsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokLiveRoomRankingsResource(client *Client, bindings map[string]string, referenceErr error) *TikTokLiveRoomRankingsResource {
-	value := &TikTokLiveRoomRankingsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokLiveRoomRankingsResource) List(ctx context.Context, options *TikTokLiveRoomRankingsOptions) (*TikTokLiveRoomRankingsPage, error) {
-	if options == nil {
-		return nil, errors.New("openhandle: operation options are required")
-	}
-	path, err := bindPath("/v1/tiktok/live/rooms/{identifier}/rankings", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokLiveRoomRankingsPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokLiveRoomRankingsOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokLiveRanking], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokLiveRoomRankingsResource) Items(options *TikTokLiveRoomRankingsOptions) *Iterator[TikTokLiveRanking] {
-	iteratorOptions := &TikTokLiveRoomRankingsOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokLiveRanking], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TikTokLocationResource struct {
@@ -2941,22 +2677,6 @@ func newTikTokPostCommentResource(client *Client, bindings map[string]string, re
 	return value
 }
 
-func (r *TikTokPostCommentResource) Get(ctx context.Context, options *TikTokPostCommentOptions) (*TikTokPostCommentResponse, error) {
-	path, err := bindPath("/v1/tiktok/posts/{identifier}/comments/{comment_id}", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokPostCommentResponse{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
 type TikTokPostCommentRepliesResource struct {
 	client       *Client
 	bindings     map[string]string
@@ -3058,11 +2778,8 @@ type TikTokProfileResource struct {
 	Followers    *TikTokProfileFollowersResource
 	Following    *TikTokProfileFollowingResource
 	LikedPosts   *TikTokProfileLikedPostsResource
-	Music        *TikTokProfileMusicResource
 	Playlists    *TikTokProfilePlaylistsResource
 	Posts        *TikTokProfilePostsResource
-	QRCode       *TikTokProfileQRCodeResource
-	Stories      *TikTokProfileStoriesResource
 }
 
 func newTikTokProfileResource(client *Client, bindings map[string]string, referenceErr error) *TikTokProfileResource {
@@ -3070,11 +2787,8 @@ func newTikTokProfileResource(client *Client, bindings map[string]string, refere
 	value.Followers = newTikTokProfileFollowersResource(client, bindings, referenceErr)
 	value.Following = newTikTokProfileFollowingResource(client, bindings, referenceErr)
 	value.LikedPosts = newTikTokProfileLikedPostsResource(client, bindings, referenceErr)
-	value.Music = newTikTokProfileMusicResource(client, bindings, referenceErr)
 	value.Playlists = newTikTokProfilePlaylistsResource(client, bindings, referenceErr)
 	value.Posts = newTikTokProfilePostsResource(client, bindings, referenceErr)
-	value.QRCode = newTikTokProfileQRCodeResource(client, bindings, referenceErr)
-	value.Stories = newTikTokProfileStoriesResource(client, bindings, referenceErr)
 	return value
 }
 
@@ -3248,53 +2962,6 @@ func (r *TikTokProfileLikedPostsResource) Items(options *TikTokProfileLikedPosts
 	return newIterator(func(ctx context.Context) (*Page[TikTokPost], error) { return r.List(ctx, iteratorOptions) })
 }
 
-type TikTokProfileMusicResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokProfileMusicResource(client *Client, bindings map[string]string, referenceErr error) *TikTokProfileMusicResource {
-	value := &TikTokProfileMusicResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokProfileMusicResource) List(ctx context.Context, options *TikTokProfileMusicOptions) (*TikTokProfileMusicPage, error) {
-	path, err := bindPath("/v1/tiktok/profiles/{identifier}/music", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokProfileMusicPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokProfileMusicOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[Music], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokProfileMusicResource) Items(options *TikTokProfileMusicOptions) *Iterator[Music] {
-	iteratorOptions := &TikTokProfileMusicOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[Music], error) { return r.List(ctx, iteratorOptions) })
-}
-
 type TikTokProfilePlaylistResource struct {
 	client       *Client
 	bindings     map[string]string
@@ -3465,157 +3132,25 @@ func (r *TikTokProfilePostsResource) Items(options *TikTokProfilePostsOptions) *
 	return newIterator(func(ctx context.Context) (*Page[TikTokPost], error) { return r.List(ctx, iteratorOptions) })
 }
 
-type TikTokProfileQRCodeResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokProfileQRCodeResource(client *Client, bindings map[string]string, referenceErr error) *TikTokProfileQRCodeResource {
-	value := &TikTokProfileQRCodeResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokProfileQRCodeResource) Get(ctx context.Context, options *TikTokProfileQRCodeOptions) (*TikTokProfileQRCodeResponse, error) {
-	path, err := bindPath("/v1/tiktok/profiles/{identifier}/qr-code", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokProfileQRCodeResponse{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-type TikTokProfileStoriesResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokProfileStoriesResource(client *Client, bindings map[string]string, referenceErr error) *TikTokProfileStoriesResource {
-	value := &TikTokProfileStoriesResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokProfileStoriesResource) List(ctx context.Context, options *TikTokProfileStoriesOptions) (*TikTokProfileStoriesPage, error) {
-	path, err := bindPath("/v1/tiktok/profiles/{identifier}/stories", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokProfileStoriesPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokProfileStoriesOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokPost], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokProfileStoriesResource) Items(options *TikTokProfileStoriesOptions) *Iterator[TikTokPost] {
-	iteratorOptions := &TikTokProfileStoriesOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokPost], error) { return r.List(ctx, iteratorOptions) })
-}
-
 type TikTokSearchResource struct {
-	client             *Client
-	bindings           map[string]string
-	referenceErr       error
-	CommentSuggestions *TikTokSearchCommentSuggestionsResource
-	Hashtags           *TikTokSearchHashtagsResource
-	Insights           *TikTokSearchInsightsResource
-	Live               *TikTokSearchLiveResource
-	Locations          *TikTokSearchLocationsResource
-	Music              *TikTokSearchMusicResource
-	Posts              *TikTokSearchPostsResource
-	Profiles           *TikTokSearchProfilesResource
-	Top                *TikTokSearchTopResource
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Hashtags     *TikTokSearchHashtagsResource
+	Locations    *TikTokSearchLocationsResource
+	Music        *TikTokSearchMusicResource
+	Posts        *TikTokSearchPostsResource
+	Profiles     *TikTokSearchProfilesResource
 }
 
 func newTikTokSearchResource(client *Client, bindings map[string]string, referenceErr error) *TikTokSearchResource {
 	value := &TikTokSearchResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	value.CommentSuggestions = newTikTokSearchCommentSuggestionsResource(client, bindings, referenceErr)
 	value.Hashtags = newTikTokSearchHashtagsResource(client, bindings, referenceErr)
-	value.Insights = newTikTokSearchInsightsResource(client, bindings, referenceErr)
-	value.Live = newTikTokSearchLiveResource(client, bindings, referenceErr)
 	value.Locations = newTikTokSearchLocationsResource(client, bindings, referenceErr)
 	value.Music = newTikTokSearchMusicResource(client, bindings, referenceErr)
 	value.Posts = newTikTokSearchPostsResource(client, bindings, referenceErr)
 	value.Profiles = newTikTokSearchProfilesResource(client, bindings, referenceErr)
-	value.Top = newTikTokSearchTopResource(client, bindings, referenceErr)
 	return value
-}
-
-type TikTokSearchCommentSuggestionsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokSearchCommentSuggestionsResource(client *Client, bindings map[string]string, referenceErr error) *TikTokSearchCommentSuggestionsResource {
-	value := &TikTokSearchCommentSuggestionsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokSearchCommentSuggestionsResource) List(ctx context.Context, options *TikTokSearchCommentSuggestionsOptions) (*TikTokSearchCommentSuggestionsPage, error) {
-	if options == nil {
-		return nil, errors.New("openhandle: operation options are required")
-	}
-	path, err := bindPath("/v1/tiktok/search/comment-suggestions", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokSearchCommentSuggestionsPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokSearchCommentSuggestionsOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokSuggestion], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokSearchCommentSuggestionsResource) Items(options *TikTokSearchCommentSuggestionsOptions) *Iterator[TikTokSuggestion] {
-	iteratorOptions := &TikTokSearchCommentSuggestionsOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokSuggestion], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TikTokSearchHashtagsResource struct {
@@ -3666,106 +3201,6 @@ func (r *TikTokSearchHashtagsResource) Items(options *TikTokSearchHashtagsOption
 		*iteratorOptions = *options
 	}
 	return newIterator(func(ctx context.Context) (*Page[Hashtag], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokSearchInsightsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokSearchInsightsResource(client *Client, bindings map[string]string, referenceErr error) *TikTokSearchInsightsResource {
-	value := &TikTokSearchInsightsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokSearchInsightsResource) List(ctx context.Context, options *TikTokSearchInsightsOptions) (*TikTokSearchInsightsPage, error) {
-	if options == nil {
-		return nil, errors.New("openhandle: operation options are required")
-	}
-	path, err := bindPath("/v1/tiktok/search/insights", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokSearchInsightsPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokSearchInsightsOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokInsight], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokSearchInsightsResource) Items(options *TikTokSearchInsightsOptions) *Iterator[TikTokInsight] {
-	iteratorOptions := &TikTokSearchInsightsOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokInsight], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokSearchLiveResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokSearchLiveResource(client *Client, bindings map[string]string, referenceErr error) *TikTokSearchLiveResource {
-	value := &TikTokSearchLiveResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokSearchLiveResource) List(ctx context.Context, options *TikTokSearchLiveOptions) (*TikTokSearchLivePage, error) {
-	if options == nil {
-		return nil, errors.New("openhandle: operation options are required")
-	}
-	path, err := bindPath("/v1/tiktok/search/live", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokSearchLivePage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokSearchLiveOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokLiveRoom], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokSearchLiveResource) Items(options *TikTokSearchLiveOptions) *Iterator[TikTokLiveRoom] {
-	iteratorOptions := &TikTokSearchLiveOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokLiveRoom], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TikTokSearchLocationsResource struct {
@@ -3968,963 +3403,11 @@ func (r *TikTokSearchProfilesResource) Items(options *TikTokSearchProfilesOption
 	return newIterator(func(ctx context.Context) (*Page[TikTokProfile], error) { return r.List(ctx, iteratorOptions) })
 }
 
-type TikTokSearchTopResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokSearchTopResource(client *Client, bindings map[string]string, referenceErr error) *TikTokSearchTopResource {
-	value := &TikTokSearchTopResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokSearchTopResource) List(ctx context.Context, options *TikTokSearchTopOptions) (*TikTokSearchTopPage, error) {
-	if options == nil {
-		return nil, errors.New("openhandle: operation options are required")
-	}
-	path, err := bindPath("/v1/tiktok/search/top", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokSearchTopPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokSearchTopOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokSearchResult], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokSearchTopResource) Items(options *TikTokSearchTopOptions) *Iterator[TikTokSearchResult] {
-	iteratorOptions := &TikTokSearchTopOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokSearchResult], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopResource struct {
-	client          *Client
-	bindings        map[string]string
-	referenceErr    error
-	Deals           *TikTokShopDealsResource
-	Home            *TikTokShopHomeResource
-	Recommendations *TikTokShopRecommendationsResource
-	Search          *TikTokShopSearchResource
-}
-
-func newTikTokShopResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopResource {
-	value := &TikTokShopResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	value.Deals = newTikTokShopDealsResource(client, bindings, referenceErr)
-	value.Home = newTikTokShopHomeResource(client, bindings, referenceErr)
-	value.Recommendations = newTikTokShopRecommendationsResource(client, bindings, referenceErr)
-	value.Search = newTikTokShopSearchResource(client, bindings, referenceErr)
-	return value
-}
-
-func (r *TikTokShopResource) Live[T ResourceReference](reference T) *TikTokShopLiveResource {
-	bindings := cloneBindings(r.bindings)
-	referenceErr := r.referenceErr
-	resolved, err := resolveReference(reference, "tiktok", "live")
-	if referenceErr == nil && err != nil {
-		referenceErr = err
-	}
-	if err == nil {
-		bindings["identifier"] = resolved
-	}
-	return newTikTokShopLiveResource(r.client, bindings, referenceErr)
-}
-
-func (r *TikTokShopResource) Product[T ResourceReference](reference T) *TikTokShopProductResource {
-	bindings := cloneBindings(r.bindings)
-	referenceErr := r.referenceErr
-	resolved, err := resolveReference(reference, "tiktok", "product")
-	if referenceErr == nil && err != nil {
-		referenceErr = err
-	}
-	if err == nil {
-		bindings["identifier"] = resolved
-	}
-	return newTikTokShopProductResource(r.client, bindings, referenceErr)
-}
-
-func (r *TikTokShopResource) Profile[T ProfileReference](reference T) *TikTokShopProfileResource {
-	bindings := cloneBindings(r.bindings)
-	referenceErr := r.referenceErr
-	resolved, err := resolveReference(reference, "tiktok", "profile")
-	if referenceErr == nil && err != nil {
-		referenceErr = err
-	}
-	if err == nil {
-		bindings["identifier"] = resolved
-	}
-	return newTikTokShopProfileResource(r.client, bindings, referenceErr)
-}
-
-func (r *TikTokShopResource) Seller[T ResourceReference](reference T) *TikTokShopSellerResource {
-	bindings := cloneBindings(r.bindings)
-	referenceErr := r.referenceErr
-	resolved, err := resolveReference(reference, "tiktok", "seller")
-	if referenceErr == nil && err != nil {
-		referenceErr = err
-	}
-	if err == nil {
-		bindings["identifier"] = resolved
-	}
-	return newTikTokShopSellerResource(r.client, bindings, referenceErr)
-}
-
-type TikTokShopDealsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-	FlashSale    *TikTokShopDealsFlashSaleResource
-	NewUser      *TikTokShopDealsNewUserResource
-}
-
-func newTikTokShopDealsResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopDealsResource {
-	value := &TikTokShopDealsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	value.FlashSale = newTikTokShopDealsFlashSaleResource(client, bindings, referenceErr)
-	value.NewUser = newTikTokShopDealsNewUserResource(client, bindings, referenceErr)
-	return value
-}
-
-type TikTokShopDealsFlashSaleResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopDealsFlashSaleResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopDealsFlashSaleResource {
-	value := &TikTokShopDealsFlashSaleResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopDealsFlashSaleResource) List(ctx context.Context, options *TikTokShopDealsFlashSaleOptions) (*TikTokShopDealsFlashSalePage, error) {
-	path, err := bindPath("/v1/tiktok/shop/deals/flash-sale", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopDealsFlashSalePage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopDealsFlashSaleOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokShopProduct], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopDealsFlashSaleResource) Items(options *TikTokShopDealsFlashSaleOptions) *Iterator[TikTokShopProduct] {
-	iteratorOptions := &TikTokShopDealsFlashSaleOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokShopProduct], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopDealsNewUserResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopDealsNewUserResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopDealsNewUserResource {
-	value := &TikTokShopDealsNewUserResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopDealsNewUserResource) List(ctx context.Context, options *TikTokShopDealsNewUserOptions) (*TikTokShopDealsNewUserPage, error) {
-	path, err := bindPath("/v1/tiktok/shop/deals/new-user", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopDealsNewUserPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopDealsNewUserOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokShopProduct], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopDealsNewUserResource) Items(options *TikTokShopDealsNewUserOptions) *Iterator[TikTokShopProduct] {
-	iteratorOptions := &TikTokShopDealsNewUserOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokShopProduct], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopHomeResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopHomeResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopHomeResource {
-	value := &TikTokShopHomeResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopHomeResource) List(ctx context.Context, options *TikTokShopHomeOptions) (*TikTokShopHomePage, error) {
-	path, err := bindPath("/v1/tiktok/shop/home", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopHomePage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopHomeOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokShopProduct], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopHomeResource) Items(options *TikTokShopHomeOptions) *Iterator[TikTokShopProduct] {
-	iteratorOptions := &TikTokShopHomeOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokShopProduct], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopLiveResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-	Products     *TikTokShopLiveProductsResource
-}
-
-func newTikTokShopLiveResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopLiveResource {
-	value := &TikTokShopLiveResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	value.Products = newTikTokShopLiveProductsResource(client, bindings, referenceErr)
-	return value
-}
-
-type TikTokShopLiveProductsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopLiveProductsResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopLiveProductsResource {
-	value := &TikTokShopLiveProductsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopLiveProductsResource) List(ctx context.Context, options *TikTokShopLiveProductsOptions) (*TikTokShopLiveProductsPage, error) {
-	if options == nil {
-		return nil, errors.New("openhandle: operation options are required")
-	}
-	path, err := bindPath("/v1/tiktok/shop/live/{identifier}/products", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopLiveProductsPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopLiveProductsOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokShopProduct], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopLiveProductsResource) Items(options *TikTokShopLiveProductsOptions) *Iterator[TikTokShopProduct] {
-	iteratorOptions := &TikTokShopLiveProductsOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokShopProduct], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopProductResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-	Reviews      *TikTokShopProductReviewsResource
-}
-
-func newTikTokShopProductResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopProductResource {
-	value := &TikTokShopProductResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	value.Reviews = newTikTokShopProductReviewsResource(client, bindings, referenceErr)
-	return value
-}
-
-func (r *TikTokShopProductResource) Get(ctx context.Context, options *TikTokShopProductOptions) (*TikTokShopProductResponse, error) {
-	path, err := bindPath("/v1/tiktok/shop/products/{identifier}", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopProductResponse{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-type TikTokShopProductReviewsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopProductReviewsResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopProductReviewsResource {
-	value := &TikTokShopProductReviewsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopProductReviewsResource) List(ctx context.Context, options *TikTokShopProductReviewsOptions) (*TikTokShopProductReviewsPage, error) {
-	path, err := bindPath("/v1/tiktok/shop/products/{identifier}/reviews", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopProductReviewsPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopProductReviewsOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokShopReview], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopProductReviewsResource) Items(options *TikTokShopProductReviewsOptions) *Iterator[TikTokShopReview] {
-	iteratorOptions := &TikTokShopProductReviewsOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokShopReview], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopProfileResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-	Page         *TikTokShopProfilePageResource
-	Products     *TikTokShopProfileProductsResource
-	Tabs         *TikTokShopProfileTabsResource
-}
-
-func newTikTokShopProfileResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopProfileResource {
-	value := &TikTokShopProfileResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	value.Page = newTikTokShopProfilePageResource(client, bindings, referenceErr)
-	value.Products = newTikTokShopProfileProductsResource(client, bindings, referenceErr)
-	value.Tabs = newTikTokShopProfileTabsResource(client, bindings, referenceErr)
-	return value
-}
-
-type TikTokShopProfilePageResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopProfilePageResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopProfilePageResource {
-	value := &TikTokShopProfilePageResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopProfilePageResource) List(ctx context.Context, options *TikTokShopProfilePageOptions) (*TikTokShopProfilePagePage, error) {
-	path, err := bindPath("/v1/tiktok/shop/profiles/{identifier}/page", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopProfilePagePage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopProfilePageOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokShopProduct], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopProfilePageResource) Items(options *TikTokShopProfilePageOptions) *Iterator[TikTokShopProduct] {
-	iteratorOptions := &TikTokShopProfilePageOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokShopProduct], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopProfileProductsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopProfileProductsResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopProfileProductsResource {
-	value := &TikTokShopProfileProductsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopProfileProductsResource) List(ctx context.Context, options *TikTokShopProfileProductsOptions) (*TikTokShopProfileProductsPage, error) {
-	path, err := bindPath("/v1/tiktok/shop/profiles/{identifier}/products", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopProfileProductsPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopProfileProductsOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokShopProduct], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopProfileProductsResource) Items(options *TikTokShopProfileProductsOptions) *Iterator[TikTokShopProduct] {
-	iteratorOptions := &TikTokShopProfileProductsOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokShopProduct], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopProfileTabsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopProfileTabsResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopProfileTabsResource {
-	value := &TikTokShopProfileTabsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopProfileTabsResource) List(ctx context.Context, options *TikTokShopProfileTabsOptions) (*TikTokShopProfileTabsPage, error) {
-	path, err := bindPath("/v1/tiktok/shop/profiles/{identifier}/tabs", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopProfileTabsPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopProfileTabsOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokOption], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopProfileTabsResource) Items(options *TikTokShopProfileTabsOptions) *Iterator[TikTokOption] {
-	iteratorOptions := &TikTokShopProfileTabsOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokOption], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopRecommendationsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopRecommendationsResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopRecommendationsResource {
-	value := &TikTokShopRecommendationsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopRecommendationsResource) List(ctx context.Context, options *TikTokShopRecommendationsOptions) (*TikTokShopRecommendationsPage, error) {
-	if options == nil {
-		return nil, errors.New("openhandle: operation options are required")
-	}
-	path, err := bindPath("/v1/tiktok/shop/recommendations", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopRecommendationsPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopRecommendationsOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokShopProduct], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopRecommendationsResource) Items(options *TikTokShopRecommendationsOptions) *Iterator[TikTokShopProduct] {
-	iteratorOptions := &TikTokShopRecommendationsOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokShopProduct], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopSearchResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopSearchResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopSearchResource {
-	value := &TikTokShopSearchResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopSearchResource) List(ctx context.Context, options *TikTokShopSearchOptions) (*TikTokShopSearchPage, error) {
-	if options == nil {
-		return nil, errors.New("openhandle: operation options are required")
-	}
-	path, err := bindPath("/v1/tiktok/shop/search", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopSearchPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopSearchOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokShopProduct], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopSearchResource) Items(options *TikTokShopSearchOptions) *Iterator[TikTokShopProduct] {
-	iteratorOptions := &TikTokShopSearchOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokShopProduct], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopSellerResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-	Categories   *TikTokShopSellerCategoriesResource
-	Products     *TikTokShopSellerProductsResource
-	SortTypes    *TikTokShopSellerSortTypesResource
-}
-
-func newTikTokShopSellerResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopSellerResource {
-	value := &TikTokShopSellerResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	value.Categories = newTikTokShopSellerCategoriesResource(client, bindings, referenceErr)
-	value.Products = newTikTokShopSellerProductsResource(client, bindings, referenceErr)
-	value.SortTypes = newTikTokShopSellerSortTypesResource(client, bindings, referenceErr)
-	return value
-}
-
-func (r *TikTokShopSellerResource) Category[T ResourceReference](reference T) *TikTokShopSellerCategoryResource {
-	bindings := cloneBindings(r.bindings)
-	referenceErr := r.referenceErr
-	resolved, err := resolveReference(reference, "tiktok", "category")
-	if referenceErr == nil && err != nil {
-		referenceErr = err
-	}
-	if err == nil {
-		bindings["category_id"] = resolved
-	}
-	return newTikTokShopSellerCategoryResource(r.client, bindings, referenceErr)
-}
-
-func (r *TikTokShopSellerResource) Get(ctx context.Context, options *TikTokShopSellerOptions) (*TikTokShopSellerResponse, error) {
-	path, err := bindPath("/v1/tiktok/shop/sellers/{identifier}", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopSellerResponse{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-type TikTokShopSellerCategoriesResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopSellerCategoriesResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopSellerCategoriesResource {
-	value := &TikTokShopSellerCategoriesResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopSellerCategoriesResource) List(ctx context.Context, options *TikTokShopSellerCategoriesOptions) (*TikTokShopSellerCategoriesPage, error) {
-	path, err := bindPath("/v1/tiktok/shop/sellers/{identifier}/categories", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopSellerCategoriesPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopSellerCategoriesOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokShopCategory], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopSellerCategoriesResource) Items(options *TikTokShopSellerCategoriesOptions) *Iterator[TikTokShopCategory] {
-	iteratorOptions := &TikTokShopSellerCategoriesOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokShopCategory], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopSellerCategoryResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-	Products     *TikTokShopSellerCategoryProductsResource
-}
-
-func newTikTokShopSellerCategoryResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopSellerCategoryResource {
-	value := &TikTokShopSellerCategoryResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	value.Products = newTikTokShopSellerCategoryProductsResource(client, bindings, referenceErr)
-	return value
-}
-
-type TikTokShopSellerCategoryProductsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopSellerCategoryProductsResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopSellerCategoryProductsResource {
-	value := &TikTokShopSellerCategoryProductsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopSellerCategoryProductsResource) List(ctx context.Context, options *TikTokShopSellerCategoryProductsOptions) (*TikTokShopSellerCategoryProductsPage, error) {
-	if options == nil {
-		return nil, errors.New("openhandle: operation options are required")
-	}
-	path, err := bindPath("/v1/tiktok/shop/sellers/{identifier}/categories/{category_id}/products", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopSellerCategoryProductsPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopSellerCategoryProductsOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokShopProduct], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopSellerCategoryProductsResource) Items(options *TikTokShopSellerCategoryProductsOptions) *Iterator[TikTokShopProduct] {
-	iteratorOptions := &TikTokShopSellerCategoryProductsOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokShopProduct], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopSellerProductsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopSellerProductsResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopSellerProductsResource {
-	value := &TikTokShopSellerProductsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopSellerProductsResource) List(ctx context.Context, options *TikTokShopSellerProductsOptions) (*TikTokShopSellerProductsPage, error) {
-	path, err := bindPath("/v1/tiktok/shop/sellers/{identifier}/products", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopSellerProductsPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopSellerProductsOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokShopProduct], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopSellerProductsResource) Items(options *TikTokShopSellerProductsOptions) *Iterator[TikTokShopProduct] {
-	iteratorOptions := &TikTokShopSellerProductsOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokShopProduct], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokShopSellerSortTypesResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokShopSellerSortTypesResource(client *Client, bindings map[string]string, referenceErr error) *TikTokShopSellerSortTypesResource {
-	value := &TikTokShopSellerSortTypesResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokShopSellerSortTypesResource) List(ctx context.Context, options *TikTokShopSellerSortTypesOptions) (*TikTokShopSellerSortTypesPage, error) {
-	path, err := bindPath("/v1/tiktok/shop/sellers/{identifier}/sort-types", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokShopSellerSortTypesPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokShopSellerSortTypesOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokOption], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokShopSellerSortTypesResource) Items(options *TikTokShopSellerSortTypesOptions) *Iterator[TikTokOption] {
-	iteratorOptions := &TikTokShopSellerSortTypesOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokOption], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokStoryResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokStoryResource(client *Client, bindings map[string]string, referenceErr error) *TikTokStoryResource {
-	value := &TikTokStoryResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokStoryResource) Get(ctx context.Context, options *TikTokStoryOptions) (*TikTokStoryResponse, error) {
-	path, err := bindPath("/v1/tiktok/stories/{identifier}", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokStoryResponse{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
 type TikTokTrendingResource struct {
 	client       *Client
 	bindings     map[string]string
 	referenceErr error
 	Categories   *TikTokTrendingCategoriesResource
-	Insights     *TikTokTrendingInsightsResource
 	Music        *TikTokTrendingMusicResource
 	Posts        *TikTokTrendingPostsResource
 }
@@ -4932,7 +3415,6 @@ type TikTokTrendingResource struct {
 func newTikTokTrendingResource(client *Client, bindings map[string]string, referenceErr error) *TikTokTrendingResource {
 	value := &TikTokTrendingResource{client: client, bindings: bindings, referenceErr: referenceErr}
 	value.Categories = newTikTokTrendingCategoriesResource(client, bindings, referenceErr)
-	value.Insights = newTikTokTrendingInsightsResource(client, bindings, referenceErr)
 	value.Music = newTikTokTrendingMusicResource(client, bindings, referenceErr)
 	value.Posts = newTikTokTrendingPostsResource(client, bindings, referenceErr)
 	return value
@@ -4983,56 +3465,6 @@ func (r *TikTokTrendingCategoriesResource) Items(options *TikTokTrendingCategori
 		*iteratorOptions = *options
 	}
 	return newIterator(func(ctx context.Context) (*Page[TrendingCategory], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TikTokTrendingInsightsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTikTokTrendingInsightsResource(client *Client, bindings map[string]string, referenceErr error) *TikTokTrendingInsightsResource {
-	value := &TikTokTrendingInsightsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TikTokTrendingInsightsResource) List(ctx context.Context, options *TikTokTrendingInsightsOptions) (*TikTokTrendingInsightsPage, error) {
-	if options == nil {
-		return nil, errors.New("openhandle: operation options are required")
-	}
-	path, err := bindPath("/v1/tiktok/trending/insights", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TikTokTrendingInsightsPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TikTokTrendingInsightsOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TikTokInsight], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TikTokTrendingInsightsResource) Items(options *TikTokTrendingInsightsOptions) *Iterator[TikTokInsight] {
-	iteratorOptions := &TikTokTrendingInsightsOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TikTokInsight], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TikTokTrendingMusicResource struct {
@@ -5291,14 +3723,12 @@ type TwitterPostResource struct {
 	bindings     map[string]string
 	referenceErr error
 	Comments     *TwitterPostCommentsResource
-	Likers       *TwitterPostLikersResource
 	Reposters    *TwitterPostRepostersResource
 }
 
 func newTwitterPostResource(client *Client, bindings map[string]string, referenceErr error) *TwitterPostResource {
 	value := &TwitterPostResource{client: client, bindings: bindings, referenceErr: referenceErr}
 	value.Comments = newTwitterPostCommentsResource(client, bindings, referenceErr)
-	value.Likers = newTwitterPostLikersResource(client, bindings, referenceErr)
 	value.Reposters = newTwitterPostRepostersResource(client, bindings, referenceErr)
 	return value
 }
@@ -5439,53 +3869,6 @@ func (r *TwitterPostCommentsResource) Items(options *TwitterPostCommentsOptions)
 	return newIterator(func(ctx context.Context) (*Page[TwitterComment], error) { return r.List(ctx, iteratorOptions) })
 }
 
-type TwitterPostLikersResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTwitterPostLikersResource(client *Client, bindings map[string]string, referenceErr error) *TwitterPostLikersResource {
-	value := &TwitterPostLikersResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TwitterPostLikersResource) List(ctx context.Context, options *TwitterPostLikersOptions) (*TwitterPostLikersPage, error) {
-	path, err := bindPath("/v1/twitter/posts/{identifier}/likers", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TwitterPostLikersPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TwitterPostLikersOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TwitterProfile], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TwitterPostLikersResource) Items(options *TwitterPostLikersOptions) *Iterator[TwitterProfile] {
-	iteratorOptions := &TwitterPostLikersOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TwitterProfile], error) { return r.List(ctx, iteratorOptions) })
-}
-
 type TwitterPostRepostersResource struct {
 	client       *Client
 	bindings     map[string]string
@@ -5539,7 +3922,6 @@ type TwitterProfileResource struct {
 	referenceErr error
 	Followers    *TwitterProfileFollowersResource
 	Following    *TwitterProfileFollowingResource
-	Lists        *TwitterProfileListsResource
 	Media        *TwitterProfileMediaResource
 	Posts        *TwitterProfilePostsResource
 	Replies      *TwitterProfileRepliesResource
@@ -5549,7 +3931,6 @@ func newTwitterProfileResource(client *Client, bindings map[string]string, refer
 	value := &TwitterProfileResource{client: client, bindings: bindings, referenceErr: referenceErr}
 	value.Followers = newTwitterProfileFollowersResource(client, bindings, referenceErr)
 	value.Following = newTwitterProfileFollowingResource(client, bindings, referenceErr)
-	value.Lists = newTwitterProfileListsResource(client, bindings, referenceErr)
 	value.Media = newTwitterProfileMediaResource(client, bindings, referenceErr)
 	value.Posts = newTwitterProfilePostsResource(client, bindings, referenceErr)
 	value.Replies = newTwitterProfileRepliesResource(client, bindings, referenceErr)
@@ -5664,53 +4045,6 @@ func (r *TwitterProfileFollowingResource) Items(options *TwitterProfileFollowing
 		*iteratorOptions = *options
 	}
 	return newIterator(func(ctx context.Context) (*Page[TwitterProfile], error) { return r.List(ctx, iteratorOptions) })
-}
-
-type TwitterProfileListsResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTwitterProfileListsResource(client *Client, bindings map[string]string, referenceErr error) *TwitterProfileListsResource {
-	value := &TwitterProfileListsResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TwitterProfileListsResource) List(ctx context.Context, options *TwitterProfileListsOptions) (*TwitterProfileListsPage, error) {
-	path, err := bindPath("/v1/twitter/profiles/{identifier}/lists", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TwitterProfileListsPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TwitterProfileListsOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TwitterList], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TwitterProfileListsResource) Items(options *TwitterProfileListsOptions) *Iterator[TwitterList] {
-	iteratorOptions := &TwitterProfileListsOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TwitterList], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TwitterProfileMediaResource struct {
@@ -6599,61 +4933,6 @@ type TikTokHashtagPostsOptions struct {
 
 type TikTokHashtagPostsPage = Page[TikTokPost]
 
-// TikTokLiveEventOptions configures tiktok.live.event.get.
-type TikTokLiveEventOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-}
-
-type TikTokLiveEventResponse struct {
-	ResponseMetadata
-	Data TikTokLiveRoom `json:"data"`
-}
-
-// TikTokLiveFeedOptions configures tiktok.live.feed.list.
-type TikTokLiveFeedOptions struct {
-	RequestOptions
-	DrawRoomID *string   `query:"draw_room_id"`
-	MaxTime    *string   `query:"max_time"`
-	Freshness  Freshness `query:"freshness"`
-	Cursor     *string   `query:"cursor"`
-}
-
-type TikTokLiveFeedPage = Page[TikTokLiveRoom]
-
-// TikTokLiveRoomOptions configures tiktok.live.room.get.
-type TikTokLiveRoomOptions struct {
-	RequestOptions
-	UserID    string    `query:"user_id" required:"true"`
-	Freshness Freshness `query:"freshness"`
-}
-
-type TikTokLiveRoomResponse struct {
-	ResponseMetadata
-	Data TikTokLiveRoom `json:"data"`
-}
-
-// TikTokLiveRoomRankingTypesOptions configures tiktok.live.room.rankingTypes.list.
-type TikTokLiveRoomRankingTypesOptions struct {
-	RequestOptions
-	UserID    string    `query:"user_id" required:"true"`
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokLiveRoomRankingTypesPage = Page[TikTokOption]
-
-// TikTokLiveRoomRankingsOptions configures tiktok.live.room.rankings.list.
-type TikTokLiveRoomRankingsOptions struct {
-	RequestOptions
-	UserID    string    `query:"user_id" required:"true"`
-	RankType  string    `query:"rank_type" required:"true"`
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokLiveRoomRankingsPage = Page[TikTokLiveRanking]
-
 // TikTokLocationOptions configures tiktok.location.get.
 type TikTokLocationOptions struct {
 	RequestOptions
@@ -6693,17 +4972,6 @@ type TikTokMusicPostsOptions struct {
 }
 
 type TikTokMusicPostsPage = Page[TikTokPost]
-
-// TikTokPostCommentOptions configures tiktok.post.comment.get.
-type TikTokPostCommentOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-}
-
-type TikTokPostCommentResponse struct {
-	ResponseMetadata
-	Data TikTokComment `json:"data"`
-}
 
 // TikTokPostCommentRepliesOptions configures tiktok.post.comment.replies.list.
 type TikTokPostCommentRepliesOptions struct {
@@ -6772,15 +5040,6 @@ type TikTokProfileLikedPostsOptions struct {
 
 type TikTokProfileLikedPostsPage = Page[TikTokPost]
 
-// TikTokProfileMusicOptions configures tiktok.profile.music.list.
-type TikTokProfileMusicOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokProfileMusicPage = Page[Music]
-
 // TikTokProfilePlaylistOptions configures tiktok.profile.playlist.get.
 type TikTokProfilePlaylistOptions struct {
 	RequestOptions
@@ -6820,36 +5079,6 @@ type TikTokProfilePostsOptions struct {
 
 type TikTokProfilePostsPage = Page[TikTokPost]
 
-// TikTokProfileQRCodeOptions configures tiktok.profile.qrCode.get.
-type TikTokProfileQRCodeOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-}
-
-type TikTokProfileQRCodeResponse struct {
-	ResponseMetadata
-	Data TikTokQRCode `json:"data"`
-}
-
-// TikTokProfileStoriesOptions configures tiktok.profile.stories.list.
-type TikTokProfileStoriesOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokProfileStoriesPage = Page[TikTokPost]
-
-// TikTokSearchCommentSuggestionsOptions configures tiktok.search.commentSuggestions.list.
-type TikTokSearchCommentSuggestionsOptions struct {
-	RequestOptions
-	Q         string    `query:"q" required:"true"`
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokSearchCommentSuggestionsPage = Page[TikTokSuggestion]
-
 // TikTokSearchHashtagsOptions configures tiktok.search.hashtags.list.
 type TikTokSearchHashtagsOptions struct {
 	RequestOptions
@@ -6859,26 +5088,6 @@ type TikTokSearchHashtagsOptions struct {
 }
 
 type TikTokSearchHashtagsPage = Page[Hashtag]
-
-// TikTokSearchInsightsOptions configures tiktok.search.insights.list.
-type TikTokSearchInsightsOptions struct {
-	RequestOptions
-	Q         string    `query:"q" required:"true"`
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokSearchInsightsPage = Page[TikTokInsight]
-
-// TikTokSearchLiveOptions configures tiktok.search.live.list.
-type TikTokSearchLiveOptions struct {
-	RequestOptions
-	Q         string    `query:"q" required:"true"`
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokSearchLivePage = Page[TikTokLiveRoom]
 
 // TikTokSearchLocationsOptions configures tiktok.search.locations.list.
 type TikTokSearchLocationsOptions struct {
@@ -6920,182 +5129,6 @@ type TikTokSearchProfilesOptions struct {
 
 type TikTokSearchProfilesPage = Page[TikTokProfile]
 
-// TikTokSearchTopOptions configures tiktok.search.top.list.
-type TikTokSearchTopOptions struct {
-	RequestOptions
-	Q         string    `query:"q" required:"true"`
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokSearchTopPage = Page[TikTokSearchResult]
-
-// TikTokShopDealsFlashSaleOptions configures tiktok.shop.deals.flashSale.list.
-type TikTokShopDealsFlashSaleOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokShopDealsFlashSalePage = Page[TikTokShopProduct]
-
-// TikTokShopDealsNewUserOptions configures tiktok.shop.deals.newUser.list.
-type TikTokShopDealsNewUserOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokShopDealsNewUserPage = Page[TikTokShopProduct]
-
-// TikTokShopHomeOptions configures tiktok.shop.home.list.
-type TikTokShopHomeOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokShopHomePage = Page[TikTokShopProduct]
-
-// TikTokShopLiveProductsOptions configures tiktok.shop.live.products.list.
-type TikTokShopLiveProductsOptions struct {
-	RequestOptions
-	RoomID    string    `query:"room_id" required:"true"`
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokShopLiveProductsPage = Page[TikTokShopProduct]
-
-// TikTokShopProductOptions configures tiktok.shop.product.get.
-type TikTokShopProductOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-}
-
-type TikTokShopProductResponse struct {
-	ResponseMetadata
-	Data TikTokShopProduct `json:"data"`
-}
-
-// TikTokShopProductReviewsOptions configures tiktok.shop.product.reviews.list.
-type TikTokShopProductReviewsOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokShopProductReviewsPage = Page[TikTokShopReview]
-
-// TikTokShopProfilePageOptions configures tiktok.shop.profile.page.list.
-type TikTokShopProfilePageOptions struct {
-	RequestOptions
-	TabID     *string   `query:"tab_id"`
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokShopProfilePagePage = Page[TikTokShopProduct]
-
-// TikTokShopProfileProductsOptions configures tiktok.shop.profile.products.list.
-type TikTokShopProfileProductsOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokShopProfileProductsPage = Page[TikTokShopProduct]
-
-// TikTokShopProfileTabsOptions configures tiktok.shop.profile.tabs.list.
-type TikTokShopProfileTabsOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokShopProfileTabsPage = Page[TikTokOption]
-
-// TikTokShopRecommendationsOptions configures tiktok.shop.recommendations.list.
-type TikTokShopRecommendationsOptions struct {
-	RequestOptions
-	CategoryID string    `query:"category_id" required:"true"`
-	Freshness  Freshness `query:"freshness"`
-	Cursor     *string   `query:"cursor"`
-}
-
-type TikTokShopRecommendationsPage = Page[TikTokShopProduct]
-
-// TikTokShopSearchOptions configures tiktok.shop.search.list.
-type TikTokShopSearchOptions struct {
-	RequestOptions
-	Q         string    `query:"q" required:"true"`
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokShopSearchPage = Page[TikTokShopProduct]
-
-// TikTokShopSellerCategoriesOptions configures tiktok.shop.seller.categories.list.
-type TikTokShopSellerCategoriesOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokShopSellerCategoriesPage = Page[TikTokShopCategory]
-
-// TikTokShopSellerCategoryProductsOptions configures tiktok.shop.seller.category.products.list.
-type TikTokShopSellerCategoryProductsOptions struct {
-	RequestOptions
-	ProductSourceType string    `query:"product_source_type" required:"true"`
-	Freshness         Freshness `query:"freshness"`
-	Cursor            *string   `query:"cursor"`
-}
-
-type TikTokShopSellerCategoryProductsPage = Page[TikTokShopProduct]
-
-// TikTokShopSellerOptions configures tiktok.shop.seller.get.
-type TikTokShopSellerOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-}
-
-type TikTokShopSellerResponse struct {
-	ResponseMetadata
-	Data TikTokShopSeller `json:"data"`
-}
-
-// TikTokShopSellerProductsOptions configures tiktok.shop.seller.products.list.
-type TikTokShopSellerProductsOptions struct {
-	RequestOptions
-	SortField *string   `query:"sort_field"`
-	SortOrder *string   `query:"sort_order"`
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokShopSellerProductsPage = Page[TikTokShopProduct]
-
-// TikTokShopSellerSortTypesOptions configures tiktok.shop.seller.sortTypes.list.
-type TikTokShopSellerSortTypesOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokShopSellerSortTypesPage = Page[TikTokOption]
-
-// TikTokStoryOptions configures tiktok.story.get.
-type TikTokStoryOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-}
-
-type TikTokStoryResponse struct {
-	ResponseMetadata
-	Data TikTokPost `json:"data"`
-}
-
 // TikTokTrendingCategoriesOptions configures tiktok.trending.categories.list.
 type TikTokTrendingCategoriesOptions struct {
 	RequestOptions
@@ -7104,16 +5137,6 @@ type TikTokTrendingCategoriesOptions struct {
 }
 
 type TikTokTrendingCategoriesPage = Page[TrendingCategory]
-
-// TikTokTrendingInsightsOptions configures tiktok.trending.insights.list.
-type TikTokTrendingInsightsOptions struct {
-	RequestOptions
-	Tab       string    `query:"tab" required:"true"`
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TikTokTrendingInsightsPage = Page[TikTokInsight]
 
 // TikTokTrendingMusicOptions configures tiktok.trending.music.list.
 type TikTokTrendingMusicOptions struct {
@@ -7193,15 +5216,6 @@ type TwitterPostResponse struct {
 	Data TwitterPost `json:"data"`
 }
 
-// TwitterPostLikersOptions configures twitter.post.likers.list.
-type TwitterPostLikersOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TwitterPostLikersPage = Page[TwitterProfile]
-
 // TwitterPostRepostersOptions configures twitter.post.reposters.list.
 type TwitterPostRepostersOptions struct {
 	RequestOptions
@@ -7239,15 +5253,6 @@ type TwitterProfileResponse struct {
 	ResponseMetadata
 	Data TwitterProfile `json:"data"`
 }
-
-// TwitterProfileListsOptions configures twitter.profile.lists.list.
-type TwitterProfileListsOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TwitterProfileListsPage = Page[TwitterList]
 
 // TwitterProfileMediaOptions configures twitter.profile.media.list.
 type TwitterProfileMediaOptions struct {
