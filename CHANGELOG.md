@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.2](https://github.com/openhandlehq/openhandle-go/compare/v1.0.1...v1.0.2) (2026-09-08)
+
+
+### Features
+
+* sync API contract ([e9a220e](https://github.com/openhandlehq/openhandle-go/commit/e9a220e3d76d867656f998b026e962ce3af71b7e))
+* sync SDK source ([4a5fc04](https://github.com/openhandlehq/openhandle-go/commit/4a5fc04d34ffc59eb4985fe688dd72fc0da34927))
+
 ## [1.0.1](https://github.com/openhandlehq/openhandle-go/compare/v1.0.0...v1.0.1) (2026-08-30)
 
 
