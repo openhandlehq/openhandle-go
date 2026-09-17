@@ -312,3 +312,26 @@ func pageJSON(id, cursor, requestID string) string {
 	}
 	return fmt.Sprintf(`{"platform":"instagram","resource":"post","capturedAt":"2026-08-27T12:00:00Z","source":"cache","data":[{"id":%q}],"meta":{"cursors":{"next":%s}},"requestId":%q}`, id, next, requestID)
 }
+
+func TestFollowerPagePreservesExplicitLimitWithoutInventingPagination(t *testing.T) {
+	for _, value := range []bool{false, true} {
+		t.Run(fmt.Sprint(value), func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, _ *http.Request) {
+				writer.Header().Set("Content-Type", "application/json")
+				_, _ = fmt.Fprintf(writer, `{"platform":"instagram","resource":"profile","data":[],"meta":{"cursors":{"next":null},"isLimited":%t}}`, value)
+			}))
+			defer server.Close()
+			client, err := New("oh_test_key", WithBaseURL(server.URL), WithMaxRetries(0))
+			if err != nil {
+				t.Fatal(err)
+			}
+			page, err := client.Instagram.Profile("example").Followers.List(t.Context(), nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if page.Meta.IsLimited == nil || *page.Meta.IsLimited != value || page.HasNextPage() {
+				t.Fatalf("follower limit or cursor changed: %#v", page.Meta)
+			}
+		})
+	}
+}

@@ -30,6 +30,7 @@ type ID string
 type URL string
 
 var (
+	redditName    = regexp.MustCompile(`^[A-Za-z0-9_-]{1,100}$`)
 	numericID     = regexp.MustCompile(`^[0-9]+$`)
 	instagramName = regexp.MustCompile(`^[A-Za-z0-9._]{1,30}$`)
 	tikTokName    = regexp.MustCompile(`^[A-Za-z0-9._]{2,24}$`)
@@ -116,7 +117,7 @@ func looksLikeSupportedSocialURL(value string) bool {
 
 func supportedSocialHost(host string) bool {
 	switch host {
-	case "instagram.com", "tiktok.com", "m.tiktok.com", "x.com", "twitter.com", "mobile.twitter.com":
+	case "reddit.com", "old.reddit.com", "new.reddit.com", "m.reddit.com", "redd.it", "instagram.com", "tiktok.com", "m.tiktok.com", "vm.tiktok.com", "vt.tiktok.com", "x.com", "twitter.com", "mobile.twitter.com":
 		return true
 	default:
 		return false
@@ -127,6 +128,8 @@ func usernameReference(value, platform string) (string, error) {
 	username := strings.TrimPrefix(value, "@")
 	var valid bool
 	switch platform {
+	case "reddit":
+		valid = redditName.MatchString(username)
 	case "instagram":
 		valid = instagramName.MatchString(username)
 	case "tiktok":
@@ -154,7 +157,12 @@ func resolveSocialURL(input string) (socialURLResolution, error) {
 
 	host := strings.TrimPrefix(strings.ToLower(parsed.Hostname()), "www.")
 	parts := strings.FieldsFunc(parsed.Path, func(r rune) bool { return r == '/' })
+	if isTikTokShortLink(host, parts) {
+		return socialURLResolution{}, &ReferenceError{Message: "TikTok short links are not resolved locally. Use Fetch instead."}
+	}
 	switch host {
+	case "reddit.com", "old.reddit.com", "new.reddit.com", "m.reddit.com", "redd.it":
+		return resolveRedditURL(host, parts)
 	case "instagram.com":
 		return resolveInstagramURL(parts)
 	case "tiktok.com", "m.tiktok.com":
@@ -180,6 +188,13 @@ func resolveInstagramURL(parts []string) (socialURLResolution, error) {
 		return socialURLResolution{platform: "instagram", resource: "profile", identifier: "@" + parts[0]}, nil
 	}
 	return socialURLResolution{}, &ReferenceError{Message: "unsupported Instagram URL"}
+}
+
+func isTikTokShortLink(host string, parts []string) bool {
+	if host == "vm.tiktok.com" || host == "vt.tiktok.com" {
+		return len(parts) == 1 && shortcode.MatchString(parts[0])
+	}
+	return (host == "tiktok.com" || host == "m.tiktok.com") && len(parts) == 2 && parts[0] == "t" && shortcode.MatchString(parts[1])
 }
 
 func resolveTikTokURL(parts []string) (socialURLResolution, error) {

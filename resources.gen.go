@@ -13,6 +13,7 @@ import (
 type Client struct {
 	core      *clientCore
 	Instagram *InstagramResource
+	Reddit    *RedditResource
 	TestData  *TestDataResource
 	TikTok    *TikTokResource
 	Twitter   *TwitterResource
@@ -21,6 +22,7 @@ type Client struct {
 func newGeneratedClient(core *clientCore) *Client {
 	client := &Client{core: core}
 	client.Instagram = newInstagramResource(client, nil, nil)
+	client.Reddit = newRedditResource(client, nil, nil)
 	client.TestData = newTestDataResource(client, nil, nil)
 	client.TikTok = newTikTokResource(client, nil, nil)
 	client.Twitter = newTwitterResource(client, nil, nil)
@@ -384,13 +386,11 @@ type InstagramLocationResource struct {
 	client       *Client
 	bindings     map[string]string
 	referenceErr error
-	Guides       *InstagramLocationGuidesResource
 	Posts        *InstagramLocationPostsResource
 }
 
 func newInstagramLocationResource(client *Client, bindings map[string]string, referenceErr error) *InstagramLocationResource {
 	value := &InstagramLocationResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	value.Guides = newInstagramLocationGuidesResource(client, bindings, referenceErr)
 	value.Posts = newInstagramLocationPostsResource(client, bindings, referenceErr)
 	return value
 }
@@ -409,53 +409,6 @@ func (r *InstagramLocationResource) Get(ctx context.Context, options *InstagramL
 		return nil, err
 	}
 	return result, nil
-}
-
-type InstagramLocationGuidesResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newInstagramLocationGuidesResource(client *Client, bindings map[string]string, referenceErr error) *InstagramLocationGuidesResource {
-	value := &InstagramLocationGuidesResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *InstagramLocationGuidesResource) List(ctx context.Context, options *InstagramLocationGuidesOptions) (*InstagramLocationGuidesPage, error) {
-	path, err := bindPath("/v1/instagram/locations/{identifier}/guides", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &InstagramLocationGuidesPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &InstagramLocationGuidesOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[InstagramLocationGuide], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *InstagramLocationGuidesResource) Items(options *InstagramLocationGuidesOptions) *Iterator[InstagramLocationGuide] {
-	iteratorOptions := &InstagramLocationGuidesOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[InstagramLocationGuide], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type InstagramLocationPostsResource struct {
@@ -962,7 +915,7 @@ func (r *InstagramPostTaggedUsersResource) List(ctx context.Context, options *In
 			*nextOptions = *options
 		}
 		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[InstagramProfile], error) {
+		result.next = func(nextContext context.Context) (*Page[InstagramUserTag], error) {
 			requestOptions := *nextOptions
 			return r.List(nextContext, &requestOptions)
 		}
@@ -970,12 +923,12 @@ func (r *InstagramPostTaggedUsersResource) List(ctx context.Context, options *In
 	return result, nil
 }
 
-func (r *InstagramPostTaggedUsersResource) Items(options *InstagramPostTaggedUsersOptions) *Iterator[InstagramProfile] {
+func (r *InstagramPostTaggedUsersResource) Items(options *InstagramPostTaggedUsersOptions) *Iterator[InstagramUserTag] {
 	iteratorOptions := &InstagramPostTaggedUsersOptions{}
 	if options != nil {
 		*iteratorOptions = *options
 	}
-	return newIterator(func(ctx context.Context) (*Page[InstagramProfile], error) { return r.List(ctx, iteratorOptions) })
+	return newIterator(func(ctx context.Context) (*Page[InstagramUserTag], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type InstagramPostTemplateResource struct {
@@ -1017,7 +970,6 @@ type InstagramProfileResource struct {
 	PinnedPosts             *InstagramProfilePinnedPostsResource
 	Posts                   *InstagramProfilePostsResource
 	Reels                   *InstagramProfileReelsResource
-	Related                 *InstagramProfileRelatedResource
 	Reposts                 *InstagramProfileRepostsResource
 	Stories                 *InstagramProfileStoriesResource
 	Suggested               *InstagramProfileSuggestedResource
@@ -1035,7 +987,6 @@ func newInstagramProfileResource(client *Client, bindings map[string]string, ref
 	value.PinnedPosts = newInstagramProfilePinnedPostsResource(client, bindings, referenceErr)
 	value.Posts = newInstagramProfilePostsResource(client, bindings, referenceErr)
 	value.Reels = newInstagramProfileReelsResource(client, bindings, referenceErr)
-	value.Related = newInstagramProfileRelatedResource(client, bindings, referenceErr)
 	value.Reposts = newInstagramProfileRepostsResource(client, bindings, referenceErr)
 	value.Stories = newInstagramProfileStoriesResource(client, bindings, referenceErr)
 	value.Suggested = newInstagramProfileSuggestedResource(client, bindings, referenceErr)
@@ -1494,53 +1445,6 @@ func (r *InstagramProfileReelsResource) Items(options *InstagramProfileReelsOpti
 	return newIterator(func(ctx context.Context) (*Page[InstagramPost], error) { return r.List(ctx, iteratorOptions) })
 }
 
-type InstagramProfileRelatedResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newInstagramProfileRelatedResource(client *Client, bindings map[string]string, referenceErr error) *InstagramProfileRelatedResource {
-	value := &InstagramProfileRelatedResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *InstagramProfileRelatedResource) List(ctx context.Context, options *InstagramProfileRelatedOptions) (*InstagramProfileRelatedPage, error) {
-	path, err := bindPath("/v1/instagram/profiles/{identifier}/related", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &InstagramProfileRelatedPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &InstagramProfileRelatedOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[InstagramProfile], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *InstagramProfileRelatedResource) Items(options *InstagramProfileRelatedOptions) *Iterator[InstagramProfile] {
-	iteratorOptions := &InstagramProfileRelatedOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[InstagramProfile], error) { return r.List(ctx, iteratorOptions) })
-}
-
 type InstagramProfileRepostsResource struct {
 	client       *Client
 	bindings     map[string]string
@@ -1813,7 +1717,7 @@ func (r *InstagramSearchHashtagsResource) List(ctx context.Context, options *Ins
 			*nextOptions = *options
 		}
 		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[Hashtag], error) {
+		result.next = func(nextContext context.Context) (*Page[InstagramHashtag], error) {
 			requestOptions := *nextOptions
 			return r.List(nextContext, &requestOptions)
 		}
@@ -1821,12 +1725,12 @@ func (r *InstagramSearchHashtagsResource) List(ctx context.Context, options *Ins
 	return result, nil
 }
 
-func (r *InstagramSearchHashtagsResource) Items(options *InstagramSearchHashtagsOptions) *Iterator[Hashtag] {
+func (r *InstagramSearchHashtagsResource) Items(options *InstagramSearchHashtagsOptions) *Iterator[InstagramHashtag] {
 	iteratorOptions := &InstagramSearchHashtagsOptions{}
 	if options != nil {
 		*iteratorOptions = *options
 	}
-	return newIterator(func(ctx context.Context) (*Page[Hashtag], error) { return r.List(ctx, iteratorOptions) })
+	return newIterator(func(ctx context.Context) (*Page[InstagramHashtag], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type InstagramSearchMusicResource struct {
@@ -1863,7 +1767,7 @@ func (r *InstagramSearchMusicResource) List(ctx context.Context, options *Instag
 			*nextOptions = *options
 		}
 		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[Music], error) {
+		result.next = func(nextContext context.Context) (*Page[InstagramMusic], error) {
 			requestOptions := *nextOptions
 			return r.List(nextContext, &requestOptions)
 		}
@@ -1871,12 +1775,12 @@ func (r *InstagramSearchMusicResource) List(ctx context.Context, options *Instag
 	return result, nil
 }
 
-func (r *InstagramSearchMusicResource) Items(options *InstagramSearchMusicOptions) *Iterator[Music] {
+func (r *InstagramSearchMusicResource) Items(options *InstagramSearchMusicOptions) *Iterator[InstagramMusic] {
 	iteratorOptions := &InstagramSearchMusicOptions{}
 	if options != nil {
 		*iteratorOptions = *options
 	}
-	return newIterator(func(ctx context.Context) (*Page[Music], error) { return r.List(ctx, iteratorOptions) })
+	return newIterator(func(ctx context.Context) (*Page[InstagramMusic], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type InstagramSearchPlacesResource struct {
@@ -1913,7 +1817,7 @@ func (r *InstagramSearchPlacesResource) List(ctx context.Context, options *Insta
 			*nextOptions = *options
 		}
 		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[Location], error) {
+		result.next = func(nextContext context.Context) (*Page[InstagramLocation], error) {
 			requestOptions := *nextOptions
 			return r.List(nextContext, &requestOptions)
 		}
@@ -1921,12 +1825,12 @@ func (r *InstagramSearchPlacesResource) List(ctx context.Context, options *Insta
 	return result, nil
 }
 
-func (r *InstagramSearchPlacesResource) Items(options *InstagramSearchPlacesOptions) *Iterator[Location] {
+func (r *InstagramSearchPlacesResource) Items(options *InstagramSearchPlacesOptions) *Iterator[InstagramLocation] {
 	iteratorOptions := &InstagramSearchPlacesOptions{}
 	if options != nil {
 		*iteratorOptions = *options
 	}
-	return newIterator(func(ctx context.Context) (*Page[Location], error) { return r.List(ctx, iteratorOptions) })
+	return newIterator(func(ctx context.Context) (*Page[InstagramLocation], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type InstagramSearchProfilesResource struct {
@@ -2104,6 +2008,1033 @@ func (r *InstagramStoryResource) Get(ctx context.Context, options *InstagramStor
 		return nil, err
 	}
 	return result, nil
+}
+
+type RedditResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Search       *RedditSearchResource
+	Subreddits   *RedditSubredditsResource
+	Trending     *RedditTrendingResource
+}
+
+func newRedditResource(client *Client, bindings map[string]string, referenceErr error) *RedditResource {
+	value := &RedditResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Search = newRedditSearchResource(client, bindings, referenceErr)
+	value.Subreddits = newRedditSubredditsResource(client, bindings, referenceErr)
+	value.Trending = newRedditTrendingResource(client, bindings, referenceErr)
+	return value
+}
+
+func (r *RedditResource) Domain[T ResourceReference](reference T) *RedditDomainResource {
+	bindings := cloneBindings(r.bindings)
+	referenceErr := r.referenceErr
+	resolved, err := resolveReference(reference, "reddit", "domain")
+	if referenceErr == nil && err != nil {
+		referenceErr = err
+	}
+	if err == nil {
+		bindings["identifier"] = resolved
+	}
+	return newRedditDomainResource(r.client, bindings, referenceErr)
+}
+
+func (r *RedditResource) Post[T ResourceReference](reference T) *RedditPostResource {
+	bindings := cloneBindings(r.bindings)
+	referenceErr := r.referenceErr
+	resolved, err := resolveReference(reference, "reddit", "post")
+	if referenceErr == nil && err != nil {
+		referenceErr = err
+	}
+	if err == nil {
+		bindings["identifier"] = resolved
+	}
+	return newRedditPostResource(r.client, bindings, referenceErr)
+}
+
+func (r *RedditResource) Profile[T ProfileReference](reference T) *RedditProfileResource {
+	bindings := cloneBindings(r.bindings)
+	referenceErr := r.referenceErr
+	resolved, err := resolveReference(reference, "reddit", "profile")
+	if referenceErr == nil && err != nil {
+		referenceErr = err
+	}
+	if err == nil {
+		bindings["identifier"] = resolved
+	}
+	return newRedditProfileResource(r.client, bindings, referenceErr)
+}
+
+func (r *RedditResource) Subreddit[T ResourceReference](reference T) *RedditSubredditResource {
+	bindings := cloneBindings(r.bindings)
+	referenceErr := r.referenceErr
+	resolved, err := resolveReference(reference, "reddit", "subreddit")
+	if referenceErr == nil && err != nil {
+		referenceErr = err
+	}
+	if err == nil {
+		bindings["identifier"] = resolved
+	}
+	return newRedditSubredditResource(r.client, bindings, referenceErr)
+}
+
+type RedditDomainResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Posts        *RedditDomainPostsResource
+}
+
+func newRedditDomainResource(client *Client, bindings map[string]string, referenceErr error) *RedditDomainResource {
+	value := &RedditDomainResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Posts = newRedditDomainPostsResource(client, bindings, referenceErr)
+	return value
+}
+
+type RedditDomainPostsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditDomainPostsResource(client *Client, bindings map[string]string, referenceErr error) *RedditDomainPostsResource {
+	value := &RedditDomainPostsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditDomainPostsResource) List(ctx context.Context, options *RedditDomainPostsOptions) (*RedditDomainPostsPage, error) {
+	path, err := bindPath("/v1/reddit/domains/{identifier}/posts", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditDomainPostsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditDomainPostsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditPost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditDomainPostsResource) Items(options *RedditDomainPostsOptions) *Iterator[RedditPost] {
+	iteratorOptions := &RedditDomainPostsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditPost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditPostResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Comments     *RedditPostCommentsResource
+	Duplicates   *RedditPostDuplicatesResource
+}
+
+func newRedditPostResource(client *Client, bindings map[string]string, referenceErr error) *RedditPostResource {
+	value := &RedditPostResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Comments = newRedditPostCommentsResource(client, bindings, referenceErr)
+	value.Duplicates = newRedditPostDuplicatesResource(client, bindings, referenceErr)
+	return value
+}
+
+func (r *RedditPostResource) Get(ctx context.Context, options *RedditPostOptions) (*RedditPostResponse, error) {
+	path, err := bindPath("/v1/reddit/posts/{identifier}", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditPostResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type RedditPostCommentsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditPostCommentsResource(client *Client, bindings map[string]string, referenceErr error) *RedditPostCommentsResource {
+	value := &RedditPostCommentsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditPostCommentsResource) List(ctx context.Context, options *RedditPostCommentsOptions) (*RedditPostCommentsPage, error) {
+	path, err := bindPath("/v1/reddit/posts/{identifier}/comments", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditPostCommentsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditPostCommentsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditComment], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditPostCommentsResource) Items(options *RedditPostCommentsOptions) *Iterator[RedditComment] {
+	iteratorOptions := &RedditPostCommentsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditComment], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditPostDuplicatesResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditPostDuplicatesResource(client *Client, bindings map[string]string, referenceErr error) *RedditPostDuplicatesResource {
+	value := &RedditPostDuplicatesResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditPostDuplicatesResource) List(ctx context.Context, options *RedditPostDuplicatesOptions) (*RedditPostDuplicatesPage, error) {
+	path, err := bindPath("/v1/reddit/posts/{identifier}/duplicates", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditPostDuplicatesPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditPostDuplicatesOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditPost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditPostDuplicatesResource) Items(options *RedditPostDuplicatesOptions) *Iterator[RedditPost] {
+	iteratorOptions := &RedditPostDuplicatesOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditPost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditProfileResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Comments     *RedditProfileCommentsResource
+	Moderated    *RedditProfileModeratedResource
+	Posts        *RedditProfilePostsResource
+	Trophies     *RedditProfileTrophiesResource
+}
+
+func newRedditProfileResource(client *Client, bindings map[string]string, referenceErr error) *RedditProfileResource {
+	value := &RedditProfileResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Comments = newRedditProfileCommentsResource(client, bindings, referenceErr)
+	value.Moderated = newRedditProfileModeratedResource(client, bindings, referenceErr)
+	value.Posts = newRedditProfilePostsResource(client, bindings, referenceErr)
+	value.Trophies = newRedditProfileTrophiesResource(client, bindings, referenceErr)
+	return value
+}
+
+func (r *RedditProfileResource) Get(ctx context.Context, options *RedditProfileOptions) (*RedditProfileResponse, error) {
+	path, err := bindPath("/v1/reddit/profiles/{identifier}", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditProfileResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type RedditProfileCommentsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditProfileCommentsResource(client *Client, bindings map[string]string, referenceErr error) *RedditProfileCommentsResource {
+	value := &RedditProfileCommentsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditProfileCommentsResource) List(ctx context.Context, options *RedditProfileCommentsOptions) (*RedditProfileCommentsPage, error) {
+	path, err := bindPath("/v1/reddit/profiles/{identifier}/comments", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditProfileCommentsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditProfileCommentsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditComment], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditProfileCommentsResource) Items(options *RedditProfileCommentsOptions) *Iterator[RedditComment] {
+	iteratorOptions := &RedditProfileCommentsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditComment], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditProfileModeratedResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditProfileModeratedResource(client *Client, bindings map[string]string, referenceErr error) *RedditProfileModeratedResource {
+	value := &RedditProfileModeratedResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditProfileModeratedResource) List(ctx context.Context, options *RedditProfileModeratedOptions) (*RedditProfileModeratedPage, error) {
+	path, err := bindPath("/v1/reddit/profiles/{identifier}/moderated", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditProfileModeratedPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditProfileModeratedOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditSubreddit], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditProfileModeratedResource) Items(options *RedditProfileModeratedOptions) *Iterator[RedditSubreddit] {
+	iteratorOptions := &RedditProfileModeratedOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditSubreddit], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditProfilePostsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditProfilePostsResource(client *Client, bindings map[string]string, referenceErr error) *RedditProfilePostsResource {
+	value := &RedditProfilePostsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditProfilePostsResource) List(ctx context.Context, options *RedditProfilePostsOptions) (*RedditProfilePostsPage, error) {
+	path, err := bindPath("/v1/reddit/profiles/{identifier}/posts", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditProfilePostsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditProfilePostsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditPost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditProfilePostsResource) Items(options *RedditProfilePostsOptions) *Iterator[RedditPost] {
+	iteratorOptions := &RedditProfilePostsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditPost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditProfileTrophiesResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditProfileTrophiesResource(client *Client, bindings map[string]string, referenceErr error) *RedditProfileTrophiesResource {
+	value := &RedditProfileTrophiesResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditProfileTrophiesResource) List(ctx context.Context, options *RedditProfileTrophiesOptions) (*RedditProfileTrophiesPage, error) {
+	path, err := bindPath("/v1/reddit/profiles/{identifier}/trophies", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditProfileTrophiesPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditProfileTrophiesOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditTrophy], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditProfileTrophiesResource) Items(options *RedditProfileTrophiesOptions) *Iterator[RedditTrophy] {
+	iteratorOptions := &RedditProfileTrophiesOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditTrophy], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditSearchResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Posts        *RedditSearchPostsResource
+	Profiles     *RedditSearchProfilesResource
+	Subreddits   *RedditSearchSubredditsResource
+}
+
+func newRedditSearchResource(client *Client, bindings map[string]string, referenceErr error) *RedditSearchResource {
+	value := &RedditSearchResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Posts = newRedditSearchPostsResource(client, bindings, referenceErr)
+	value.Profiles = newRedditSearchProfilesResource(client, bindings, referenceErr)
+	value.Subreddits = newRedditSearchSubredditsResource(client, bindings, referenceErr)
+	return value
+}
+
+type RedditSearchPostsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditSearchPostsResource(client *Client, bindings map[string]string, referenceErr error) *RedditSearchPostsResource {
+	value := &RedditSearchPostsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditSearchPostsResource) List(ctx context.Context, options *RedditSearchPostsOptions) (*RedditSearchPostsPage, error) {
+	if options == nil {
+		return nil, errors.New("openhandle: operation options are required")
+	}
+	path, err := bindPath("/v1/reddit/search/posts", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditSearchPostsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditSearchPostsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditPost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditSearchPostsResource) Items(options *RedditSearchPostsOptions) *Iterator[RedditPost] {
+	iteratorOptions := &RedditSearchPostsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditPost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditSearchProfilesResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditSearchProfilesResource(client *Client, bindings map[string]string, referenceErr error) *RedditSearchProfilesResource {
+	value := &RedditSearchProfilesResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditSearchProfilesResource) List(ctx context.Context, options *RedditSearchProfilesOptions) (*RedditSearchProfilesPage, error) {
+	if options == nil {
+		return nil, errors.New("openhandle: operation options are required")
+	}
+	path, err := bindPath("/v1/reddit/search/profiles", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditSearchProfilesPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditSearchProfilesOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditProfile], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditSearchProfilesResource) Items(options *RedditSearchProfilesOptions) *Iterator[RedditProfile] {
+	iteratorOptions := &RedditSearchProfilesOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditProfile], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditSearchSubredditsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditSearchSubredditsResource(client *Client, bindings map[string]string, referenceErr error) *RedditSearchSubredditsResource {
+	value := &RedditSearchSubredditsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditSearchSubredditsResource) List(ctx context.Context, options *RedditSearchSubredditsOptions) (*RedditSearchSubredditsPage, error) {
+	if options == nil {
+		return nil, errors.New("openhandle: operation options are required")
+	}
+	path, err := bindPath("/v1/reddit/search/subreddits", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditSearchSubredditsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditSearchSubredditsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditSubreddit], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditSearchSubredditsResource) Items(options *RedditSearchSubredditsOptions) *Iterator[RedditSubreddit] {
+	iteratorOptions := &RedditSearchSubredditsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditSubreddit], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditSubredditResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Posts        *RedditSubredditPostsResource
+	Rules        *RedditSubredditRulesResource
+	WikiPages    *RedditSubredditWikiPagesResource
+}
+
+func newRedditSubredditResource(client *Client, bindings map[string]string, referenceErr error) *RedditSubredditResource {
+	value := &RedditSubredditResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Posts = newRedditSubredditPostsResource(client, bindings, referenceErr)
+	value.Rules = newRedditSubredditRulesResource(client, bindings, referenceErr)
+	value.WikiPages = newRedditSubredditWikiPagesResource(client, bindings, referenceErr)
+	return value
+}
+
+func (r *RedditSubredditResource) WikiPage[T ResourceReference](reference T) *RedditSubredditWikiPageResource {
+	bindings := cloneBindings(r.bindings)
+	referenceErr := r.referenceErr
+	resolved, err := resolveReference(reference, "reddit", "wikiPage")
+	if referenceErr == nil && err != nil {
+		referenceErr = err
+	}
+	if err == nil {
+		bindings["page"] = resolved
+	}
+	return newRedditSubredditWikiPageResource(r.client, bindings, referenceErr)
+}
+
+func (r *RedditSubredditResource) Get(ctx context.Context, options *RedditSubredditOptions) (*RedditSubredditResponse, error) {
+	path, err := bindPath("/v1/reddit/subreddits/{identifier}", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditSubredditResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type RedditSubredditPostsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditSubredditPostsResource(client *Client, bindings map[string]string, referenceErr error) *RedditSubredditPostsResource {
+	value := &RedditSubredditPostsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditSubredditPostsResource) List(ctx context.Context, options *RedditSubredditPostsOptions) (*RedditSubredditPostsPage, error) {
+	path, err := bindPath("/v1/reddit/subreddits/{identifier}/posts", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditSubredditPostsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditSubredditPostsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditPost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditSubredditPostsResource) Items(options *RedditSubredditPostsOptions) *Iterator[RedditPost] {
+	iteratorOptions := &RedditSubredditPostsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditPost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditSubredditRulesResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditSubredditRulesResource(client *Client, bindings map[string]string, referenceErr error) *RedditSubredditRulesResource {
+	value := &RedditSubredditRulesResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditSubredditRulesResource) List(ctx context.Context, options *RedditSubredditRulesOptions) (*RedditSubredditRulesPage, error) {
+	path, err := bindPath("/v1/reddit/subreddits/{identifier}/rules", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditSubredditRulesPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditSubredditRulesOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditRule], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditSubredditRulesResource) Items(options *RedditSubredditRulesOptions) *Iterator[RedditRule] {
+	iteratorOptions := &RedditSubredditRulesOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditRule], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditSubredditWikiPageResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditSubredditWikiPageResource(client *Client, bindings map[string]string, referenceErr error) *RedditSubredditWikiPageResource {
+	value := &RedditSubredditWikiPageResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditSubredditWikiPageResource) Get(ctx context.Context, options *RedditSubredditWikiPageOptions) (*RedditSubredditWikiPageResponse, error) {
+	path, err := bindPath("/v1/reddit/subreddits/{identifier}/wiki-pages/{page}", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditSubredditWikiPageResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type RedditSubredditWikiPagesResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditSubredditWikiPagesResource(client *Client, bindings map[string]string, referenceErr error) *RedditSubredditWikiPagesResource {
+	value := &RedditSubredditWikiPagesResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditSubredditWikiPagesResource) List(ctx context.Context, options *RedditSubredditWikiPagesOptions) (*RedditSubredditWikiPagesPage, error) {
+	path, err := bindPath("/v1/reddit/subreddits/{identifier}/wiki-pages", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditSubredditWikiPagesPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditSubredditWikiPagesOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditWikiPage], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditSubredditWikiPagesResource) Items(options *RedditSubredditWikiPagesOptions) *Iterator[RedditWikiPage] {
+	iteratorOptions := &RedditSubredditWikiPagesOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditWikiPage], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditSubredditsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	New          *RedditSubredditsNewResource
+	Popular      *RedditSubredditsPopularResource
+}
+
+func newRedditSubredditsResource(client *Client, bindings map[string]string, referenceErr error) *RedditSubredditsResource {
+	value := &RedditSubredditsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.New = newRedditSubredditsNewResource(client, bindings, referenceErr)
+	value.Popular = newRedditSubredditsPopularResource(client, bindings, referenceErr)
+	return value
+}
+
+type RedditSubredditsNewResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditSubredditsNewResource(client *Client, bindings map[string]string, referenceErr error) *RedditSubredditsNewResource {
+	value := &RedditSubredditsNewResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditSubredditsNewResource) List(ctx context.Context, options *RedditSubredditsNewOptions) (*RedditSubredditsNewPage, error) {
+	path, err := bindPath("/v1/reddit/subreddits/new", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditSubredditsNewPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditSubredditsNewOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditSubreddit], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditSubredditsNewResource) Items(options *RedditSubredditsNewOptions) *Iterator[RedditSubreddit] {
+	iteratorOptions := &RedditSubredditsNewOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditSubreddit], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditSubredditsPopularResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditSubredditsPopularResource(client *Client, bindings map[string]string, referenceErr error) *RedditSubredditsPopularResource {
+	value := &RedditSubredditsPopularResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditSubredditsPopularResource) List(ctx context.Context, options *RedditSubredditsPopularOptions) (*RedditSubredditsPopularPage, error) {
+	path, err := bindPath("/v1/reddit/subreddits/popular", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditSubredditsPopularPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditSubredditsPopularOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditSubreddit], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditSubredditsPopularResource) Items(options *RedditSubredditsPopularOptions) *Iterator[RedditSubreddit] {
+	iteratorOptions := &RedditSubredditsPopularOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditSubreddit], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type RedditTrendingResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Posts        *RedditTrendingPostsResource
+}
+
+func newRedditTrendingResource(client *Client, bindings map[string]string, referenceErr error) *RedditTrendingResource {
+	value := &RedditTrendingResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Posts = newRedditTrendingPostsResource(client, bindings, referenceErr)
+	return value
+}
+
+type RedditTrendingPostsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newRedditTrendingPostsResource(client *Client, bindings map[string]string, referenceErr error) *RedditTrendingPostsResource {
+	value := &RedditTrendingPostsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *RedditTrendingPostsResource) List(ctx context.Context, options *RedditTrendingPostsOptions) (*RedditTrendingPostsPage, error) {
+	path, err := bindPath("/v1/reddit/trending/posts", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &RedditTrendingPostsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &RedditTrendingPostsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[RedditPost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *RedditTrendingPostsResource) Items(options *RedditTrendingPostsOptions) *Iterator[RedditPost] {
+	iteratorOptions := &RedditTrendingPostsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[RedditPost], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TestDataResource struct {
@@ -3187,7 +4118,7 @@ func (r *TikTokSearchHashtagsResource) List(ctx context.Context, options *TikTok
 			*nextOptions = *options
 		}
 		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[Hashtag], error) {
+		result.next = func(nextContext context.Context) (*Page[TikTokHashtag], error) {
 			requestOptions := *nextOptions
 			return r.List(nextContext, &requestOptions)
 		}
@@ -3195,12 +4126,12 @@ func (r *TikTokSearchHashtagsResource) List(ctx context.Context, options *TikTok
 	return result, nil
 }
 
-func (r *TikTokSearchHashtagsResource) Items(options *TikTokSearchHashtagsOptions) *Iterator[Hashtag] {
+func (r *TikTokSearchHashtagsResource) Items(options *TikTokSearchHashtagsOptions) *Iterator[TikTokHashtag] {
 	iteratorOptions := &TikTokSearchHashtagsOptions{}
 	if options != nil {
 		*iteratorOptions = *options
 	}
-	return newIterator(func(ctx context.Context) (*Page[Hashtag], error) { return r.List(ctx, iteratorOptions) })
+	return newIterator(func(ctx context.Context) (*Page[TikTokHashtag], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TikTokSearchLocationsResource struct {
@@ -3237,7 +4168,7 @@ func (r *TikTokSearchLocationsResource) List(ctx context.Context, options *TikTo
 			*nextOptions = *options
 		}
 		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[Location], error) {
+		result.next = func(nextContext context.Context) (*Page[TikTokLocation], error) {
 			requestOptions := *nextOptions
 			return r.List(nextContext, &requestOptions)
 		}
@@ -3245,12 +4176,12 @@ func (r *TikTokSearchLocationsResource) List(ctx context.Context, options *TikTo
 	return result, nil
 }
 
-func (r *TikTokSearchLocationsResource) Items(options *TikTokSearchLocationsOptions) *Iterator[Location] {
+func (r *TikTokSearchLocationsResource) Items(options *TikTokSearchLocationsOptions) *Iterator[TikTokLocation] {
 	iteratorOptions := &TikTokSearchLocationsOptions{}
 	if options != nil {
 		*iteratorOptions = *options
 	}
-	return newIterator(func(ctx context.Context) (*Page[Location], error) { return r.List(ctx, iteratorOptions) })
+	return newIterator(func(ctx context.Context) (*Page[TikTokLocation], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TikTokSearchMusicResource struct {
@@ -3287,7 +4218,7 @@ func (r *TikTokSearchMusicResource) List(ctx context.Context, options *TikTokSea
 			*nextOptions = *options
 		}
 		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[Music], error) {
+		result.next = func(nextContext context.Context) (*Page[TikTokMusic], error) {
 			requestOptions := *nextOptions
 			return r.List(nextContext, &requestOptions)
 		}
@@ -3295,12 +4226,12 @@ func (r *TikTokSearchMusicResource) List(ctx context.Context, options *TikTokSea
 	return result, nil
 }
 
-func (r *TikTokSearchMusicResource) Items(options *TikTokSearchMusicOptions) *Iterator[Music] {
+func (r *TikTokSearchMusicResource) Items(options *TikTokSearchMusicOptions) *Iterator[TikTokMusic] {
 	iteratorOptions := &TikTokSearchMusicOptions{}
 	if options != nil {
 		*iteratorOptions = *options
 	}
-	return newIterator(func(ctx context.Context) (*Page[Music], error) { return r.List(ctx, iteratorOptions) })
+	return newIterator(func(ctx context.Context) (*Page[TikTokMusic], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TikTokSearchPostsResource struct {
@@ -3451,7 +4382,7 @@ func (r *TikTokTrendingCategoriesResource) List(ctx context.Context, options *Ti
 			*nextOptions = *options
 		}
 		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TrendingCategory], error) {
+		result.next = func(nextContext context.Context) (*Page[TikTokCategory], error) {
 			requestOptions := *nextOptions
 			return r.List(nextContext, &requestOptions)
 		}
@@ -3459,12 +4390,12 @@ func (r *TikTokTrendingCategoriesResource) List(ctx context.Context, options *Ti
 	return result, nil
 }
 
-func (r *TikTokTrendingCategoriesResource) Items(options *TikTokTrendingCategoriesOptions) *Iterator[TrendingCategory] {
+func (r *TikTokTrendingCategoriesResource) Items(options *TikTokTrendingCategoriesOptions) *Iterator[TikTokCategory] {
 	iteratorOptions := &TikTokTrendingCategoriesOptions{}
 	if options != nil {
 		*iteratorOptions = *options
 	}
-	return newIterator(func(ctx context.Context) (*Page[TrendingCategory], error) { return r.List(ctx, iteratorOptions) })
+	return newIterator(func(ctx context.Context) (*Page[TikTokCategory], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TikTokTrendingMusicResource struct {
@@ -3597,78 +4528,13 @@ type TwitterListResource struct {
 	client       *Client
 	bindings     map[string]string
 	referenceErr error
-	Members      *TwitterListMembersResource
 	Posts        *TwitterListPostsResource
 }
 
 func newTwitterListResource(client *Client, bindings map[string]string, referenceErr error) *TwitterListResource {
 	value := &TwitterListResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	value.Members = newTwitterListMembersResource(client, bindings, referenceErr)
 	value.Posts = newTwitterListPostsResource(client, bindings, referenceErr)
 	return value
-}
-
-func (r *TwitterListResource) Get(ctx context.Context, options *TwitterListOptions) (*TwitterListResponse, error) {
-	path, err := bindPath("/v1/twitter/lists/{identifier}", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TwitterListResponse{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
-type TwitterListMembersResource struct {
-	client       *Client
-	bindings     map[string]string
-	referenceErr error
-}
-
-func newTwitterListMembersResource(client *Client, bindings map[string]string, referenceErr error) *TwitterListMembersResource {
-	value := &TwitterListMembersResource{client: client, bindings: bindings, referenceErr: referenceErr}
-	return value
-}
-
-func (r *TwitterListMembersResource) List(ctx context.Context, options *TwitterListMembersOptions) (*TwitterListMembersPage, error) {
-	path, err := bindPath("/v1/twitter/lists/{identifier}/members", r.bindings, r.referenceErr)
-	if err != nil {
-		return nil, err
-	}
-	query, controls, err := encodeOptions(options)
-	if err != nil {
-		return nil, err
-	}
-	result := &TwitterListMembersPage{}
-	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
-		return nil, err
-	}
-	if result.HasNextPage() {
-		cursor := result.NextCursor()
-		nextOptions := &TwitterListMembersOptions{}
-		if options != nil {
-			*nextOptions = *options
-		}
-		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TwitterProfile], error) {
-			requestOptions := *nextOptions
-			return r.List(nextContext, &requestOptions)
-		}
-	}
-	return result, nil
-}
-
-func (r *TwitterListMembersResource) Items(options *TwitterListMembersOptions) *Iterator[TwitterProfile] {
-	iteratorOptions := &TwitterListMembersOptions{}
-	if options != nil {
-		*iteratorOptions = *options
-	}
-	return newIterator(func(ctx context.Context) (*Page[TwitterProfile], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TwitterListPostsResource struct {
@@ -3806,7 +4672,7 @@ func (r *TwitterPostCommentRepliesResource) List(ctx context.Context, options *T
 			*nextOptions = *options
 		}
 		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TwitterComment], error) {
+		result.next = func(nextContext context.Context) (*Page[TwitterPost], error) {
 			requestOptions := *nextOptions
 			return r.List(nextContext, &requestOptions)
 		}
@@ -3814,12 +4680,12 @@ func (r *TwitterPostCommentRepliesResource) List(ctx context.Context, options *T
 	return result, nil
 }
 
-func (r *TwitterPostCommentRepliesResource) Items(options *TwitterPostCommentRepliesOptions) *Iterator[TwitterComment] {
+func (r *TwitterPostCommentRepliesResource) Items(options *TwitterPostCommentRepliesOptions) *Iterator[TwitterPost] {
 	iteratorOptions := &TwitterPostCommentRepliesOptions{}
 	if options != nil {
 		*iteratorOptions = *options
 	}
-	return newIterator(func(ctx context.Context) (*Page[TwitterComment], error) { return r.List(ctx, iteratorOptions) })
+	return newIterator(func(ctx context.Context) (*Page[TwitterPost], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TwitterPostCommentsResource struct {
@@ -3853,7 +4719,7 @@ func (r *TwitterPostCommentsResource) List(ctx context.Context, options *Twitter
 			*nextOptions = *options
 		}
 		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TwitterComment], error) {
+		result.next = func(nextContext context.Context) (*Page[TwitterPost], error) {
 			requestOptions := *nextOptions
 			return r.List(nextContext, &requestOptions)
 		}
@@ -3861,12 +4727,12 @@ func (r *TwitterPostCommentsResource) List(ctx context.Context, options *Twitter
 	return result, nil
 }
 
-func (r *TwitterPostCommentsResource) Items(options *TwitterPostCommentsOptions) *Iterator[TwitterComment] {
+func (r *TwitterPostCommentsResource) Items(options *TwitterPostCommentsOptions) *Iterator[TwitterPost] {
 	iteratorOptions := &TwitterPostCommentsOptions{}
 	if options != nil {
 		*iteratorOptions = *options
 	}
-	return newIterator(func(ctx context.Context) (*Page[TwitterComment], error) { return r.List(ctx, iteratorOptions) })
+	return newIterator(func(ctx context.Context) (*Page[TwitterPost], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TwitterPostRepostersResource struct {
@@ -4341,7 +5207,7 @@ func (r *TwitterSearchSuggestionsResource) List(ctx context.Context, options *Tw
 			*nextOptions = *options
 		}
 		nextOptions.Cursor = &cursor
-		result.next = func(nextContext context.Context) (*Page[TwitterSuggestion], error) {
+		result.next = func(nextContext context.Context) (*Page[TwitterProfile], error) {
 			requestOptions := *nextOptions
 			return r.List(nextContext, &requestOptions)
 		}
@@ -4349,12 +5215,12 @@ func (r *TwitterSearchSuggestionsResource) List(ctx context.Context, options *Tw
 	return result, nil
 }
 
-func (r *TwitterSearchSuggestionsResource) Items(options *TwitterSearchSuggestionsOptions) *Iterator[TwitterSuggestion] {
+func (r *TwitterSearchSuggestionsResource) Items(options *TwitterSearchSuggestionsOptions) *Iterator[TwitterProfile] {
 	iteratorOptions := &TwitterSearchSuggestionsOptions{}
 	if options != nil {
 		*iteratorOptions = *options
 	}
-	return newIterator(func(ctx context.Context) (*Page[TwitterSuggestion], error) { return r.List(ctx, iteratorOptions) })
+	return newIterator(func(ctx context.Context) (*Page[TwitterProfile], error) { return r.List(ctx, iteratorOptions) })
 }
 
 type TwitterSearchUsersResource struct {
@@ -4425,7 +5291,7 @@ type InstagramHashtagOptions struct {
 
 type InstagramHashtagResponse struct {
 	ResponseMetadata
-	Data Hashtag `json:"data"`
+	Data InstagramHashtag `json:"data"`
 }
 
 // InstagramHashtagPostsOptions configures instagram.hashtag.posts.list.
@@ -4466,17 +5332,8 @@ type InstagramLocationOptions struct {
 
 type InstagramLocationResponse struct {
 	ResponseMetadata
-	Data Location `json:"data"`
+	Data InstagramLocation `json:"data"`
 }
-
-// InstagramLocationGuidesOptions configures instagram.location.guides.list.
-type InstagramLocationGuidesOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type InstagramLocationGuidesPage = Page[InstagramLocationGuide]
 
 // InstagramLocationPostsOptions configures instagram.location.posts.list.
 type InstagramLocationPostsOptions struct {
@@ -4496,7 +5353,7 @@ type InstagramMusicOptions struct {
 
 type InstagramMusicResponse struct {
 	ResponseMetadata
-	Data Music `json:"data"`
+	Data InstagramMusic `json:"data"`
 }
 
 // InstagramMusicStreamOptions configures instagram.music.stream.list.
@@ -4609,7 +5466,7 @@ type InstagramPostTaggedUsersOptions struct {
 	Cursor    *string   `query:"cursor"`
 }
 
-type InstagramPostTaggedUsersPage = Page[InstagramProfile]
+type InstagramPostTaggedUsersPage = Page[InstagramUserTag]
 
 // InstagramPostTemplateOptions configures instagram.post.template.get.
 type InstagramPostTemplateOptions struct {
@@ -4728,15 +5585,6 @@ type InstagramProfileReelsOptions struct {
 
 type InstagramProfileReelsPage = Page[InstagramPost]
 
-// InstagramProfileRelatedOptions configures instagram.profile.related.list.
-type InstagramProfileRelatedOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type InstagramProfileRelatedPage = Page[InstagramProfile]
-
 // InstagramProfileRepostsOptions configures instagram.profile.reposts.list.
 type InstagramProfileRepostsOptions struct {
 	RequestOptions
@@ -4792,7 +5640,7 @@ type InstagramSearchHashtagsOptions struct {
 	Cursor    *string   `query:"cursor"`
 }
 
-type InstagramSearchHashtagsPage = Page[Hashtag]
+type InstagramSearchHashtagsPage = Page[InstagramHashtag]
 
 // InstagramSearchMusicOptions configures instagram.search.music.list.
 type InstagramSearchMusicOptions struct {
@@ -4802,7 +5650,7 @@ type InstagramSearchMusicOptions struct {
 	Cursor    *string   `query:"cursor"`
 }
 
-type InstagramSearchMusicPage = Page[Music]
+type InstagramSearchMusicPage = Page[InstagramMusic]
 
 // InstagramSearchPlacesOptions configures instagram.search.places.list.
 type InstagramSearchPlacesOptions struct {
@@ -4812,7 +5660,7 @@ type InstagramSearchPlacesOptions struct {
 	Cursor    *string   `query:"cursor"`
 }
 
-type InstagramSearchPlacesPage = Page[Location]
+type InstagramSearchPlacesPage = Page[InstagramLocation]
 
 // InstagramSearchProfilesOptions configures instagram.search.profiles.list.
 type InstagramSearchProfilesOptions struct {
@@ -4854,6 +5702,224 @@ type InstagramStoryResponse struct {
 	ResponseMetadata
 	Data InstagramStory `json:"data"`
 }
+
+// RedditDomainPostsOptions configures reddit.domain.posts.list.
+type RedditDomainPostsOptions struct {
+	RequestOptions
+	Sort      SortOrder `query:"sort"`
+	T         *string   `query:"t"`
+	Limit     *int64    `query:"limit"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditDomainPostsPage = Page[RedditPost]
+
+// RedditPostCommentsOptions configures reddit.post.comments.list.
+type RedditPostCommentsOptions struct {
+	RequestOptions
+	Sort      SortOrder `query:"sort"`
+	Limit     *int64    `query:"limit"`
+	Depth     *int64    `query:"depth"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditPostCommentsPage = Page[RedditComment]
+
+// RedditPostDuplicatesOptions configures reddit.post.duplicates.list.
+type RedditPostDuplicatesOptions struct {
+	RequestOptions
+	Limit     *int64    `query:"limit"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditPostDuplicatesPage = Page[RedditPost]
+
+// RedditPostOptions configures reddit.post.get.
+type RedditPostOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+}
+
+type RedditPostResponse struct {
+	ResponseMetadata
+	Data RedditPost `json:"data"`
+}
+
+// RedditProfileCommentsOptions configures reddit.profile.comments.list.
+type RedditProfileCommentsOptions struct {
+	RequestOptions
+	Sort      SortOrder `query:"sort"`
+	T         *string   `query:"t"`
+	Limit     *int64    `query:"limit"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditProfileCommentsPage = Page[RedditComment]
+
+// RedditProfileOptions configures reddit.profile.get.
+type RedditProfileOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+}
+
+type RedditProfileResponse struct {
+	ResponseMetadata
+	Data RedditProfile `json:"data"`
+}
+
+// RedditProfileModeratedOptions configures reddit.profile.moderated.list.
+type RedditProfileModeratedOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditProfileModeratedPage = Page[RedditSubreddit]
+
+// RedditProfilePostsOptions configures reddit.profile.posts.list.
+type RedditProfilePostsOptions struct {
+	RequestOptions
+	Sort      SortOrder `query:"sort"`
+	T         *string   `query:"t"`
+	Limit     *int64    `query:"limit"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditProfilePostsPage = Page[RedditPost]
+
+// RedditProfileTrophiesOptions configures reddit.profile.trophies.list.
+type RedditProfileTrophiesOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditProfileTrophiesPage = Page[RedditTrophy]
+
+// RedditSearchPostsOptions configures reddit.search.posts.list.
+type RedditSearchPostsOptions struct {
+	RequestOptions
+	Q         string    `query:"q" required:"true"`
+	Sort      SortOrder `query:"sort"`
+	Subreddit *string   `query:"subreddit"`
+	T         *string   `query:"t"`
+	Limit     *int64    `query:"limit"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditSearchPostsPage = Page[RedditPost]
+
+// RedditSearchProfilesOptions configures reddit.search.profiles.list.
+type RedditSearchProfilesOptions struct {
+	RequestOptions
+	Q         string    `query:"q" required:"true"`
+	Limit     *int64    `query:"limit"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditSearchProfilesPage = Page[RedditProfile]
+
+// RedditSearchSubredditsOptions configures reddit.search.subreddits.list.
+type RedditSearchSubredditsOptions struct {
+	RequestOptions
+	Q         string    `query:"q" required:"true"`
+	Limit     *int64    `query:"limit"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditSearchSubredditsPage = Page[RedditSubreddit]
+
+// RedditSubredditOptions configures reddit.subreddit.get.
+type RedditSubredditOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+}
+
+type RedditSubredditResponse struct {
+	ResponseMetadata
+	Data RedditSubreddit `json:"data"`
+}
+
+// RedditSubredditPostsOptions configures reddit.subreddit.posts.list.
+type RedditSubredditPostsOptions struct {
+	RequestOptions
+	Sort      SortOrder `query:"sort"`
+	T         *string   `query:"t"`
+	Limit     *int64    `query:"limit"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditSubredditPostsPage = Page[RedditPost]
+
+// RedditSubredditRulesOptions configures reddit.subreddit.rules.list.
+type RedditSubredditRulesOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditSubredditRulesPage = Page[RedditRule]
+
+// RedditSubredditWikiPageOptions configures reddit.subreddit.wikiPage.get.
+type RedditSubredditWikiPageOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+}
+
+type RedditSubredditWikiPageResponse struct {
+	ResponseMetadata
+	Data RedditWikiPage `json:"data"`
+}
+
+// RedditSubredditWikiPagesOptions configures reddit.subreddit.wikiPages.list.
+type RedditSubredditWikiPagesOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditSubredditWikiPagesPage = Page[RedditWikiPage]
+
+// RedditSubredditsNewOptions configures reddit.subreddits.new.list.
+type RedditSubredditsNewOptions struct {
+	RequestOptions
+	Limit     *int64    `query:"limit"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditSubredditsNewPage = Page[RedditSubreddit]
+
+// RedditSubredditsPopularOptions configures reddit.subreddits.popular.list.
+type RedditSubredditsPopularOptions struct {
+	RequestOptions
+	Limit     *int64    `query:"limit"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditSubredditsPopularPage = Page[RedditSubreddit]
+
+// RedditTrendingPostsOptions configures reddit.trending.posts.list.
+type RedditTrendingPostsOptions struct {
+	RequestOptions
+	Sort      SortOrder `query:"sort"`
+	T         *string   `query:"t"`
+	Limit     *int64    `query:"limit"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type RedditTrendingPostsPage = Page[RedditPost]
 
 // TestDataEntryOptions configures testData.entry.get.
 type TestDataEntryOptions struct {
@@ -4921,7 +5987,7 @@ type TikTokHashtagOptions struct {
 
 type TikTokHashtagResponse struct {
 	ResponseMetadata
-	Data Hashtag `json:"data"`
+	Data TikTokHashtag `json:"data"`
 }
 
 // TikTokHashtagPostsOptions configures tiktok.hashtag.posts.list.
@@ -4941,7 +6007,7 @@ type TikTokLocationOptions struct {
 
 type TikTokLocationResponse struct {
 	ResponseMetadata
-	Data Location `json:"data"`
+	Data TikTokLocation `json:"data"`
 }
 
 // TikTokLocationPostsOptions configures tiktok.location.posts.list.
@@ -4961,7 +6027,7 @@ type TikTokMusicOptions struct {
 
 type TikTokMusicResponse struct {
 	ResponseMetadata
-	Data Music `json:"data"`
+	Data TikTokMusic `json:"data"`
 }
 
 // TikTokMusicPostsOptions configures tiktok.music.posts.list.
@@ -5087,7 +6153,7 @@ type TikTokSearchHashtagsOptions struct {
 	Cursor    *string   `query:"cursor"`
 }
 
-type TikTokSearchHashtagsPage = Page[Hashtag]
+type TikTokSearchHashtagsPage = Page[TikTokHashtag]
 
 // TikTokSearchLocationsOptions configures tiktok.search.locations.list.
 type TikTokSearchLocationsOptions struct {
@@ -5097,7 +6163,7 @@ type TikTokSearchLocationsOptions struct {
 	Cursor    *string   `query:"cursor"`
 }
 
-type TikTokSearchLocationsPage = Page[Location]
+type TikTokSearchLocationsPage = Page[TikTokLocation]
 
 // TikTokSearchMusicOptions configures tiktok.search.music.list.
 type TikTokSearchMusicOptions struct {
@@ -5107,7 +6173,7 @@ type TikTokSearchMusicOptions struct {
 	Cursor    *string   `query:"cursor"`
 }
 
-type TikTokSearchMusicPage = Page[Music]
+type TikTokSearchMusicPage = Page[TikTokMusic]
 
 // TikTokSearchPostsOptions configures tiktok.search.posts.list.
 type TikTokSearchPostsOptions struct {
@@ -5136,7 +6202,7 @@ type TikTokTrendingCategoriesOptions struct {
 	Cursor    *string   `query:"cursor"`
 }
 
-type TikTokTrendingCategoriesPage = Page[TrendingCategory]
+type TikTokTrendingCategoriesPage = Page[TikTokCategory]
 
 // TikTokTrendingMusicOptions configures tiktok.trending.music.list.
 type TikTokTrendingMusicOptions struct {
@@ -5146,7 +6212,7 @@ type TikTokTrendingMusicOptions struct {
 
 type TikTokTrendingMusicResponse struct {
 	ResponseMetadata
-	Data Music `json:"data"`
+	Data TikTokMusic `json:"data"`
 }
 
 // TikTokTrendingPostsOptions configures tiktok.trending.posts.list.
@@ -5157,26 +6223,6 @@ type TikTokTrendingPostsOptions struct {
 }
 
 type TikTokTrendingPostsPage = Page[TikTokPost]
-
-// TwitterListOptions configures twitter.list.get.
-type TwitterListOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-}
-
-type TwitterListResponse struct {
-	ResponseMetadata
-	Data TwitterList `json:"data"`
-}
-
-// TwitterListMembersOptions configures twitter.list.members.list.
-type TwitterListMembersOptions struct {
-	RequestOptions
-	Freshness Freshness `query:"freshness"`
-	Cursor    *string   `query:"cursor"`
-}
-
-type TwitterListMembersPage = Page[TwitterProfile]
 
 // TwitterListPostsOptions configures twitter.list.posts.list.
 type TwitterListPostsOptions struct {
@@ -5194,7 +6240,7 @@ type TwitterPostCommentRepliesOptions struct {
 	Cursor    *string   `query:"cursor"`
 }
 
-type TwitterPostCommentRepliesPage = Page[TwitterComment]
+type TwitterPostCommentRepliesPage = Page[TwitterPost]
 
 // TwitterPostCommentsOptions configures twitter.post.comments.list.
 type TwitterPostCommentsOptions struct {
@@ -5203,7 +6249,7 @@ type TwitterPostCommentsOptions struct {
 	Cursor    *string   `query:"cursor"`
 }
 
-type TwitterPostCommentsPage = Page[TwitterComment]
+type TwitterPostCommentsPage = Page[TwitterPost]
 
 // TwitterPostOptions configures twitter.post.get.
 type TwitterPostOptions struct {
@@ -5312,7 +6358,7 @@ type TwitterSearchSuggestionsOptions struct {
 	Cursor    *string   `query:"cursor"`
 }
 
-type TwitterSearchSuggestionsPage = Page[TwitterSuggestion]
+type TwitterSearchSuggestionsPage = Page[TwitterProfile]
 
 // TwitterSearchUsersOptions configures twitter.search.users.list.
 type TwitterSearchUsersOptions struct {
@@ -5335,6 +6381,9 @@ func (*TikTokProfile) isFetchResource()      {}
 func (*TikTokPost) isFetchResource()         {}
 func (*TwitterProfile) isFetchResource()     {}
 func (*TwitterPost) isFetchResource()        {}
+func (*RedditProfile) isFetchResource()      {}
+func (*RedditPost) isFetchResource()         {}
+func (*RedditSubreddit) isFetchResource()    {}
 
 // FetchResponse is the polymorphic response returned by Client.Fetch.
 type FetchResponse struct {
@@ -5375,6 +6424,12 @@ func (r *FetchResponse) UnmarshalJSON(data []byte) error {
 		target = &TwitterProfile{}
 	case wire.Platform == PlatformTwitter && wire.Resource == Resource("post"):
 		target = &TwitterPost{}
+	case wire.Platform == PlatformReddit && wire.Resource == Resource("profile"):
+		target = &RedditProfile{}
+	case wire.Platform == PlatformReddit && wire.Resource == Resource("post"):
+		target = &RedditPost{}
+	case wire.Platform == PlatformReddit && wire.Resource == Resource("subreddit"):
+		target = &RedditSubreddit{}
 	default:
 		return errors.New("openhandle: unsupported fetch response variant")
 	}

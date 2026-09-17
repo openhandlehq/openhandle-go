@@ -487,7 +487,7 @@ func generateOperationTypes(output *strings.Builder, definition operationDefinit
 }
 
 func generateFetchTypes(output *strings.Builder) {
-	variants := []string{"InstagramProfile", "InstagramPost", "InstagramStory", "InstagramHighlight", "TikTokProfile", "TikTokPost", "TwitterProfile", "TwitterPost"}
+	variants := []string{"InstagramProfile", "InstagramPost", "InstagramStory", "InstagramHighlight", "TikTokProfile", "TikTokPost", "TwitterProfile", "TwitterPost", "RedditProfile", "RedditPost", "RedditSubreddit"}
 	output.WriteString("// FetchResource is one of the concrete resources returned by Client.Fetch.\n")
 	output.WriteString("type FetchResource interface { isFetchResource() }\n\n")
 	for _, variant := range variants {
@@ -506,6 +506,9 @@ func generateFetchTypes(output *strings.Builder) {
 	output.WriteString("\tcase wire.Platform == PlatformTikTok && wire.Resource == Resource(\"post\"):\n\t\ttarget = &TikTokPost{}\n")
 	output.WriteString("\tcase wire.Platform == PlatformTwitter && wire.Resource == Resource(\"profile\"):\n\t\ttarget = &TwitterProfile{}\n")
 	output.WriteString("\tcase wire.Platform == PlatformTwitter && wire.Resource == Resource(\"post\"):\n\t\ttarget = &TwitterPost{}\n")
+	output.WriteString("\tcase wire.Platform == PlatformReddit && wire.Resource == Resource(\"profile\"):\n\t\ttarget = &RedditProfile{}\n")
+	output.WriteString("\tcase wire.Platform == PlatformReddit && wire.Resource == Resource(\"post\"):\n\t\ttarget = &RedditPost{}\n")
+	output.WriteString("\tcase wire.Platform == PlatformReddit && wire.Resource == Resource(\"subreddit\"):\n\t\ttarget = &RedditSubreddit{}\n")
 	output.WriteString("\tdefault:\n\t\treturn errors.New(\"openhandle: unsupported fetch response variant\")\n\t}\n")
 	output.WriteString("\tif err := json.Unmarshal(wire.Data, target); err != nil { return err }\n\tr.Data = target\n\treturn nil\n}\n\n")
 }

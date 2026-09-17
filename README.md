@@ -88,6 +88,8 @@ client.Instagram.Profile(openhandle.URL("https://www.instagram.com/openai/"))
 Raw strings and explicit references are compile-time checked by Go 1.27 generic
 selector methods. Resolution is entirely local: the SDK never follows
 redirects, makes hidden lookup requests, or tries multiple interpretations.
+TikTok short links such as `tiktok.com/t/…` and `vm.tiktok.com/…` are
+rejected here. Pass them to `Fetch`, which expands them server-side.
 
 Use `Fetch` when the URL's platform or resource is not known:
 
