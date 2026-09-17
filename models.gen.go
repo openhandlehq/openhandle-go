@@ -4,54 +4,6 @@ package openhandle
 
 import "time"
 
-type Comment = CommentCore
-
-type CommentCore struct {
-	Author              PostAuthor     `json:"author"`
-	ID                  string         `json:"id"`
-	IsLikedByPostAuthor *bool          `json:"isLikedByPostAuthor"`
-	IsPinned            *bool          `json:"isPinned"`
-	Media               []PostMedia    `json:"media"`
-	Metrics             CommentMetrics `json:"metrics"`
-	ParentID            *string        `json:"parentId"`
-	PinnedPosition      *int64         `json:"pinnedPosition"`
-	PublishedAt         time.Time      `json:"publishedAt"`
-	ReplyPreview        []Comment      `json:"replyPreview,omitempty"`
-	Text                string         `json:"text"`
-	ThreadRootID        *string        `json:"threadRootId"`
-}
-
-type CommentMetrics struct {
-	Bookmarks *int64 `json:"bookmarks"`
-	Likes     *int64 `json:"likes"`
-	Quotes    *int64 `json:"quotes"`
-	Replies   *int64 `json:"replies"`
-	Reposts   *int64 `json:"reposts"`
-	Views     *int64 `json:"views"`
-}
-
-type Entity = EntityCore
-
-type EntityCore struct {
-	Attributes  map[string]any  `json:"attributes"`
-	Description *string         `json:"description"`
-	Handle      *string         `json:"handle"`
-	ID          string          `json:"id"`
-	Image       *MediaReference `json:"image"`
-	Kind        string          `json:"kind"`
-	Metrics     map[string]any  `json:"metrics"`
-	Name        *string         `json:"name"`
-	URL         *string         `json:"url"`
-}
-
-type EntityReference struct {
-	Handle *string         `json:"handle,omitempty"`
-	ID     string          `json:"id"`
-	Image  *MediaReference `json:"image,omitempty"`
-	Name   *string         `json:"name,omitempty"`
-	URL    *string         `json:"url,omitempty"`
-}
-
 type ErrorEnvelope struct {
 	Error struct {
 		Code      string         `json:"code"`
@@ -62,438 +14,1741 @@ type ErrorEnvelope struct {
 	} `json:"error"`
 }
 
-type Hashtag struct {
-	Description *string         `json:"description"`
-	ID          string          `json:"id"`
-	Image       *MediaReference `json:"image"`
-	Metrics     struct {
-		Posts *int64 `json:"posts"`
-		Views *int64 `json:"views"`
-	} `json:"metrics"`
-	Name string `json:"name"`
+type InstagramAudio struct {
+	Artist                    *InstagramProfileReference `json:"artist"`
+	ArtistID                  *string                    `json:"artistId"`
+	ArtistName                *string                    `json:"artistName"`
+	Artwork                   *InstagramImage            `json:"artwork"`
+	ClusterID                 *string                    `json:"clusterId"`
+	CompositionStartTime      *float64                   `json:"compositionStartTime"`
+	CreatedAt                 *time.Time                 `json:"createdAt"`
+	Duration                  *float64                   `json:"duration"`
+	FastStartURL              *string                    `json:"fastStartUrl"`
+	Filters                   []any                      `json:"filters"`
+	HasLyrics                 *bool                      `json:"hasLyrics"`
+	HighlightStartTimes       []float64                  `json:"highlightStartTimes"`
+	ID                        string                     `json:"id"`
+	IsAutomaticallyAttributed *bool                      `json:"isAutomaticallyAttributed"`
+	IsCrosspostedFromFacebook *bool                      `json:"isCrosspostedFromFacebook"`
+	IsExplicit                *bool                      `json:"isExplicit"`
+	IsTrending                *bool                      `json:"isTrending"`
+	Metrics                   InstagramAudioMetrics      `json:"metrics"`
+	MonetizationType          *string                    `json:"monetizationType"`
+	MusicID                   *string                    `json:"musicId"`
+	OriginalPostID            *string                    `json:"originalPostId"`
+	OverlapDuration           *float64                   `json:"overlapDuration"`
+	Parts                     []InstagramAudioPart       `json:"parts"`
+	PreviewURL                *string                    `json:"previewUrl"`
+	Spotify                   struct {
+		ID  *string `json:"id"`
+		URL *string `json:"url"`
+	} `json:"spotify"`
+	StartTime *float64            `json:"startTime"`
+	Streaming *InstagramStreaming `json:"streaming"`
+	Subtype   *string             `json:"subtype"`
+	Title     *string             `json:"title"`
+	Type      *string             `json:"type"`
+	URL       *string             `json:"url"`
+}
+
+type InstagramAudioMetrics struct {
+	Photos            *int64 `json:"photos"`
+	PreviousTrendRank *int64 `json:"previousTrendRank"`
+	Reels             *int64 `json:"reels"`
+	TrendRank         *int64 `json:"trendRank"`
+}
+
+type InstagramAudioPart struct {
+	Artist          *InstagramProfileReference `json:"artist"`
+	ArtistName      *string                    `json:"artistName"`
+	Artwork         *InstagramImage            `json:"artwork"`
+	IsExplicit      *bool                      `json:"isExplicit"`
+	MusicID         *string                    `json:"musicId"`
+	ParentStartTime *float64                   `json:"parentStartTime"`
+	StartTime       *float64                   `json:"startTime"`
+	Title           *string                    `json:"title"`
+	Type            *string                    `json:"type"`
+}
+
+type InstagramAudioReference struct {
+	Artist                    *InstagramProfileReference `json:"artist"`
+	ArtistID                  *string                    `json:"artistId"`
+	ArtistName                *string                    `json:"artistName"`
+	Artwork                   *InstagramImage            `json:"artwork"`
+	ClusterID                 *string                    `json:"clusterId"`
+	CompositionStartTime      *float64                   `json:"compositionStartTime"`
+	CreatedAt                 *time.Time                 `json:"createdAt"`
+	Duration                  *float64                   `json:"duration"`
+	FastStartURL              *string                    `json:"fastStartUrl"`
+	Filters                   []any                      `json:"filters"`
+	HasLyrics                 *bool                      `json:"hasLyrics"`
+	HighlightStartTimes       []float64                  `json:"highlightStartTimes"`
+	ID                        *string                    `json:"id"`
+	IsAutomaticallyAttributed *bool                      `json:"isAutomaticallyAttributed"`
+	IsCrosspostedFromFacebook *bool                      `json:"isCrosspostedFromFacebook"`
+	IsExplicit                *bool                      `json:"isExplicit"`
+	IsTrending                *bool                      `json:"isTrending"`
+	Metrics                   InstagramAudioMetrics      `json:"metrics"`
+	MonetizationType          *string                    `json:"monetizationType"`
+	MusicID                   *string                    `json:"musicId"`
+	OriginalPostID            *string                    `json:"originalPostId"`
+	OverlapDuration           *float64                   `json:"overlapDuration"`
+	Parts                     []InstagramAudioPart       `json:"parts"`
+	PreviewURL                *string                    `json:"previewUrl"`
+	Spotify                   struct {
+		ID  *string `json:"id"`
+		URL *string `json:"url"`
+	} `json:"spotify"`
+	StartTime *float64            `json:"startTime"`
+	Streaming *InstagramStreaming `json:"streaming"`
+	Subtype   *string             `json:"subtype"`
+	Title     *string             `json:"title"`
+	Type      *string             `json:"type"`
+	URL       *string             `json:"url"`
+}
+
+type InstagramBioLink struct {
+	Icon       *InstagramImage `json:"icon"`
+	ID         *string         `json:"id"`
+	Image      *InstagramImage `json:"image"`
+	IsPinned   *bool           `json:"isPinned"`
+	IsVerified *bool           `json:"isVerified"`
+	Title      *string         `json:"title"`
+	Type       *string         `json:"type"`
+	URL        *string         `json:"url"`
 }
 
 type InstagramClipMetadata struct {
-	Author      *EntityReference `json:"author,omitempty"`
-	Caption     *string          `json:"caption,omitempty"`
-	Duration    *float64         `json:"duration,omitempty"`
-	Height      *int64           `json:"height,omitempty"`
-	ID          string           `json:"id"`
-	Media       []PostMedia      `json:"media"`
-	Music       *PostMusic       `json:"music,omitempty"`
-	PlayCount   *int64           `json:"playCount,omitempty"`
-	PublishedAt *time.Time       `json:"publishedAt,omitempty"`
-	Title       *string          `json:"title,omitempty"`
-	ViewCount   *int64           `json:"viewCount,omitempty"`
-	Width       *int64           `json:"width,omitempty"`
+	Audio   *InstagramAudioReference `json:"audio"`
+	Partial *InstagramPartialData    `json:"partial"`
+	PostID  *string                  `json:"postId"`
 }
 
 type InstagramComment struct {
-	CommentCore
+	Ai struct {
+		Type *string `json:"type"`
+	} `json:"ai"`
+	Author              *InstagramProfileReference  `json:"author"`
+	CreatedAt           time.Time                   `json:"createdAt"`
+	ID                  string                      `json:"id"`
+	IsByPostAuthor      *bool                       `json:"isByPostAuthor"`
+	IsCovered           *bool                       `json:"isCovered"`
+	IsEdited            *bool                       `json:"isEdited"`
+	IsLikedByPostAuthor *bool                       `json:"isLikedByPostAuthor"`
+	IsPinned            *bool                       `json:"isPinned"`
+	Keywords            []any                       `json:"keywords"`
+	LikedByCoauthors    []InstagramProfileReference `json:"likedByCoauthors"`
+	Media               []InstagramImage            `json:"media"`
+	Metrics             InstagramCommentMetrics     `json:"metrics"`
+	ParentID            *string                     `json:"parentId"`
+	PinnedPosition      *int64                      `json:"pinnedPosition"`
+	PostID              *string                     `json:"postId"`
+	PreviewUsers        []InstagramProfileReference `json:"previewUsers"`
+	Ranking             struct {
+		Index      *int64 `json:"index"`
+		IsRanked   *bool  `json:"isRanked"`
+		ReplyIndex *int64 `json:"replyIndex"`
+	} `json:"ranking"`
+	Replies        []InstagramCommentReference `json:"replies"`
+	ReplyToID      *string                     `json:"replyToId"`
+	SharingEnabled *bool                       `json:"sharingEnabled"`
+	Status         *string                     `json:"status"`
+	Text           *string                     `json:"text"`
+	Translation    struct {
+		Text *string `json:"text"`
+	} `json:"translation"`
 }
 
 type InstagramCommentMetadata struct {
-	CanComment       *bool  `json:"canComment,omitempty"`
-	CanViewMore      *bool  `json:"canViewMore,omitempty"`
-	CommentCount     *int64 `json:"commentCount,omitempty"`
-	CommentsDisabled *bool  `json:"commentsDisabled,omitempty"`
-	ID               string `json:"id"`
-	PreviewCount     *int64 `json:"previewCount,omitempty"`
+	Comments InstagramCommentSettings `json:"comments"`
+	Metrics  struct {
+		Comments *int64 `json:"comments"`
+	} `json:"metrics"`
+	PostID *string `json:"postId"`
+}
+
+type InstagramCommentMetrics struct {
+	Likes   *int64 `json:"likes"`
+	Replies *int64 `json:"replies"`
 }
 
 type InstagramCommentModeration struct {
-	ID          string   `json:"id"`
-	IsBullying  *bool    `json:"isBullying,omitempty"`
-	IsOffensive *bool    `json:"isOffensive,omitempty"`
-	IsSpam      *bool    `json:"isSpam,omitempty"`
-	Reasons     []string `json:"reasons"`
-	Score       *float64 `json:"score,omitempty"`
-	Text        *string  `json:"text,omitempty"`
+	IsOffensive *bool `json:"isOffensive"`
 }
 
-type InstagramEntity struct {
-	EntityCore
+type InstagramCommentReference struct {
+	Ai struct {
+		Type *string `json:"type"`
+	} `json:"ai"`
+	Author              *InstagramProfileReference  `json:"author"`
+	CreatedAt           *time.Time                  `json:"createdAt"`
+	ID                  *string                     `json:"id"`
+	IsByPostAuthor      *bool                       `json:"isByPostAuthor"`
+	IsCovered           *bool                       `json:"isCovered"`
+	IsEdited            *bool                       `json:"isEdited"`
+	IsLikedByPostAuthor *bool                       `json:"isLikedByPostAuthor"`
+	IsPinned            *bool                       `json:"isPinned"`
+	Keywords            []any                       `json:"keywords"`
+	LikedByCoauthors    []InstagramProfileReference `json:"likedByCoauthors"`
+	Media               []InstagramImage            `json:"media"`
+	Metrics             InstagramCommentMetrics     `json:"metrics"`
+	ParentID            *string                     `json:"parentId"`
+	PinnedPosition      *int64                      `json:"pinnedPosition"`
+	PostID              *string                     `json:"postId"`
+	PreviewUsers        []InstagramProfileReference `json:"previewUsers"`
+	Ranking             struct {
+		Index      *int64 `json:"index"`
+		IsRanked   *bool  `json:"isRanked"`
+		ReplyIndex *int64 `json:"replyIndex"`
+	} `json:"ranking"`
+	Replies        []InstagramCommentReference `json:"replies"`
+	ReplyToID      *string                     `json:"replyToId"`
+	SharingEnabled *bool                       `json:"sharingEnabled"`
+	Status         *string                     `json:"status"`
+	Text           *string                     `json:"text"`
+	Translation    struct {
+		Text *string `json:"text"`
+	} `json:"translation"`
+}
+
+type InstagramCommentSettings struct {
+	Enabled                   *bool                       `json:"enabled"`
+	HasMore                   *bool                       `json:"hasMore"`
+	LikesEnabled              *bool                       `json:"likesEnabled"`
+	MaxVisiblePreviewComments *int64                      `json:"maxVisiblePreviewComments"`
+	Preview                   []InstagramCommentReference `json:"preview"`
+	ThreadingEnabled          *bool                       `json:"threadingEnabled"`
+}
+
+type InstagramCoordinates struct {
+	Latitude  *float64 `json:"latitude"`
+	Longitude *float64 `json:"longitude"`
+}
+
+type InstagramCrop struct {
+	Bottom *float64 `json:"bottom"`
+	Left   *float64 `json:"left"`
+	Right  *float64 `json:"right"`
+	Top    *float64 `json:"top"`
+}
+
+type InstagramDASH struct {
+	Manifest     *string                  `json:"manifest"`
+	QualityCount *int64                   `json:"qualityCount"`
+	Variants     []InstagramStreamVariant `json:"variants"`
+}
+
+type InstagramHashtag struct {
+	Avatar     *InstagramImage `json:"avatar"`
+	Bio        *string         `json:"bio"`
+	ID         string          `json:"id"`
+	IsTrending *bool           `json:"isTrending"`
+	Metrics    struct {
+		Posts *int64 `json:"posts"`
+		Views *int64 `json:"views"`
+	} `json:"metrics"`
+	Name *string `json:"name"`
+	URL  string  `json:"url"`
+}
+
+type InstagramHashtagReference struct {
+	Avatar     *InstagramImage `json:"avatar"`
+	Bio        *string         `json:"bio"`
+	ID         *string         `json:"id"`
+	IsTrending *bool           `json:"isTrending"`
+	Metrics    struct {
+		Posts *int64 `json:"posts"`
+		Views *int64 `json:"views"`
+	} `json:"metrics"`
+	Name *string `json:"name"`
+	URL  *string `json:"url"`
 }
 
 type InstagramHighlight struct {
-	Cover     *MediaReference  `json:"cover,omitempty"`
-	ID        string           `json:"id"`
-	ItemCount *int64           `json:"itemCount,omitempty"`
-	Items     []InstagramStory `json:"items"`
-	Owner     *EntityReference `json:"owner,omitempty"`
-	Title     *string          `json:"title,omitempty"`
+	Author            *InstagramProfileReference `json:"author"`
+	Cover             *InstagramImage            `json:"cover"`
+	CreatedAt         *time.Time                 `json:"createdAt"`
+	ID                string                     `json:"id"`
+	IsArchived        *bool                      `json:"isArchived"`
+	IsConvertedToReel *bool                      `json:"isConvertedToReel"`
+	IsInProfileGrid   *bool                      `json:"isInProfileGrid"`
+	IsPinned          *bool                      `json:"isPinned"`
+	LastStoryAt       *time.Time                 `json:"lastStoryAt"`
+	Metrics           struct {
+		Stories *int64 `json:"stories"`
+	} `json:"metrics"`
+	Stories   []InstagramStoryReference `json:"stories"`
+	Title     *string                   `json:"title"`
+	UpdatedAt *time.Time                `json:"updatedAt"`
+	URL       string                    `json:"url"`
 }
 
-type InstagramLocationGuide struct {
-	Author      *EntityReference `json:"author,omitempty"`
-	Description *string          `json:"description,omitempty"`
-	ID          string           `json:"id"`
-	Image       *MediaReference  `json:"image,omitempty"`
-	ItemCount   *int64           `json:"itemCount,omitempty"`
-	Location    *PostLocation    `json:"location,omitempty"`
-	Title       *string          `json:"title,omitempty"`
-	URL         *string          `json:"url,omitempty"`
+type InstagramHighlightReference struct {
+	ID    *string `json:"id"`
+	Title *string `json:"title"`
+}
+
+type InstagramImage struct {
+	Height    *int64           `json:"height"`
+	ID        *string          `json:"id"`
+	IsDefault *bool            `json:"isDefault"`
+	IsSpatial *bool            `json:"isSpatial"`
+	Thumbnail *InstagramImage  `json:"thumbnail"`
+	Type      *string          `json:"type"`
+	URL       *string          `json:"url"`
+	Variants  []InstagramImage `json:"variants"`
+	Width     *int64           `json:"width"`
+}
+
+type InstagramLocation struct {
+	Address     InstagramLocationAddress `json:"address"`
+	Category    *string                  `json:"category"`
+	Coordinates InstagramCoordinates     `json:"coordinates"`
+	External    struct {
+		ID     *string `json:"id"`
+		Source *string `json:"source"`
+	} `json:"external"`
+	Hours         *InstagramLocationHours `json:"hours"`
+	ID            string                  `json:"id"`
+	Name          *string                 `json:"name"`
+	Phone         *string                 `json:"phone"`
+	SearchContext struct {
+		Subtitle *string `json:"subtitle"`
+		Title    *string `json:"title"`
+	} `json:"searchContext"`
+	ShortName *string `json:"shortName"`
+	URL       string  `json:"url"`
+	Website   *string `json:"website"`
+}
+
+type InstagramLocationAddress struct {
+	City        *string `json:"city"`
+	CountryCode *string `json:"countryCode"`
+	PostalCode  *string `json:"postalCode"`
+	Region      *string `json:"region"`
+	Street      *string `json:"street"`
+}
+
+type InstagramLocationHours struct {
+	CurrentStatus *string `json:"currentStatus"`
+	IsOpen        *bool   `json:"isOpen"`
+	Schedule      []any   `json:"schedule"`
+	Status        *string `json:"status"`
+	Today         *string `json:"today"`
+}
+
+type InstagramLocationReference struct {
+	Address     InstagramLocationAddress `json:"address"`
+	Category    *string                  `json:"category"`
+	Coordinates InstagramCoordinates     `json:"coordinates"`
+	External    struct {
+		ID     *string `json:"id"`
+		Source *string `json:"source"`
+	} `json:"external"`
+	Hours         *InstagramLocationHours `json:"hours"`
+	ID            *string                 `json:"id"`
+	Name          *string                 `json:"name"`
+	Phone         *string                 `json:"phone"`
+	SearchContext struct {
+		Subtitle *string `json:"subtitle"`
+		Title    *string `json:"title"`
+	} `json:"searchContext"`
+	ShortName *string `json:"shortName"`
+	URL       *string `json:"url"`
+	Website   *string `json:"website"`
+}
+
+type InstagramMedia struct {
+	AltText             *string                  `json:"altText"`
+	Audio               *InstagramAudioReference `json:"audio"`
+	Bitrate             *int64                   `json:"bitrate"`
+	CommercialityStatus *string                  `json:"commercialityStatus"`
+	CreatedAt           *time.Time               `json:"createdAt"`
+	Crops               struct {
+		FeedPreview InstagramCrop `json:"feedPreview"`
+		FourByThree InstagramCrop `json:"fourByThree"`
+		Square      InstagramCrop `json:"square"`
+	} `json:"crops"`
+	Duration       *float64                `json:"duration"`
+	FirstFrame     *InstagramImage         `json:"firstFrame"`
+	HasAudio       *bool                   `json:"hasAudio"`
+	Height         *int64                  `json:"height"`
+	ID             *string                 `json:"id"`
+	OriginalHeight *int64                  `json:"originalHeight"`
+	OriginalWidth  *int64                  `json:"originalWidth"`
+	ParentID       *string                 `json:"parentId"`
+	ProductTags    []InstagramProductTag   `json:"productTags"`
+	Scrubber       *InstagramScrubber      `json:"scrubber"`
+	Streaming      *InstagramStreaming     `json:"streaming"`
+	Subtitles      *InstagramSubtitles     `json:"subtitles"`
+	TaggedUsers    []InstagramUserTag      `json:"taggedUsers"`
+	Thumbnail      *InstagramImage         `json:"thumbnail"`
+	Type           *string                 `json:"type"`
+	URL            *string                 `json:"url"`
+	Variants       []InstagramMediaVariant `json:"variants"`
+	Width          *int64                  `json:"width"`
+}
+
+type InstagramMediaPreview struct {
+	Fbid      *string         `json:"fbid"`
+	ID        *string         `json:"id"`
+	Thumbnail *InstagramImage `json:"thumbnail"`
+}
+
+type InstagramMediaVariant struct {
+	Bitrate   *int64  `json:"bitrate"`
+	Height    *int64  `json:"height"`
+	ID        *string `json:"id"`
+	IsSpatial *bool   `json:"isSpatial"`
+	Type      *string `json:"type"`
+	URL       *string `json:"url"`
+	Width     *int64  `json:"width"`
+}
+
+type InstagramMusic struct {
+	Artist                    *InstagramProfileReference `json:"artist"`
+	ArtistID                  *string                    `json:"artistId"`
+	ArtistName                *string                    `json:"artistName"`
+	Artwork                   *InstagramImage            `json:"artwork"`
+	ClusterID                 *string                    `json:"clusterId"`
+	CompositionStartTime      *float64                   `json:"compositionStartTime"`
+	CreatedAt                 *time.Time                 `json:"createdAt"`
+	Duration                  *float64                   `json:"duration"`
+	FastStartURL              *string                    `json:"fastStartUrl"`
+	Filters                   []any                      `json:"filters"`
+	HasLyrics                 *bool                      `json:"hasLyrics"`
+	HighlightStartTimes       []float64                  `json:"highlightStartTimes"`
+	ID                        string                     `json:"id"`
+	IsAutomaticallyAttributed *bool                      `json:"isAutomaticallyAttributed"`
+	IsCrosspostedFromFacebook *bool                      `json:"isCrosspostedFromFacebook"`
+	IsExplicit                *bool                      `json:"isExplicit"`
+	IsTrending                *bool                      `json:"isTrending"`
+	Metrics                   InstagramAudioMetrics      `json:"metrics"`
+	MonetizationType          *string                    `json:"monetizationType"`
+	MusicID                   *string                    `json:"musicId"`
+	OriginalPostID            *string                    `json:"originalPostId"`
+	OverlapDuration           *float64                   `json:"overlapDuration"`
+	Parts                     []InstagramAudioPart       `json:"parts"`
+	Posts                     []InstagramPostReference   `json:"posts"`
+	PreviewURL                *string                    `json:"previewUrl"`
+	Spotify                   struct {
+		ID  *string `json:"id"`
+		URL *string `json:"url"`
+	} `json:"spotify"`
+	StartTime  *float64            `json:"startTime"`
+	Streaming  *InstagramStreaming `json:"streaming"`
+	Subtype    *string             `json:"subtype"`
+	Title      *string             `json:"title"`
+	Type       *string             `json:"type"`
+	URL        *string             `json:"url"`
+	UsageLabel *string             `json:"usageLabel"`
 }
 
 type InstagramMusicStream struct {
-	Bitrate   *int64     `json:"bitrate,omitempty"`
-	Duration  *float64   `json:"duration,omitempty"`
-	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
-	ID        string     `json:"id"`
-	MimeType  *string    `json:"mimeType,omitempty"`
-	Page      *int64     `json:"page,omitempty"`
-	URL       *string    `json:"url,omitempty"`
+	ID      string                      `json:"id"`
+	Media   []InstagramMedia            `json:"media"`
+	Metrics InstagramMusicStreamMetrics `json:"metrics"`
+	Type    *string                     `json:"type"`
+}
+
+type InstagramMusicStreamMetrics struct {
+	Plays *int64 `json:"plays"`
+}
+
+type InstagramNote struct {
+	Author    *InstagramProfileReference `json:"author"`
+	CreatedAt *time.Time                 `json:"createdAt"`
+	ID        *string                    `json:"id"`
+	Text      *string                    `json:"text"`
 }
 
 type InstagramOEmbed struct {
-	AuthorName   *string         `json:"authorName,omitempty"`
-	AuthorURL    *string         `json:"authorUrl,omitempty"`
-	Height       *int64          `json:"height,omitempty"`
-	Html         *string         `json:"html,omitempty"`
-	ID           string          `json:"id"`
-	ProviderName *string         `json:"providerName,omitempty"`
-	ProviderURL  *string         `json:"providerUrl,omitempty"`
-	Thumbnail    *MediaReference `json:"thumbnail,omitempty"`
-	Title        *string         `json:"title,omitempty"`
-	Type         *string         `json:"type,omitempty"`
-	URL          *string         `json:"url,omitempty"`
-	Width        *int64          `json:"width,omitempty"`
+	Author   *InstagramProfileReference `json:"author"`
+	Height   *int64                     `json:"height"`
+	Html     *string                    `json:"html"`
+	PostID   *string                    `json:"postId"`
+	Provider struct {
+		Name *string `json:"name"`
+		URL  *string `json:"url"`
+	} `json:"provider"`
+	Thumbnail *InstagramImage `json:"thumbnail"`
+	Title     *string         `json:"title"`
+	Type      *string         `json:"type"`
+	Width     *int64          `json:"width"`
 }
 
-type InstagramPlayCountBreakdown struct {
-	Facebook  *int64 `json:"facebook"`
-	Instagram *int64 `json:"instagram"`
+type InstagramPageMetadata struct {
+	Collection    *InstagramStoryCollection `json:"collection"`
+	HasMore       *bool                     `json:"hasMore"`
+	HasMoreAfter  *bool                     `json:"hasMoreAfter"`
+	HasMoreBefore *bool                     `json:"hasMoreBefore"`
+	LikesEnabled  *bool                     `json:"likesEnabled"`
+	Metrics       struct {
+		Comments *int64 `json:"comments"`
+		Likes    *int64 `json:"likes"`
+		Replies  *int64 `json:"replies"`
+	} `json:"metrics"`
+	Parent           *InstagramCommentReference `json:"parent"`
+	ThreadingEnabled *bool                      `json:"threadingEnabled"`
+	Track            *InstagramAudioReference   `json:"track"`
+}
+
+type InstagramPartialData struct {
+	Errors []InstagramPartialError `json:"errors"`
+}
+
+type InstagramPartialError struct {
+	Message *string  `json:"message"`
+	Path    []string `json:"path"`
+}
+
+type InstagramPosition struct {
+	X *float64 `json:"x"`
+	Y *float64 `json:"y"`
 }
 
 type InstagramPost struct {
-	PostCore
-	Collaborators     []PostAuthor           `json:"collaborators"`
-	Extended          *InstagramPostExtended `json:"extended,omitempty"`
-	IsAd              *bool                  `json:"isAd"`
-	IsPaidPartnership *bool                  `json:"isPaidPartnership"`
-	Location          *PostLocation          `json:"location"`
-	Metrics           InstagramPostMetrics   `json:"metrics"`
-	Music             *PostMusic             `json:"music"`
-	Shortcode         *string                `json:"shortcode"`
-	Sponsors          []PostAuthor           `json:"sponsors"`
-	TaggedUsers       []PostAuthor           `json:"taggedUsers"`
-}
-
-type InstagramPostExtended struct {
-	AccessibilityCaption *string `json:"accessibilityCaption"`
-	LikeCountsHidden     *bool   `json:"likeCountsHidden"`
-	ProductType          *string `json:"productType"`
+	Ai struct {
+		DetectionMethod *string `json:"detectionMethod"`
+		Label           struct {
+			DetectionMethod *string `json:"detectionMethod"`
+			IsSelfDisclosed *bool   `json:"isSelfDisclosed"`
+			Subtitle        *string `json:"subtitle"`
+			Text            *string `json:"text"`
+		} `json:"label"`
+	} `json:"ai"`
+	Attribution struct {
+		OriginalPost *InstagramPostReference `json:"originalPost"`
+	} `json:"attribution"`
+	Author   *InstagramProfileReference `json:"author"`
+	Caption  *InstagramCommentReference `json:"caption"`
+	Carousel struct {
+		ItemCount          *int64                      `json:"itemCount"`
+		PendingItemCount   *int64                      `json:"pendingItemCount"`
+		PreviousSubmitters []InstagramProfileReference `json:"previousSubmitters"`
+		SubmissionState    *string                     `json:"submissionState"`
+	} `json:"carousel"`
+	Code          *string                     `json:"code"`
+	Collaborators []InstagramProfileReference `json:"collaborators"`
+	Comments      InstagramCommentSettings    `json:"comments"`
+	CreatedAt     time.Time                   `json:"createdAt"`
+	Crossposting  struct {
+		IsFeedbackAggregated *bool `json:"isFeedbackAggregated"`
+		IsSharedToFacebook   *bool `json:"isSharedToFacebook"`
+	} `json:"crossposting"`
+	Fbid                     *string                     `json:"fbid"`
+	HasDelayedMetadata       *bool                       `json:"hasDelayedMetadata"`
+	HasTaggedUsers           *bool                       `json:"hasTaggedUsers"`
+	HasVisualReplies         *bool                       `json:"hasVisualReplies"`
+	ID                       string                      `json:"id"`
+	InvitedCollaborators     []InstagramProfileReference `json:"invitedCollaborators"`
+	IsEarlyAccess            *bool                       `json:"isEarlyAccess"`
+	IsFanClubPromo           *bool                       `json:"isFanClubPromo"`
+	IsOpenToPublicSubmission *bool                       `json:"isOpenToPublicSubmission"`
+	IsPaidPartnership        *bool                       `json:"isPaidPartnership"`
+	IsPublicChatWelcomeVideo *bool                       `json:"isPublicChatWelcomeVideo"`
+	Language                 *string                     `json:"language"`
+	LikeAndViewCountsHidden  *bool                       `json:"likeAndViewCountsHidden"`
+	Location                 *InstagramLocationReference `json:"location"`
+	Media                    []InstagramMedia            `json:"media"`
+	Metrics                  InstagramPostMetrics        `json:"metrics"`
+	Notes                    []InstagramNote             `json:"notes"`
+	Pinning                  struct {
+		ProfileUserIDs []string `json:"profileUserIds"`
+		ReelsUserIDs   []string `json:"reelsUserIds"`
+	} `json:"pinning"`
+	ProductTags []InstagramProductTag `json:"productTags"`
+	Remix       struct {
+		Allowed                *bool `json:"allowed"`
+		CarouselRemixesAllowed *bool `json:"carouselRemixesAllowed"`
+		CrosspostingAllowed    *bool `json:"crosspostingAllowed"`
+		HasBeenRemixed         *bool `json:"hasBeenRemixed"`
+		IsRequestingRemixes    *bool `json:"isRequestingRemixes"`
+	} `json:"remix"`
+	Reuse struct {
+		Allowed               *bool `json:"allowed"`
+		CutoutStickersAllowed *bool `json:"cutoutStickersAllowed"`
+	} `json:"reuse"`
+	ShareCountHidden *bool                  `json:"shareCountHidden"`
+	SharingEnabled   *bool                  `json:"sharingEnabled"`
+	TaggedUsers      []InstagramUserTag     `json:"taggedUsers"`
+	Template         *InstagramTemplateInfo `json:"template"`
+	Text             *string                `json:"text"`
+	Title            *string                `json:"title"`
+	Type             *string                `json:"type"`
+	URL              string                 `json:"url"`
 }
 
 type InstagramPostInsight struct {
-	AverageWatchTime *float64 `json:"averageWatchTime,omitempty"`
-	Comments         *int64   `json:"comments,omitempty"`
-	Follows          *int64   `json:"follows,omitempty"`
-	ID               string   `json:"id"`
-	Impressions      *int64   `json:"impressions,omitempty"`
-	Interactions     *int64   `json:"interactions,omitempty"`
-	Likes            *int64   `json:"likes,omitempty"`
-	Plays            *int64   `json:"plays,omitempty"`
-	ProfileVisits    *int64   `json:"profileVisits,omitempty"`
-	Reach            *int64   `json:"reach,omitempty"`
-	Saves            *int64   `json:"saves,omitempty"`
-	Shares           *int64   `json:"shares,omitempty"`
-	Views            *int64   `json:"views,omitempty"`
-	WatchTime        *float64 `json:"watchTime,omitempty"`
+	AuthorID  *string    `json:"authorId"`
+	CreatedAt *time.Time `json:"createdAt"`
+	Facebook  struct {
+		AccountID *string `json:"accountId"`
+		ActorID   *string `json:"actorId"`
+	} `json:"facebook"`
+	Fbid           *string `json:"fbid"`
+	HasProductTags *bool   `json:"hasProductTags"`
+	Image          struct {
+		Height *int64 `json:"height"`
+		Width  *int64 `json:"width"`
+	} `json:"image"`
+	Metrics struct {
+		Comments *int64 `json:"comments"`
+		Likes    *int64 `json:"likes"`
+		Saves    *int64 `json:"saves"`
+		Shopping struct {
+			ProductClicks         []any `json:"productClicks"`
+			ProductOutboundClicks []any `json:"productOutboundClicks"`
+		} `json:"shopping"`
+		ShoppingOutboundClicks *int64 `json:"shoppingOutboundClicks"`
+		ShoppingProductClicks  *int64 `json:"shoppingProductClicks"`
+	} `json:"metrics"`
+	OrganicPostID *string         `json:"organicPostId"`
+	PostID        *string         `json:"postId"`
+	Thumbnail     *InstagramImage `json:"thumbnail"`
+	Type          *string         `json:"type"`
 }
 
 type InstagramPostMetrics struct {
-	PostMetrics
-	PlayCountBreakdown *InstagramPlayCountBreakdown `json:"playCountBreakdown,omitempty"`
+	Comments *int64 `json:"comments"`
+	Facebook struct {
+		Comments *int64 `json:"comments"`
+		Likes    *int64 `json:"likes"`
+		Plays    *int64 `json:"plays"`
+	} `json:"facebook"`
+	Instagram struct {
+		Plays *int64 `json:"plays"`
+	} `json:"instagram"`
+	Likes            *int64 `json:"likes"`
+	Plays            *int64 `json:"plays"`
+	PremiumReactions *int64 `json:"premiumReactions"`
+	Reposts          *int64 `json:"reposts"`
+	Reshares         *int64 `json:"reshares"`
+	Saves            *int64 `json:"saves"`
+	Views            *int64 `json:"views"`
+}
+
+type InstagramPostReference struct {
+	Ai struct {
+		DetectionMethod *string `json:"detectionMethod"`
+		Label           struct {
+			DetectionMethod *string `json:"detectionMethod"`
+			IsSelfDisclosed *bool   `json:"isSelfDisclosed"`
+			Subtitle        *string `json:"subtitle"`
+			Text            *string `json:"text"`
+		} `json:"label"`
+	} `json:"ai"`
+	Attribution struct {
+		OriginalPost *InstagramPostReference `json:"originalPost"`
+	} `json:"attribution"`
+	Author   *InstagramProfileReference `json:"author"`
+	Caption  *InstagramCommentReference `json:"caption"`
+	Carousel struct {
+		ItemCount          *int64                      `json:"itemCount"`
+		PendingItemCount   *int64                      `json:"pendingItemCount"`
+		PreviousSubmitters []InstagramProfileReference `json:"previousSubmitters"`
+		SubmissionState    *string                     `json:"submissionState"`
+	} `json:"carousel"`
+	Code          *string                     `json:"code"`
+	Collaborators []InstagramProfileReference `json:"collaborators"`
+	Comments      InstagramCommentSettings    `json:"comments"`
+	CreatedAt     *time.Time                  `json:"createdAt"`
+	Crossposting  struct {
+		IsFeedbackAggregated *bool `json:"isFeedbackAggregated"`
+		IsSharedToFacebook   *bool `json:"isSharedToFacebook"`
+	} `json:"crossposting"`
+	Fbid                     *string                     `json:"fbid"`
+	HasDelayedMetadata       *bool                       `json:"hasDelayedMetadata"`
+	HasTaggedUsers           *bool                       `json:"hasTaggedUsers"`
+	HasVisualReplies         *bool                       `json:"hasVisualReplies"`
+	ID                       *string                     `json:"id"`
+	InvitedCollaborators     []InstagramProfileReference `json:"invitedCollaborators"`
+	IsEarlyAccess            *bool                       `json:"isEarlyAccess"`
+	IsFanClubPromo           *bool                       `json:"isFanClubPromo"`
+	IsOpenToPublicSubmission *bool                       `json:"isOpenToPublicSubmission"`
+	IsPaidPartnership        *bool                       `json:"isPaidPartnership"`
+	IsPublicChatWelcomeVideo *bool                       `json:"isPublicChatWelcomeVideo"`
+	Language                 *string                     `json:"language"`
+	LikeAndViewCountsHidden  *bool                       `json:"likeAndViewCountsHidden"`
+	Location                 *InstagramLocationReference `json:"location"`
+	Media                    []InstagramMedia            `json:"media"`
+	Metrics                  InstagramPostMetrics        `json:"metrics"`
+	Notes                    []InstagramNote             `json:"notes"`
+	Pinning                  struct {
+		ProfileUserIDs []string `json:"profileUserIds"`
+		ReelsUserIDs   []string `json:"reelsUserIds"`
+	} `json:"pinning"`
+	ProductTags []InstagramProductTag `json:"productTags"`
+	Remix       struct {
+		Allowed                *bool `json:"allowed"`
+		CarouselRemixesAllowed *bool `json:"carouselRemixesAllowed"`
+		CrosspostingAllowed    *bool `json:"crosspostingAllowed"`
+		HasBeenRemixed         *bool `json:"hasBeenRemixed"`
+		IsRequestingRemixes    *bool `json:"isRequestingRemixes"`
+	} `json:"remix"`
+	Reuse struct {
+		Allowed               *bool `json:"allowed"`
+		CutoutStickersAllowed *bool `json:"cutoutStickersAllowed"`
+	} `json:"reuse"`
+	ShareCountHidden *bool                  `json:"shareCountHidden"`
+	SharingEnabled   *bool                  `json:"sharingEnabled"`
+	TaggedUsers      []InstagramUserTag     `json:"taggedUsers"`
+	Template         *InstagramTemplateInfo `json:"template"`
+	Text             *string                `json:"text"`
+	Title            *string                `json:"title"`
+	Type             *string                `json:"type"`
+	URL              *string                `json:"url"`
+}
+
+type InstagramPrice struct {
+	Amount            *string `json:"amount"`
+	Formatted         *string `json:"formatted"`
+	StrippedFormatted *string `json:"strippedFormatted"`
+}
+
+type InstagramProduct struct {
+	Checkout struct {
+		Style *string `json:"style"`
+	} `json:"checkout"`
+	CompoundID  *string                    `json:"compoundId"`
+	Description *string                    `json:"description"`
+	HasVariants *bool                      `json:"hasVariants"`
+	ID          *string                    `json:"id"`
+	Image       *InstagramImage            `json:"image"`
+	IsAffiliate *bool                      `json:"isAffiliate"`
+	IsInStock   *bool                      `json:"isInStock"`
+	Merchant    *InstagramProfileReference `json:"merchant"`
+	Name        *string                    `json:"name"`
+	Pricing     struct {
+		Current         InstagramPrice `json:"current"`
+		Formatted       *string        `json:"formatted"`
+		Full            InstagramPrice `json:"full"`
+		IsUkEuCompliant *bool          `json:"isUkEuCompliant"`
+	} `json:"pricing"`
+	RetailerID   *string         `json:"retailerId"`
+	ReviewStatus *string         `json:"reviewStatus"`
+	Thumbnail    *InstagramImage `json:"thumbnail"`
+	URL          *string         `json:"url"`
+}
+
+type InstagramProductTag struct {
+	Position InstagramPosition `json:"position"`
+	Product  InstagramProduct  `json:"product"`
 }
 
 type InstagramProfile struct {
-	ProfileCore
-	Extended *InstagramProfileExtended `json:"extended,omitempty"`
+	AccountBadges                []any                             `json:"accountBadges"`
+	AccountType                  *InstagramProfileAccountType      `json:"accountType"`
+	Avatar                       *InstagramImage                   `json:"avatar"`
+	Bio                          *string                           `json:"bio"`
+	BioEntities                  []any                             `json:"bioEntities"`
+	BioLinks                     []InstagramBioLink                `json:"bioLinks"`
+	BroadcastChannels            InstagramProfileBroadcastChannels `json:"broadcastChannels"`
+	Category                     *string                           `json:"category"`
+	CategoryID                   *string                           `json:"categoryId"`
+	Contact                      InstagramProfileContact           `json:"contact"`
+	Content                      InstagramProfileContent           `json:"content"`
+	ContentSettings              InstagramProfileContentSettings   `json:"contentSettings"`
+	DisplayName                  *string                           `json:"displayName"`
+	DisplaySettings              InstagramProfileDisplaySettings   `json:"displaySettings"`
+	ExternalURL                  *string                           `json:"externalUrl"`
+	FanClub                      InstagramProfileFanClub           `json:"fanClub"`
+	Fbid                         *string                           `json:"fbid"`
+	Fundraisers                  InstagramProfileFundraisers       `json:"fundraisers"`
+	Handle                       string                            `json:"handle"`
+	HasDigitalAvatar             *bool                             `json:"hasDigitalAvatar"`
+	ID                           string                            `json:"id"`
+	IsAccountTransparencyVisible *bool                             `json:"isAccountTransparencyVisible"`
+	IsBusiness                   *bool                             `json:"isBusiness"`
+	IsFacebookOnboardedCharity   *bool                             `json:"isFacebookOnboardedCharity"`
+	IsMemorialized               *bool                             `json:"isMemorialized"`
+	IsNew                        *bool                             `json:"isNew"`
+	IsOpenToCollaboration        *bool                             `json:"isOpenToCollaboration"`
+	IsPotentialBusiness          *bool                             `json:"isPotentialBusiness"`
+	IsPrivate                    *bool                             `json:"isPrivate"`
+	IsUnpublished                *bool                             `json:"isUnpublished"`
+	IsVerified                   *bool                             `json:"isVerified"`
+	LastStoryAt                  *time.Time                        `json:"lastStoryAt"`
+	Location                     InstagramProfileLocation          `json:"location"`
+	MediaPreviews                []InstagramMediaPreview           `json:"mediaPreviews"`
+	MessagingFbid                *string                           `json:"messagingFbid"`
+	Metrics                      InstagramProfileMetrics           `json:"metrics"`
+	Pronouns                     []string                          `json:"pronouns"`
+	SocialContext                *string                           `json:"socialContext"`
+	Suggestion                   *InstagramSuggestion              `json:"suggestion"`
+	Threads                      InstagramProfileThreads           `json:"threads"`
+	UpcomingEvents               []any                             `json:"upcomingEvents"`
+	URL                          string                            `json:"url"`
 }
 
 type InstagramProfileAbout struct {
-	Bio                 *string    `json:"bio,omitempty"`
-	Category            *string    `json:"category,omitempty"`
-	Country             *string    `json:"country,omitempty"`
-	DisplayName         *string    `json:"displayName,omitempty"`
-	ExternalURL         *string    `json:"externalUrl,omitempty"`
-	FormerUsernameCount *int64     `json:"formerUsernameCount,omitempty"`
-	Handle              *string    `json:"handle,omitempty"`
-	ID                  string     `json:"id"`
-	IsBusiness          *bool      `json:"isBusiness,omitempty"`
-	IsPrivate           *bool      `json:"isPrivate,omitempty"`
-	IsVerified          *bool      `json:"isVerified,omitempty"`
-	JoinedAt            *time.Time `json:"joinedAt,omitempty"`
+	Country    *string `json:"country"`
+	Handle     *string `json:"handle"`
+	IsVerified *bool   `json:"isVerified"`
+	JoinedAt   *string `json:"joinedAt"`
+	Metrics    struct {
+		HandleChanges *int64 `json:"handleChanges"`
+	} `json:"metrics"`
 }
 
-type InstagramProfileExtended struct {
-	AccountTypeCode        *int64        `json:"accountTypeCode"`
-	AddressStreet          *string       `json:"addressStreet"`
-	BioLinks               []ProfileLink `json:"bioLinks"`
-	BusinessContactMethod  *string       `json:"businessContactMethod"`
-	City                   *string       `json:"city"`
-	Latitude               *float64      `json:"latitude"`
-	Longitude              *float64      `json:"longitude"`
-	PostalCode             *string       `json:"postalCode"`
-	PublicEmail            *string       `json:"publicEmail"`
-	PublicPhoneCountryCode *string       `json:"publicPhoneCountryCode"`
-	PublicPhoneNumber      *string       `json:"publicPhoneNumber"`
+type InstagramProfileAccountType any
+
+type InstagramProfileAddress struct {
+	City       *string `json:"city"`
+	CityID     *string `json:"cityId"`
+	PostalCode *string `json:"postalCode"`
+	Street     *string `json:"street"`
 }
 
-type InstagramProfileSummary struct {
-	Avatar      *MediaReference `json:"avatar,omitempty"`
-	Bio         *string         `json:"bio,omitempty"`
-	Category    *string         `json:"category,omitempty"`
-	DisplayName *string         `json:"displayName,omitempty"`
-	Followers   *int64          `json:"followers,omitempty"`
-	Handle      *string         `json:"handle,omitempty"`
-	ID          string          `json:"id"`
-	IsPrivate   *bool           `json:"isPrivate,omitempty"`
-	IsVerified  *bool           `json:"isVerified,omitempty"`
-	URL         *string         `json:"url,omitempty"`
+type InstagramProfileBroadcastChannel struct {
+	Avatar  *InstagramImage `json:"avatar"`
+	Cover   *InstagramImage `json:"cover"`
+	Creator struct {
+		Handle     *string `json:"handle"`
+		ID         *string `json:"id"`
+		IsVerified *bool   `json:"isVerified"`
+	} `json:"creator"`
+	ID      *string `json:"id"`
+	Metrics struct {
+		Members *int64 `json:"members"`
+	} `json:"metrics"`
+	Title *string `json:"title"`
+	URL   *string `json:"url"`
 }
 
-type InstagramSearchResult struct {
-	Author      *EntityReference     `json:"author,omitempty"`
-	Description *string              `json:"description,omitempty"`
-	Handle      *string              `json:"handle,omitempty"`
-	ID          string               `json:"id"`
-	Image       *MediaReference      `json:"image,omitempty"`
-	Metrics     *SearchResultMetrics `json:"metrics,omitempty"`
-	Title       *string              `json:"title,omitempty"`
-	Type        *string              `json:"type,omitempty"`
-	URL         *string              `json:"url,omitempty"`
+type InstagramProfileBroadcastChannels struct {
+	HasPublicChannels *bool                              `json:"hasPublicChannels"`
+	IsCreator         *bool                              `json:"isCreator"`
+	Pinned            []InstagramProfileBroadcastChannel `json:"pinned"`
+}
+
+type InstagramProfileContact struct {
+	ContactPhone     *string `json:"contactPhone"`
+	Email            *string `json:"email"`
+	Method           *string `json:"method"`
+	Phone            *string `json:"phone"`
+	PhoneCountryCode *string `json:"phoneCountryCode"`
+}
+
+type InstagramProfileContent struct {
+	HasGuides        *bool `json:"hasGuides"`
+	HasHighlights    *bool `json:"hasHighlights"`
+	HasLongformMedia *bool `json:"hasLongformMedia"`
+	HasMusic         *bool `json:"hasMusic"`
+	HasVideos        *bool `json:"hasVideos"`
+	HasVisibleNotes  *bool `json:"hasVisibleNotes"`
+}
+
+type InstagramProfileContentSettings struct {
+	HighlightResharingEnabled *bool `json:"highlightResharingEnabled"`
+	PostRemixingEnabled       *bool `json:"postRemixingEnabled"`
+	PostResharingEnabled      *bool `json:"postResharingEnabled"`
+	ReelRemixingEnabled       *bool `json:"reelRemixingEnabled"`
+}
+
+type InstagramProfileDisplaySettings struct {
+	ShowCategory       *bool `json:"showCategory"`
+	ShowPublicContacts *bool `json:"showPublicContacts"`
+}
+
+type InstagramProfileFanClub struct {
+	HasExclusiveFeedContent         *bool   `json:"hasExclusiveFeedContent"`
+	ID                              *string `json:"id"`
+	LargestPublicBroadcastChannelID *string `json:"largestPublicBroadcastChannelId"`
+	Metrics                         struct {
+		Subscribers *int64 `json:"subscribers"`
+	} `json:"metrics"`
+	Name *string `json:"name"`
+}
+
+type InstagramProfileFundraisers struct {
+	Items   []any `json:"items"`
+	Metrics struct {
+		Active *int64 `json:"active"`
+	} `json:"metrics"`
+}
+
+type InstagramProfileLocation struct {
+	Address InstagramProfileAddress `json:"address"`
+	ID      *string                 `json:"id"`
+}
+
+type InstagramProfileMetrics struct {
+	ArEffects *int64 `json:"arEffects"`
+	Followers *int64 `json:"followers"`
+	Following *int64 `json:"following"`
+	Posts     *int64 `json:"posts"`
+}
+
+type InstagramProfileReference struct {
+	AccountBadges                []any                             `json:"accountBadges"`
+	AccountType                  *InstagramProfileAccountType      `json:"accountType"`
+	Avatar                       *InstagramImage                   `json:"avatar"`
+	Bio                          *string                           `json:"bio"`
+	BioEntities                  []any                             `json:"bioEntities"`
+	BioLinks                     []InstagramBioLink                `json:"bioLinks"`
+	BroadcastChannels            InstagramProfileBroadcastChannels `json:"broadcastChannels"`
+	Category                     *string                           `json:"category"`
+	CategoryID                   *string                           `json:"categoryId"`
+	Contact                      InstagramProfileContact           `json:"contact"`
+	Content                      InstagramProfileContent           `json:"content"`
+	ContentSettings              InstagramProfileContentSettings   `json:"contentSettings"`
+	DisplayName                  *string                           `json:"displayName"`
+	DisplaySettings              InstagramProfileDisplaySettings   `json:"displaySettings"`
+	ExternalURL                  *string                           `json:"externalUrl"`
+	FanClub                      InstagramProfileFanClub           `json:"fanClub"`
+	Fbid                         *string                           `json:"fbid"`
+	Fundraisers                  InstagramProfileFundraisers       `json:"fundraisers"`
+	Handle                       *string                           `json:"handle"`
+	HasDigitalAvatar             *bool                             `json:"hasDigitalAvatar"`
+	ID                           *string                           `json:"id"`
+	IsAccountTransparencyVisible *bool                             `json:"isAccountTransparencyVisible"`
+	IsBusiness                   *bool                             `json:"isBusiness"`
+	IsFacebookOnboardedCharity   *bool                             `json:"isFacebookOnboardedCharity"`
+	IsMemorialized               *bool                             `json:"isMemorialized"`
+	IsNew                        *bool                             `json:"isNew"`
+	IsOpenToCollaboration        *bool                             `json:"isOpenToCollaboration"`
+	IsPotentialBusiness          *bool                             `json:"isPotentialBusiness"`
+	IsPrivate                    *bool                             `json:"isPrivate"`
+	IsUnpublished                *bool                             `json:"isUnpublished"`
+	IsVerified                   *bool                             `json:"isVerified"`
+	LastStoryAt                  *time.Time                        `json:"lastStoryAt"`
+	Location                     InstagramProfileLocation          `json:"location"`
+	MediaPreviews                []InstagramMediaPreview           `json:"mediaPreviews"`
+	MessagingFbid                *string                           `json:"messagingFbid"`
+	Metrics                      InstagramProfileMetrics           `json:"metrics"`
+	Pronouns                     []string                          `json:"pronouns"`
+	SocialContext                *string                           `json:"socialContext"`
+	Suggestion                   *InstagramSuggestion              `json:"suggestion"`
+	Threads                      InstagramProfileThreads           `json:"threads"`
+	UpcomingEvents               []any                             `json:"upcomingEvents"`
+	URL                          *string                           `json:"url"`
+}
+
+type InstagramProfileSummary = InstagramProfile
+
+type InstagramProfileThreads struct {
+	Handle      *string `json:"handle"`
+	IsActive    *bool   `json:"isActive"`
+	JoinerLabel *string `json:"joinerLabel"`
+	URL         *string `json:"url"`
+}
+
+type InstagramScrubber struct {
+	Duration               *float64 `json:"duration"`
+	Height                 *int64   `json:"height"`
+	MaxThumbnailsPerSprite *int64   `json:"maxThumbnailsPerSprite"`
+	ThumbnailDuration      *float64 `json:"thumbnailDuration"`
+	ThumbnailHeight        *int64   `json:"thumbnailHeight"`
+	ThumbnailWidth         *int64   `json:"thumbnailWidth"`
+	ThumbnailsPerRow       *int64   `json:"thumbnailsPerRow"`
+	ThumbnailsPerSprite    *int64   `json:"thumbnailsPerSprite"`
+	URLs                   []string `json:"urls"`
+	Width                  *int64   `json:"width"`
+}
+
+type InstagramSearchResult = InstagramPost
+
+type InstagramSticker struct {
+	Audio    *InstagramAudioReference   `json:"audio"`
+	EndTime  *float64                   `json:"endTime"`
+	Hashtag  *InstagramHashtagReference `json:"hashtag"`
+	ID       *string                    `json:"id"`
+	IsHidden *bool                      `json:"isHidden"`
+	IsPinned *bool                      `json:"isPinned"`
+	Position struct {
+		Height   *float64 `json:"height"`
+		Rotation *float64 `json:"rotation"`
+		Width    *float64 `json:"width"`
+		X        *float64 `json:"x"`
+		Y        *float64 `json:"y"`
+		Z        *float64 `json:"z"`
+	} `json:"position"`
+	Post          *InstagramStickerPost      `json:"post"`
+	StartTime     *float64                   `json:"startTime"`
+	TargetMediaID *string                    `json:"targetMediaId"`
+	Title         *string                    `json:"title"`
+	Type          *string                    `json:"type"`
+	URL           *string                    `json:"url"`
+	User          *InstagramProfileReference `json:"user"`
+}
+
+type InstagramStickerPost struct {
+	Code        *string `json:"code"`
+	ID          *string `json:"id"`
+	MediaType   *string `json:"mediaType"`
+	ProductType *string `json:"productType"`
+	URL         *string `json:"url"`
 }
 
 type InstagramStory struct {
-	Author        *EntityReference  `json:"author,omitempty"`
-	CanQuickReply *bool             `json:"canQuickReply,omitempty"`
-	CanReply      *bool             `json:"canReply,omitempty"`
-	CanReshare    *bool             `json:"canReshare,omitempty"`
-	ExpiresAt     *time.Time        `json:"expiresAt,omitempty"`
-	Hashtags      []string          `json:"hashtags"`
-	ID            string            `json:"id"`
-	Links         []StoryLink       `json:"links"`
-	Locations     []PostLocation    `json:"locations"`
-	Media         []PostMedia       `json:"media"`
-	Mentions      []EntityReference `json:"mentions"`
-	PublishedAt   *time.Time        `json:"publishedAt,omitempty"`
-	Shortcode     *string           `json:"shortcode,omitempty"`
-	Stickers      []StorySticker    `json:"stickers"`
-	Type          *string           `json:"type,omitempty"`
+	Ai struct {
+		DetectionMethod *string `json:"detectionMethod"`
+		Label           struct {
+			DetectionMethod *string `json:"detectionMethod"`
+			IsSelfDisclosed *bool   `json:"isSelfDisclosed"`
+			Subtitle        *string `json:"subtitle"`
+			Text            *string `json:"text"`
+		} `json:"label"`
+	} `json:"ai"`
+	Attribution struct {
+		OriginalPost *InstagramPostReference `json:"originalPost"`
+	} `json:"attribution"`
+	Author   *InstagramProfileReference `json:"author"`
+	Caption  *InstagramCommentReference `json:"caption"`
+	Carousel struct {
+		ItemCount          *int64                      `json:"itemCount"`
+		PendingItemCount   *int64                      `json:"pendingItemCount"`
+		PreviousSubmitters []InstagramProfileReference `json:"previousSubmitters"`
+		SubmissionState    *string                     `json:"submissionState"`
+	} `json:"carousel"`
+	Code          *string                     `json:"code"`
+	Collaborators []InstagramProfileReference `json:"collaborators"`
+	Comments      InstagramCommentSettings    `json:"comments"`
+	CreatedAt     time.Time                   `json:"createdAt"`
+	Crossposting  struct {
+		IsFeedbackAggregated *bool `json:"isFeedbackAggregated"`
+		IsSharedToFacebook   *bool `json:"isSharedToFacebook"`
+	} `json:"crossposting"`
+	ExpiresAt                *time.Time                    `json:"expiresAt"`
+	Fbid                     *string                       `json:"fbid"`
+	HasDelayedMetadata       *bool                         `json:"hasDelayedMetadata"`
+	HasTaggedUsers           *bool                         `json:"hasTaggedUsers"`
+	HasVisualReplies         *bool                         `json:"hasVisualReplies"`
+	Highlights               []InstagramHighlightReference `json:"highlights"`
+	ID                       string                        `json:"id"`
+	InvitedCollaborators     []InstagramProfileReference   `json:"invitedCollaborators"`
+	IsEarlyAccess            *bool                         `json:"isEarlyAccess"`
+	IsEdited                 *bool                         `json:"isEdited"`
+	IsFanClubPromo           *bool                         `json:"isFanClubPromo"`
+	IsLastVideoSegment       *bool                         `json:"isLastVideoSegment"`
+	IsOpenToPublicSubmission *bool                         `json:"isOpenToPublicSubmission"`
+	IsPaidPartnership        *bool                         `json:"isPaidPartnership"`
+	IsPublicChatWelcomeVideo *bool                         `json:"isPublicChatWelcomeVideo"`
+	Language                 *string                       `json:"language"`
+	LikeAndViewCountsHidden  *bool                         `json:"likeAndViewCountsHidden"`
+	Location                 *InstagramLocationReference   `json:"location"`
+	Media                    []InstagramMedia              `json:"media"`
+	Metrics                  InstagramPostMetrics          `json:"metrics"`
+	Notes                    []InstagramNote               `json:"notes"`
+	Pinning                  struct {
+		ProfileUserIDs []string `json:"profileUserIds"`
+		ReelsUserIDs   []string `json:"reelsUserIds"`
+	} `json:"pinning"`
+	ProductTags []InstagramProductTag `json:"productTags"`
+	Remix       struct {
+		Allowed                *bool `json:"allowed"`
+		CarouselRemixesAllowed *bool `json:"carouselRemixesAllowed"`
+		CrosspostingAllowed    *bool `json:"crosspostingAllowed"`
+		HasBeenRemixed         *bool `json:"hasBeenRemixed"`
+		IsRequestingRemixes    *bool `json:"isRequestingRemixes"`
+	} `json:"remix"`
+	Reuse struct {
+		Allowed               *bool `json:"allowed"`
+		CutoutStickersAllowed *bool `json:"cutoutStickersAllowed"`
+	} `json:"reuse"`
+	ShareCountHidden *bool                  `json:"shareCountHidden"`
+	SharingEnabled   *bool                  `json:"sharingEnabled"`
+	Stickers         []InstagramSticker     `json:"stickers"`
+	TaggedUsers      []InstagramUserTag     `json:"taggedUsers"`
+	Template         *InstagramTemplateInfo `json:"template"`
+	Text             *string                `json:"text"`
+	Title            *string                `json:"title"`
+	Type             *string                `json:"type"`
+	URL              string                 `json:"url"`
+}
+
+type InstagramStoryCollection struct {
+	Audience struct {
+		HasCloseFriendsStories *bool `json:"hasCloseFriendsStories"`
+		HasSubscriberStories   *bool `json:"hasSubscriberStories"`
+	} `json:"audience"`
+	ExpiresAt   *time.Time `json:"expiresAt"`
+	ID          *string    `json:"id"`
+	IsArchived  *bool      `json:"isArchived"`
+	LastStoryAt *time.Time `json:"lastStoryAt"`
+	Metrics     struct {
+		Stories *int64 `json:"stories"`
+	} `json:"metrics"`
+}
+
+type InstagramStoryReference struct {
+	Ai struct {
+		DetectionMethod *string `json:"detectionMethod"`
+		Label           struct {
+			DetectionMethod *string `json:"detectionMethod"`
+			IsSelfDisclosed *bool   `json:"isSelfDisclosed"`
+			Subtitle        *string `json:"subtitle"`
+			Text            *string `json:"text"`
+		} `json:"label"`
+	} `json:"ai"`
+	Attribution struct {
+		OriginalPost *InstagramPostReference `json:"originalPost"`
+	} `json:"attribution"`
+	Author   *InstagramProfileReference `json:"author"`
+	Caption  *InstagramCommentReference `json:"caption"`
+	Carousel struct {
+		ItemCount          *int64                      `json:"itemCount"`
+		PendingItemCount   *int64                      `json:"pendingItemCount"`
+		PreviousSubmitters []InstagramProfileReference `json:"previousSubmitters"`
+		SubmissionState    *string                     `json:"submissionState"`
+	} `json:"carousel"`
+	Code          *string                     `json:"code"`
+	Collaborators []InstagramProfileReference `json:"collaborators"`
+	Comments      InstagramCommentSettings    `json:"comments"`
+	CreatedAt     *time.Time                  `json:"createdAt"`
+	Crossposting  struct {
+		IsFeedbackAggregated *bool `json:"isFeedbackAggregated"`
+		IsSharedToFacebook   *bool `json:"isSharedToFacebook"`
+	} `json:"crossposting"`
+	ExpiresAt                *time.Time                    `json:"expiresAt"`
+	Fbid                     *string                       `json:"fbid"`
+	HasDelayedMetadata       *bool                         `json:"hasDelayedMetadata"`
+	HasTaggedUsers           *bool                         `json:"hasTaggedUsers"`
+	HasVisualReplies         *bool                         `json:"hasVisualReplies"`
+	Highlights               []InstagramHighlightReference `json:"highlights"`
+	ID                       *string                       `json:"id"`
+	InvitedCollaborators     []InstagramProfileReference   `json:"invitedCollaborators"`
+	IsEarlyAccess            *bool                         `json:"isEarlyAccess"`
+	IsEdited                 *bool                         `json:"isEdited"`
+	IsFanClubPromo           *bool                         `json:"isFanClubPromo"`
+	IsLastVideoSegment       *bool                         `json:"isLastVideoSegment"`
+	IsOpenToPublicSubmission *bool                         `json:"isOpenToPublicSubmission"`
+	IsPaidPartnership        *bool                         `json:"isPaidPartnership"`
+	IsPublicChatWelcomeVideo *bool                         `json:"isPublicChatWelcomeVideo"`
+	Language                 *string                       `json:"language"`
+	LikeAndViewCountsHidden  *bool                         `json:"likeAndViewCountsHidden"`
+	Location                 *InstagramLocationReference   `json:"location"`
+	Media                    []InstagramMedia              `json:"media"`
+	Metrics                  InstagramPostMetrics          `json:"metrics"`
+	Notes                    []InstagramNote               `json:"notes"`
+	Pinning                  struct {
+		ProfileUserIDs []string `json:"profileUserIds"`
+		ReelsUserIDs   []string `json:"reelsUserIds"`
+	} `json:"pinning"`
+	ProductTags []InstagramProductTag `json:"productTags"`
+	Remix       struct {
+		Allowed                *bool `json:"allowed"`
+		CarouselRemixesAllowed *bool `json:"carouselRemixesAllowed"`
+		CrosspostingAllowed    *bool `json:"crosspostingAllowed"`
+		HasBeenRemixed         *bool `json:"hasBeenRemixed"`
+		IsRequestingRemixes    *bool `json:"isRequestingRemixes"`
+	} `json:"remix"`
+	Reuse struct {
+		Allowed               *bool `json:"allowed"`
+		CutoutStickersAllowed *bool `json:"cutoutStickersAllowed"`
+	} `json:"reuse"`
+	ShareCountHidden *bool                  `json:"shareCountHidden"`
+	SharingEnabled   *bool                  `json:"sharingEnabled"`
+	Stickers         []InstagramSticker     `json:"stickers"`
+	TaggedUsers      []InstagramUserTag     `json:"taggedUsers"`
+	Template         *InstagramTemplateInfo `json:"template"`
+	Text             *string                `json:"text"`
+	Title            *string                `json:"title"`
+	Type             *string                `json:"type"`
+	URL              *string                `json:"url"`
+}
+
+type InstagramStreamVariant struct {
+	Bitrate      *int64   `json:"bitrate"`
+	Codec        *string  `json:"codec"`
+	FrameRate    *float64 `json:"frameRate"`
+	Height       *int64   `json:"height"`
+	ID           *string  `json:"id"`
+	MimeType     *string  `json:"mimeType"`
+	QualityLabel *string  `json:"qualityLabel"`
+	SampleRate   *int64   `json:"sampleRate"`
+	SizeBytes    *int64   `json:"sizeBytes"`
+	URL          *string  `json:"url"`
+	Width        *int64   `json:"width"`
+}
+
+type InstagramStreaming struct {
+	Dash *InstagramDASH `json:"dash"`
+}
+
+type InstagramSubtitles struct {
+	Confidence *float64 `json:"confidence"`
+	Enabled    *bool    `json:"enabled"`
+	Generated  *bool    `json:"generated"`
+	Locale     *string  `json:"locale"`
+	Status     *string  `json:"status"`
+	URL        *string  `json:"url"`
+}
+
+type InstagramSuggestion struct {
+	Caption       *string                  `json:"caption"`
+	HasStoryRing  *bool                    `json:"hasStoryRing"`
+	Icon          *string                  `json:"icon"`
+	IsNew         *bool                    `json:"isNew"`
+	LargeImages   []InstagramImage         `json:"largeImages"`
+	Posts         []InstagramPostReference `json:"posts"`
+	SocialContext *string                  `json:"socialContext"`
+	Thumbnails    []InstagramImage         `json:"thumbnails"`
 }
 
 type InstagramTemplate struct {
-	Author      *EntityReference `json:"author,omitempty"`
-	Description *string          `json:"description,omitempty"`
-	Duration    *float64         `json:"duration,omitempty"`
-	ID          string           `json:"id"`
-	Media       []PostMedia      `json:"media"`
-	Name        *string          `json:"name,omitempty"`
-	Type        *string          `json:"type,omitempty"`
-	URL         *string          `json:"url,omitempty"`
+	AudioTitle *string                    `json:"audioTitle"`
+	Author     *InstagramProfileReference `json:"author"`
+	EffectID   *string                    `json:"effectId"`
+	Effects    struct {
+		Segments []any `json:"segments"`
+	} `json:"effects"`
+	MinimumSegments *int64                     `json:"minimumSegments"`
+	PostID          *string                    `json:"postId"`
+	Posts           []InstagramPostReference   `json:"posts"`
+	Segments        []InstagramTemplateSegment `json:"segments"`
+	Title           *string                    `json:"title"`
+	UsageLabel      *string                    `json:"usageLabel"`
 }
 
-type Location struct {
-	Address     *string  `json:"address"`
-	Category    *string  `json:"category"`
-	City        *string  `json:"city"`
-	CountryCode *string  `json:"countryCode"`
-	ID          string   `json:"id"`
-	Latitude    *float64 `json:"latitude"`
-	Longitude   *float64 `json:"longitude"`
-	Name        string   `json:"name"`
-	Phone       *string  `json:"phone"`
-	PostalCode  *string  `json:"postalCode"`
-	Region      *string  `json:"region"`
-	Website     *string  `json:"website"`
+type InstagramTemplateInfo struct {
+	Author   *InstagramProfileReference `json:"author"`
+	EffectID *string                    `json:"effectId"`
+	Effects  struct {
+		Segments []any `json:"segments"`
+	} `json:"effects"`
+	MinimumSegments *int64                     `json:"minimumSegments"`
+	PostID          *string                    `json:"postId"`
+	Segments        []InstagramTemplateSegment `json:"segments"`
 }
 
-type MediaReference struct {
-	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
-	URL       string     `json:"url"`
+type InstagramTemplateSegment struct {
+	AssetEndTime   *float64 `json:"assetEndTime"`
+	AssetStartTime *float64 `json:"assetStartTime"`
+	Duration       *float64 `json:"duration"`
+}
+
+type InstagramUserTag struct {
+	Position InstagramPosition         `json:"position"`
+	User     InstagramProfileReference `json:"user"`
 }
 
 type MessageEnvelope struct {
 	Message string `json:"message"`
 }
 
-type Music struct {
-	Album        *string          `json:"album"`
-	Artist       *PostMusicArtist `json:"artist"`
-	Artwork      *MediaReference  `json:"artwork"`
-	Audio        *MediaReference  `json:"audio"`
-	Duration     *float64         `json:"duration"`
-	ID           string           `json:"id"`
-	IsCommercial *bool            `json:"isCommercial"`
-	IsExplicit   *bool            `json:"isExplicit"`
-	IsOriginal   *bool            `json:"isOriginal"`
-	Metrics      struct {
-		Posts *int64 `json:"posts"`
-	} `json:"metrics"`
-	Title string `json:"title"`
+type RedditAuthor struct {
+	Flair       *RedditFlair `json:"flair"`
+	Handle      *string      `json:"handle"`
+	ID          *string      `json:"id"`
+	IsPremium   *bool        `json:"isPremium"`
+	Placeholder *string      `json:"placeholder"`
 }
 
-type PostAuthor struct {
-	Avatar      *MediaReference `json:"avatar"`
-	DisplayName *string         `json:"displayName"`
-	Handle      string          `json:"handle"`
-	ID          string          `json:"id"`
-	IsVerified  *bool           `json:"isVerified"`
+type RedditComment struct {
+	Author          *RedditAuthor            `json:"author"`
+	Community       *RedditCommunity         `json:"community"`
+	CreatedAt       time.Time                `json:"createdAt"`
+	Depth           *int64                   `json:"depth"`
+	Display         RedditCommentDisplay     `json:"display"`
+	DistinguishedBy *string                  `json:"distinguishedBy"`
+	EditedAt        *time.Time               `json:"editedAt"`
+	ID              string                   `json:"id"`
+	IsArchived      *bool                    `json:"isArchived"`
+	IsByPostAuthor  *bool                    `json:"isByPostAuthor"`
+	IsControversial *bool                    `json:"isControversial"`
+	IsEdited        *bool                    `json:"isEdited"`
+	IsLocked        *bool                    `json:"isLocked"`
+	IsStickied      *bool                    `json:"isStickied"`
+	Metrics         RedditCommentMetrics     `json:"metrics"`
+	ParentID        *string                  `json:"parentId"`
+	PostID          *string                  `json:"postId"`
+	Replies         []RedditCommentReference `json:"replies"`
+	Text            *string                  `json:"text"`
+	TextHtml        *string                  `json:"textHtml"`
+	Type            *string                  `json:"type"`
+	URL             string                   `json:"url"`
+	Visibility      RedditCommentVisibility  `json:"visibility"`
 }
 
-type PostCore struct {
-	Author           PostAuthor  `json:"author"`
-	Caption          *string     `json:"caption"`
-	CommentsDisabled *bool       `json:"commentsDisabled"`
-	Format           string      `json:"format"`
-	Hashtags         []string    `json:"hashtags"`
-	ID               string      `json:"id"`
-	Media            []PostMedia `json:"media"`
-	Mentions         []string    `json:"mentions"`
-	PublishedAt      time.Time   `json:"publishedAt"`
-	Title            *string     `json:"title"`
-	Type             string      `json:"type"`
-	URL              string      `json:"url"`
+type RedditCommentDisplay struct {
+	CollapsedReason *string `json:"collapsedReason"`
+	IsCollapsed     *bool   `json:"isCollapsed"`
 }
 
-type PostLocation struct {
-	Address     *string  `json:"address"`
-	Category    *string  `json:"category"`
-	City        *string  `json:"city"`
-	CountryCode *string  `json:"countryCode"`
-	ID          *string  `json:"id"`
-	Latitude    *float64 `json:"latitude"`
-	Longitude   *float64 `json:"longitude"`
-	Name        *string  `json:"name"`
-	Phone       *string  `json:"phone"`
-	PostalCode  *string  `json:"postalCode"`
-	Region      *string  `json:"region"`
-	Website     *string  `json:"website"`
+type RedditCommentMetrics struct {
+	Awards *int64 `json:"awards"`
+	Gilded *int64 `json:"gilded"`
+	Score  *int64 `json:"score"`
 }
 
-type PostMedia struct {
-	AltText   *string            `json:"altText,omitempty"`
-	Duration  *float64           `json:"duration,omitempty"`
-	ExpiresAt *time.Time         `json:"expiresAt,omitempty"`
-	Height    *int64             `json:"height,omitempty"`
-	ID        *string            `json:"id,omitempty"`
-	Thumbnail *MediaReference    `json:"thumbnail,omitempty"`
-	Type      string             `json:"type"`
-	URL       string             `json:"url"`
-	Variants  []PostMediaVariant `json:"variants,omitempty"`
-	Width     *int64             `json:"width,omitempty"`
+type RedditCommentReference struct {
+	Author          *RedditAuthor            `json:"author"`
+	Community       *RedditCommunity         `json:"community"`
+	CreatedAt       *time.Time               `json:"createdAt"`
+	Depth           *int64                   `json:"depth"`
+	Display         RedditCommentDisplay     `json:"display"`
+	DistinguishedBy *string                  `json:"distinguishedBy"`
+	EditedAt        *time.Time               `json:"editedAt"`
+	ID              *string                  `json:"id"`
+	IsArchived      *bool                    `json:"isArchived"`
+	IsByPostAuthor  *bool                    `json:"isByPostAuthor"`
+	IsControversial *bool                    `json:"isControversial"`
+	IsEdited        *bool                    `json:"isEdited"`
+	IsLocked        *bool                    `json:"isLocked"`
+	IsStickied      *bool                    `json:"isStickied"`
+	Metrics         RedditCommentMetrics     `json:"metrics"`
+	ParentID        *string                  `json:"parentId"`
+	PostID          *string                  `json:"postId"`
+	Replies         []RedditCommentReference `json:"replies"`
+	Text            *string                  `json:"text"`
+	TextHtml        *string                  `json:"textHtml"`
+	Type            *string                  `json:"type"`
+	URL             *string                  `json:"url"`
+	Visibility      RedditCommentVisibility  `json:"visibility"`
 }
 
-type PostMediaVariant struct {
-	Bitrate     *int64     `json:"bitrate,omitempty"`
-	ExpiresAt   *time.Time `json:"expiresAt,omitempty"`
-	Height      *int64     `json:"height,omitempty"`
-	MimeType    *string    `json:"mimeType,omitempty"`
-	Role        *string    `json:"role,omitempty"`
-	URL         string     `json:"url"`
-	Watermarked *bool      `json:"watermarked,omitempty"`
-	Width       *int64     `json:"width,omitempty"`
+type RedditCommentSettings struct {
+	RestrictCommenting *bool   `json:"restrictCommenting"`
+	ScoreHideDuration  *int64  `json:"scoreHideDuration"`
+	SuggestedSort      *string `json:"suggestedSort"`
 }
 
-type PostMetrics struct {
+type RedditCommentVisibility struct {
+	IsScoreHidden *bool `json:"isScoreHidden"`
+}
+
+type RedditCommentsSetting struct {
+	AllowLiveComments *bool   `json:"allowLiveComments"`
+	DiscussionType    *string `json:"discussionType"`
+	IsContestMode     *bool   `json:"isContestMode"`
+	SuggestedSort     *string `json:"suggestedSort"`
+}
+
+type RedditCommunity struct {
+	DisplayHandle *string                `json:"displayHandle"`
+	Handle        *string                `json:"handle"`
+	ID            *string                `json:"id"`
+	IsQuarantined *bool                  `json:"isQuarantined"`
+	Metrics       RedditSubredditMetrics `json:"metrics"`
+	Type          *string                `json:"type"`
+}
+
+type RedditCommunityHandle struct {
+	Handle *string `json:"handle"`
+}
+
+type RedditDisplaySettings struct {
+	ShowMedia *bool `json:"showMedia"`
+}
+
+type RedditEmbed struct {
+	Author         *RedditEmbedAuthor `json:"author"`
+	Domain         *string            `json:"domain"`
+	Height         *int64             `json:"height"`
+	Html           *string            `json:"html"`
+	MediaDomainURL *string            `json:"mediaDomainUrl"`
+	Provider       *RedditEmbedSource `json:"provider"`
+	Scrolling      *bool              `json:"scrolling"`
+	Thumbnail      *RedditThumbnail   `json:"thumbnail"`
+	Title          *string            `json:"title"`
+	Type           *string            `json:"type"`
+	Version        *string            `json:"version"`
+	Width          *int64             `json:"width"`
+}
+
+type RedditEmbedAuthor struct {
+	DisplayName *string `json:"displayName"`
+	URL         *string `json:"url"`
+}
+
+type RedditEmbedSource struct {
+	Name *string `json:"name"`
+	URL  *string `json:"url"`
+}
+
+type RedditFlair struct {
+	BackgroundColor *string `json:"backgroundColor"`
+	CssClass        *string `json:"cssClass"`
+	HasPatreonFlair *bool   `json:"hasPatreonFlair"`
+	TemplateID      *string `json:"templateId"`
+	Text            *string `json:"text"`
+	TextColor       *string `json:"textColor"`
+	Type            *string `json:"type"`
+}
+
+type RedditImage struct {
+	Height   *int64        `json:"height"`
+	Label    *string       `json:"label"`
+	Type     *string       `json:"type"`
+	URL      *string       `json:"url"`
+	Variants []RedditImage `json:"variants"`
+	Width    *int64        `json:"width"`
+}
+
+type RedditKarma struct {
+	Awardee  *int64 `json:"awardee"`
+	Awarder  *int64 `json:"awarder"`
 	Comments *int64 `json:"comments"`
-	Likes    *int64 `json:"likes"`
-	Reposts  *int64 `json:"reposts"`
-	Saves    *int64 `json:"saves"`
-	Shares   *int64 `json:"shares"`
-	Views    *int64 `json:"views"`
+	Posts    *int64 `json:"posts"`
+	Total    *int64 `json:"total"`
 }
 
-type PostMusic struct {
-	Album        *string          `json:"album"`
-	Artist       *PostMusicArtist `json:"artist"`
-	Artwork      *MediaReference  `json:"artwork"`
-	Audio        *MediaReference  `json:"audio"`
-	Duration     *float64         `json:"duration"`
-	ID           string           `json:"id"`
-	IsCommercial *bool            `json:"isCommercial"`
-	IsExplicit   *bool            `json:"isExplicit"`
-	IsOriginal   *bool            `json:"isOriginal"`
-	Title        *string          `json:"title"`
+type RedditListingContext struct {
+	OriginalPost *RedditPostReference `json:"originalPost"`
+	Post         *RedditPostReference `json:"post"`
 }
 
-type PostMusicArtist struct {
-	ID   *string `json:"id"`
-	Name string  `json:"name"`
+type RedditMedia struct {
+	BitrateKbps       *int64               `json:"bitrateKbps"`
+	Caption           *string              `json:"caption"`
+	Duration          *float64             `json:"duration"`
+	HasAudio          *bool                `json:"hasAudio"`
+	Height            *int64               `json:"height"`
+	ID                *string              `json:"id"`
+	IsAnimated        *bool                `json:"isAnimated"`
+	MimeType          *string              `json:"mimeType"`
+	Scrubber          *RedditMediaVariant  `json:"scrubber"`
+	TranscodingStatus *string              `json:"transcodingStatus"`
+	Type              *string              `json:"type"`
+	URL               *string              `json:"url"`
+	Variants          []RedditMediaVariant `json:"variants"`
+	Width             *int64               `json:"width"`
 }
 
-type Profile = ProfileCore
-
-type ProfileCore struct {
-	AccountType *string         `json:"accountType"`
-	Avatar      *MediaReference `json:"avatar"`
-	Bio         string          `json:"bio"`
-	Category    *string         `json:"category"`
-	DisplayName string          `json:"displayName"`
-	ExternalURL *string         `json:"externalUrl"`
-	Handle      string          `json:"handle"`
-	ID          string          `json:"id"`
-	IsBusiness  bool            `json:"isBusiness"`
-	IsPrivate   bool            `json:"isPrivate"`
-	IsVerified  bool            `json:"isVerified"`
-	Metrics     ProfileMetrics  `json:"metrics"`
+type RedditMediaVariant struct {
+	Format *string `json:"format"`
+	Type   *string `json:"type"`
+	URL    *string `json:"url"`
 }
 
-type ProfileLink struct {
-	Title *string `json:"title"`
-	URL   string  `json:"url"`
+type RedditPageMetadata struct {
+	Community      *RedditCommunityHandle `json:"community"`
+	Context        *RedditListingContext  `json:"context"`
+	Count          *int64                 `json:"count"`
+	Domain         *string                `json:"domain"`
+	Handle         *string                `json:"handle"`
+	HasMore        *bool                  `json:"hasMore"`
+	Limit          *int64                 `json:"limit"`
+	PreviousCursor *string                `json:"previousCursor"`
+	Query          *string                `json:"query"`
+	SiteRules      []string               `json:"siteRules"`
+	Sort           *string                `json:"sort"`
 }
 
-type ProfileMetrics struct {
-	Followers *int64 `json:"followers"`
-	Following *int64 `json:"following"`
-	Posts     *int64 `json:"posts"`
+type RedditPost struct {
+	Author              *RedditAuthor         `json:"author"`
+	Comments            RedditCommentsSetting `json:"comments"`
+	Community           *RedditCommunity      `json:"community"`
+	CreatedAt           time.Time             `json:"createdAt"`
+	DistinguishedBy     *string               `json:"distinguishedBy"`
+	Domain              *string               `json:"domain"`
+	EditedAt            *time.Time            `json:"editedAt"`
+	Embed               *RedditEmbed          `json:"embed"`
+	Flair               *RedditFlair          `json:"flair"`
+	ID                  string                `json:"id"`
+	IsArchived          *bool                 `json:"isArchived"`
+	IsCrosspostable     *bool                 `json:"isCrosspostable"`
+	IsEdited            *bool                 `json:"isEdited"`
+	IsGallery           *bool                 `json:"isGallery"`
+	IsLocked            *bool                 `json:"isLocked"`
+	IsMediaOnly         *bool                 `json:"isMediaOnly"`
+	IsMeta              *bool                 `json:"isMeta"`
+	IsOriginalContent   *bool                 `json:"isOriginalContent"`
+	IsPinned            *bool                 `json:"isPinned"`
+	IsRedditMediaDomain *bool                 `json:"isRedditMediaDomain"`
+	IsSelf              *bool                 `json:"isSelf"`
+	IsSensitive         *bool                 `json:"isSensitive"`
+	IsSpoiler           *bool                 `json:"isSpoiler"`
+	IsStickied          *bool                 `json:"isStickied"`
+	IsVideo             *bool                 `json:"isVideo"`
+	LinkURL             *string               `json:"linkUrl"`
+	Media               []RedditMedia         `json:"media"`
+	Metrics             RedditPostMetrics     `json:"metrics"`
+	RemovedByCategory   *string               `json:"removedByCategory"`
+	Text                *string               `json:"text"`
+	TextHtml            *string               `json:"textHtml"`
+	Thumbnail           *RedditThumbnail      `json:"thumbnail"`
+	Title               *string               `json:"title"`
+	TopAwardedType      *string               `json:"topAwardedType"`
+	URL                 string                `json:"url"`
+	Visibility          RedditPostVisibility  `json:"visibility"`
 }
 
-type SearchResultMetrics struct {
-	Comments  *int64 `json:"comments,omitempty"`
-	Followers *int64 `json:"followers,omitempty"`
-	Likes     *int64 `json:"likes,omitempty"`
-	Posts     *int64 `json:"posts,omitempty"`
-	Shares    *int64 `json:"shares,omitempty"`
-	Views     *int64 `json:"views,omitempty"`
+type RedditPostFlairSettings struct {
+	Enabled  *bool   `json:"enabled"`
+	Position *string `json:"position"`
 }
 
-type StoryLink struct {
-	DisplayURL *string  `json:"displayUrl,omitempty"`
-	Height     *float64 `json:"height,omitempty"`
-	Rotation   *float64 `json:"rotation,omitempty"`
-	Title      *string  `json:"title,omitempty"`
-	URL        string   `json:"url"`
-	Width      *float64 `json:"width,omitempty"`
-	X          *float64 `json:"x,omitempty"`
-	Y          *float64 `json:"y,omitempty"`
+type RedditPostMetrics struct {
+	Awards      *int64   `json:"awards"`
+	Comments    *int64   `json:"comments"`
+	Crossposts  *int64   `json:"crossposts"`
+	Gilded      *int64   `json:"gilded"`
+	Score       *int64   `json:"score"`
+	UpvoteRatio *float64 `json:"upvoteRatio"`
+	Views       *int64   `json:"views"`
 }
 
-type StorySticker struct {
-	Height   *float64   `json:"height,omitempty"`
-	ID       *string    `json:"id,omitempty"`
-	Link     *StoryLink `json:"link,omitempty"`
-	Rotation *float64   `json:"rotation,omitempty"`
-	Type     *string    `json:"type,omitempty"`
-	Width    *float64   `json:"width,omitempty"`
-	X        *float64   `json:"x,omitempty"`
-	Y        *float64   `json:"y,omitempty"`
+type RedditPostReference struct {
+	Author              *RedditAuthor         `json:"author"`
+	Comments            RedditCommentsSetting `json:"comments"`
+	Community           *RedditCommunity      `json:"community"`
+	CreatedAt           *time.Time            `json:"createdAt"`
+	DistinguishedBy     *string               `json:"distinguishedBy"`
+	Domain              *string               `json:"domain"`
+	EditedAt            *time.Time            `json:"editedAt"`
+	Embed               *RedditEmbed          `json:"embed"`
+	Flair               *RedditFlair          `json:"flair"`
+	ID                  *string               `json:"id"`
+	IsArchived          *bool                 `json:"isArchived"`
+	IsCrosspostable     *bool                 `json:"isCrosspostable"`
+	IsEdited            *bool                 `json:"isEdited"`
+	IsGallery           *bool                 `json:"isGallery"`
+	IsLocked            *bool                 `json:"isLocked"`
+	IsMediaOnly         *bool                 `json:"isMediaOnly"`
+	IsMeta              *bool                 `json:"isMeta"`
+	IsOriginalContent   *bool                 `json:"isOriginalContent"`
+	IsPinned            *bool                 `json:"isPinned"`
+	IsRedditMediaDomain *bool                 `json:"isRedditMediaDomain"`
+	IsSelf              *bool                 `json:"isSelf"`
+	IsSensitive         *bool                 `json:"isSensitive"`
+	IsSpoiler           *bool                 `json:"isSpoiler"`
+	IsStickied          *bool                 `json:"isStickied"`
+	IsVideo             *bool                 `json:"isVideo"`
+	LinkURL             *string               `json:"linkUrl"`
+	Media               []RedditMedia         `json:"media"`
+	Metrics             RedditPostMetrics     `json:"metrics"`
+	RemovedByCategory   *string               `json:"removedByCategory"`
+	Text                *string               `json:"text"`
+	TextHtml            *string               `json:"textHtml"`
+	Thumbnail           *RedditThumbnail      `json:"thumbnail"`
+	Title               *string               `json:"title"`
+	TopAwardedType      *string               `json:"topAwardedType"`
+	URL                 *string               `json:"url"`
+	Visibility          RedditPostVisibility  `json:"visibility"`
+}
+
+type RedditPostVisibility struct {
+	IsRobotIndexable *bool `json:"isRobotIndexable"`
+	IsScoreHidden    *bool `json:"isScoreHidden"`
+}
+
+type RedditPostingLabels struct {
+	Link *string `json:"link"`
+	Text *string `json:"text"`
+}
+
+type RedditPostingSettings struct {
+	AllOriginalContent        *bool                `json:"allOriginalContent"`
+	AllowGalleries            *bool                `json:"allowGalleries"`
+	AllowImages               *bool                `json:"allowImages"`
+	AllowPolls                *bool                `json:"allowPolls"`
+	AllowVideos               *bool                `json:"allowVideos"`
+	Instructions              *RedditText          `json:"instructions"`
+	Labels                    *RedditPostingLabels `json:"labels"`
+	OriginalContentTagEnabled *bool                `json:"originalContentTagEnabled"`
+	RestrictPosting           *bool                `json:"restrictPosting"`
+	SpoilersEnabled           *bool                `json:"spoilersEnabled"`
+	Type                      *string              `json:"type"`
+}
+
+type RedditProfile struct {
+	AcceptsFollowers *bool                   `json:"acceptsFollowers"`
+	Avatar           *RedditImage            `json:"avatar"`
+	Banner           *RedditImage            `json:"banner"`
+	Bio              *string                 `json:"bio"`
+	CreatedAt        *time.Time              `json:"createdAt"`
+	DisplayHandle    *string                 `json:"displayHandle"`
+	DisplayName      *string                 `json:"displayName"`
+	Handle           string                  `json:"handle"`
+	ID               string                  `json:"id"`
+	IsEmployee       *bool                   `json:"isEmployee"`
+	IsModerator      *bool                   `json:"isModerator"`
+	IsPremium        *bool                   `json:"isPremium"`
+	IsSensitive      *bool                   `json:"isSensitive"`
+	Metrics          RedditProfileMetrics    `json:"metrics"`
+	ProfileCommunity *RedditProfileCommunity `json:"profileCommunity"`
+	Snoovatar        *RedditImage            `json:"snoovatar"`
+	URL              string                  `json:"url"`
+	Verification     RedditVerification      `json:"verification"`
+	Visibility       RedditProfileVisibility `json:"visibility"`
+}
+
+type RedditProfileCommunity struct {
+	CommunityIcon *RedditImage `json:"communityIcon"`
+	DisplayHandle *string      `json:"displayHandle"`
+	Handle        *string      `json:"handle"`
+	Icon          *RedditImage `json:"icon"`
+	PrimaryColor  *string      `json:"primaryColor"`
+	Type          *string      `json:"type"`
+}
+
+type RedditProfileMetrics struct {
+	Followers *int64      `json:"followers"`
+	Karma     RedditKarma `json:"karma"`
+}
+
+type RedditProfileVisibility struct {
+	HideFromRobots *bool `json:"hideFromRobots"`
+}
+
+type RedditReportSettings struct {
+	AllowCustomReasons *bool `json:"allowCustomReasons"`
+}
+
+type RedditRule struct {
+	CreatedAt       *time.Time  `json:"createdAt"`
+	Description     *RedditText `json:"description"`
+	Kind            *string     `json:"kind"`
+	Name            string      `json:"name"`
+	Priority        *int64      `json:"priority"`
+	ViolationReason *string     `json:"violationReason"`
+}
+
+type RedditSubreddit struct {
+	AcceptsFollowers *bool                   `json:"acceptsFollowers"`
+	Avatar           *RedditImage            `json:"avatar"`
+	Banner           *RedditImage            `json:"banner"`
+	Branding         RedditSubredditBranding `json:"branding"`
+	CreatedAt        *time.Time              `json:"createdAt"`
+	Description      *RedditText             `json:"description"`
+	DisplayHandle    *string                 `json:"displayHandle"`
+	DisplayName      *string                 `json:"displayName"`
+	Handle           string                  `json:"handle"`
+	ID               string                  `json:"id"`
+	IsQuarantined    *bool                   `json:"isQuarantined"`
+	IsSensitive      *bool                   `json:"isSensitive"`
+	Language         *string                 `json:"language"`
+	Metrics          RedditSubredditMetrics  `json:"metrics"`
+	Settings         RedditSubredditSettings `json:"settings"`
+	Summary          *RedditText             `json:"summary"`
+	Type             *string                 `json:"type"`
+	URL              string                  `json:"url"`
+}
+
+type RedditSubredditBranding struct {
+	Banner      *RedditImage          `json:"banner"`
+	Colors      RedditSubredditColors `json:"colors"`
+	Header      *RedditImage          `json:"header"`
+	HeaderTitle *string               `json:"headerTitle"`
+	Icon        *RedditImage          `json:"icon"`
+}
+
+type RedditSubredditColors struct {
+	BannerBackground *string `json:"bannerBackground"`
+	Key              *string `json:"key"`
+	Primary          *string `json:"primary"`
+}
+
+type RedditSubredditMetrics struct {
+	Subscribers *int64 `json:"subscribers"`
+}
+
+type RedditSubredditSettings struct {
+	Comments  RedditCommentSettings   `json:"comments"`
+	Display   RedditDisplaySettings   `json:"display"`
+	PostFlair RedditPostFlairSettings `json:"postFlair"`
+	Posting   RedditPostingSettings   `json:"posting"`
+	Reports   RedditReportSettings    `json:"reports"`
+}
+
+type RedditText struct {
+	Html *string `json:"html"`
+	Text *string `json:"text"`
+}
+
+type RedditThumbnail struct {
+	Height *int64  `json:"height"`
+	State  *string `json:"state"`
+	Type   *string `json:"type"`
+	URL    *string `json:"url"`
+	Width  *int64  `json:"width"`
+}
+
+type RedditTrophy struct {
+	AwardID     *string      `json:"awardId"`
+	Description *string      `json:"description"`
+	GrantedAt   *time.Time   `json:"grantedAt"`
+	Icon        *RedditImage `json:"icon"`
+	ID          *string      `json:"id"`
+	Name        string       `json:"name"`
+	URL         *string      `json:"url"`
+}
+
+type RedditVerification struct {
+	HasVerifiedEmail *bool `json:"hasVerifiedEmail"`
+	ReportedVerified *bool `json:"reportedVerified"`
+}
+
+type RedditWikiAuthor struct {
+	Handle *string `json:"handle"`
+}
+
+type RedditWikiContent struct {
+	Html     *string `json:"html"`
+	Markdown *string `json:"markdown"`
+}
+
+type RedditWikiPage struct {
+	Content  *RedditWikiContent  `json:"content"`
+	Revision *RedditWikiRevision `json:"revision"`
+	Title    string              `json:"title"`
+	URL      string              `json:"url"`
+}
+
+type RedditWikiRevision struct {
+	Author    *RedditWikiAuthor `json:"author"`
+	CreatedAt *time.Time        `json:"createdAt"`
+	ID        *string           `json:"id"`
+	Reason    *string           `json:"reason"`
+}
+
+type ResponseCursors struct {
+	Next *string `json:"next"`
+}
+
+type ResponseMeta struct {
+	Cashtags            []any                     `json:"cashtags,omitempty"`
+	Chart               *TikTokChartMetadata      `json:"chart,omitempty"`
+	Collection          *InstagramStoryCollection `json:"collection,omitempty"`
+	Community           *RedditCommunityHandle    `json:"community,omitempty"`
+	Context             *RedditListingContext     `json:"context,omitempty"`
+	Continuation        *TikTokPageContinuation   `json:"continuation,omitempty"`
+	Count               *int64                    `json:"count,omitempty"`
+	Cursors             ResponseCursors           `json:"cursors"`
+	Domain              *string                   `json:"domain,omitempty"`
+	Events              []any                     `json:"events,omitempty"`
+	Handle              *string                   `json:"handle,omitempty"`
+	HasFilteredComments *bool                     `json:"hasFilteredComments,omitempty"`
+	HasMore             *bool                     `json:"hasMore,omitempty"`
+	HasMoreAfter        *bool                     `json:"hasMoreAfter,omitempty"`
+	HasMoreBefore       *bool                     `json:"hasMoreBefore,omitempty"`
+	Hashtags            []any                     `json:"hashtags,omitempty"`
+	IsLimited           *bool                     `json:"isLimited,omitempty"`
+	LikesEnabled        *bool                     `json:"likesEnabled,omitempty"`
+	Limit               *int64                    `json:"limit,omitempty"`
+	Lists               []any                     `json:"lists,omitempty"`
+	Metrics             *struct {
+		Comments    *int64 `json:"comments,omitempty"`
+		Followers   *int64 `json:"followers,omitempty"`
+		Following   *int64 `json:"following,omitempty"`
+		Likes       *int64 `json:"likes,omitempty"`
+		Replies     *int64 `json:"replies,omitempty"`
+		Results     *int64 `json:"results,omitempty"`
+		Suggestions *int64 `json:"suggestions,omitempty"`
+	} `json:"metrics,omitempty"`
+	NextCursorLabel  *string                    `json:"nextCursorLabel,omitempty"`
+	NextCursorType   *string                    `json:"nextCursorType,omitempty"`
+	Parent           *InstagramCommentReference `json:"parent,omitempty"`
+	PreviousCursor   *string                    `json:"previousCursor,omitempty"`
+	Promoted         []TwitterPostReference     `json:"promoted,omitempty"`
+	Queries          []TwitterSuggestedQuery    `json:"queries,omitempty"`
+	Query            *string                    `json:"query,omitempty"`
+	SiteRules        []string                   `json:"siteRules,omitempty"`
+	Sort             *string                    `json:"sort,omitempty"`
+	ThreadingEnabled *bool                      `json:"threadingEnabled,omitempty"`
+	Track            *InstagramAudioReference   `json:"track,omitempty"`
 }
 
 type SuccessEnvelope struct {
-	CapturedAt time.Time `json:"capturedAt"`
-	Data       any       `json:"data"`
-	Meta       *struct {
-		Cursors struct {
-			Next *string `json:"next"`
-		} `json:"cursors"`
-	} `json:"meta,omitempty"`
-	Platform string `json:"platform"`
-	Resource string `json:"resource"`
-	Source   string `json:"source"`
+	CapturedAt time.Time     `json:"capturedAt"`
+	Data       any           `json:"data"`
+	Meta       *ResponseMeta `json:"meta,omitempty"`
+	Platform   string        `json:"platform"`
+	Resource   string        `json:"resource"`
+	Source     string        `json:"source"`
 }
 
 type TestDataCatalog struct {
@@ -554,153 +1809,1601 @@ type TestDataRelationship struct {
 	Type    string `json:"type"`
 }
 
+type TikTokAsset struct {
+	Bitrate           *int64                    `json:"bitrate"`
+	CodecCode         *int64                    `json:"codecCode"`
+	Covers            []TikTokAsset             `json:"covers"`
+	Duration          *float64                  `json:"duration"`
+	ExpiresAt         *time.Time                `json:"expiresAt"`
+	Format            *string                   `json:"format"`
+	FrameRate         *float64                  `json:"frameRate"`
+	HasWatermark      *bool                     `json:"hasWatermark"`
+	Hash              *string                   `json:"hash"`
+	Height            *int64                    `json:"height"`
+	ID                *string                   `json:"id"`
+	IsAutoGenerated   *bool                     `json:"isAutoGenerated"`
+	IsBytevc1         *bool                     `json:"isBytevc1"`
+	IsOriginal        *bool                     `json:"isOriginal"`
+	Label             *string                   `json:"label"`
+	Language          *string                   `json:"language"`
+	Locale            *string                   `json:"locale"`
+	PreviewThumbnails []TikTokPreviewThumbnails `json:"previewThumbnails"`
+	QualityCode       *int64                    `json:"qualityCode"`
+	QualityLabel      *string                   `json:"qualityLabel"`
+	Renditions        []TikTokAsset             `json:"renditions"`
+	Role              *string                   `json:"role"`
+	Size              *int64                    `json:"size"`
+	Subtitles         []TikTokAsset             `json:"subtitles"`
+	Type              *string                   `json:"type"`
+	URL               *string                   `json:"url"`
+	Variants          []TikTokAsset             `json:"variants"`
+	Version           *string                   `json:"version"`
+	VolumeInfo        TikTokVolumeInfo          `json:"volumeInfo"`
+	Width             *int64                    `json:"width"`
+}
+
+type TikTokBeatData struct {
+	Bitrate           *int64                    `json:"bitrate"`
+	CodecCode         *int64                    `json:"codecCode"`
+	Covers            []TikTokAsset             `json:"covers"`
+	Duration          *float64                  `json:"duration"`
+	ExpiresAt         *time.Time                `json:"expiresAt"`
+	Format            *string                   `json:"format"`
+	FrameRate         *float64                  `json:"frameRate"`
+	HasWatermark      *bool                     `json:"hasWatermark"`
+	Hash              *string                   `json:"hash"`
+	Height            *int64                    `json:"height"`
+	ID                *string                   `json:"id"`
+	IsAutoGenerated   *bool                     `json:"isAutoGenerated"`
+	IsBytevc1         *bool                     `json:"isBytevc1"`
+	IsOriginal        *bool                     `json:"isOriginal"`
+	Label             *string                   `json:"label"`
+	Language          *string                   `json:"language"`
+	Locale            *string                   `json:"locale"`
+	PreviewThumbnails []TikTokPreviewThumbnails `json:"previewThumbnails"`
+	QualityCode       *int64                    `json:"qualityCode"`
+	QualityLabel      *string                   `json:"qualityLabel"`
+	Renditions        []TikTokAsset             `json:"renditions"`
+	Resources         []TikTokAsset             `json:"resources"`
+	Role              *string                   `json:"role"`
+	Size              *int64                    `json:"size"`
+	Subtitles         []TikTokAsset             `json:"subtitles"`
+	Type              *string                   `json:"type"`
+	URL               *string                   `json:"url"`
+	Variants          []TikTokAsset             `json:"variants"`
+	Version           *string                   `json:"version"`
+	VolumeInfo        TikTokVolumeInfo          `json:"volumeInfo"`
+	Width             *int64                    `json:"width"`
+}
+
+type TikTokCategory struct {
+	Avatar          *TikTokAsset                `json:"avatar"`
+	CategoryContext TikTokCategoryContext       `json:"categoryContext"`
+	Classification  TikTokHashtagClassification `json:"classification"`
+	Cover           *TikTokAsset                `json:"cover"`
+	Description     *string                     `json:"description"`
+	ID              string                      `json:"id"`
+	IsCommerce      *bool                       `json:"isCommerce"`
+	IsStrongMusic   *bool                       `json:"isStrongMusic"`
+	Metrics         TikTokHashtagMetrics        `json:"metrics"`
+	Music           []TikTokMusicReference      `json:"music"`
+	Name            *string                     `json:"name"`
+	PreviewPosts    []TikTokPostReference       `json:"previewPosts"`
+	SearchContext   TikTokHashtagSearchContext  `json:"searchContext"`
+	URL             string                      `json:"url"`
+}
+
+type TikTokCategoryContext struct {
+	Label    *string `json:"label"`
+	TypeCode *int64  `json:"typeCode"`
+}
+
+type TikTokChartMetadata struct {
+	Cover     *TikTokAsset `json:"cover"`
+	ID        *string      `json:"id"`
+	UpdatedAt *time.Time   `json:"updatedAt"`
+}
+
+type TikTokCollaborator struct {
+	Profile TikTokProfileReference `json:"profile"`
+	Status  *int64                 `json:"status"`
+}
+
 type TikTokComment struct {
-	CommentCore
+	Author           *TikTokProfileReference  `json:"author"`
+	CreatedAt        time.Time                `json:"createdAt"`
+	Entities         []TikTokTextEntity       `json:"entities"`
+	ID               string                   `json:"id"`
+	IsLikedByCreator *bool                    `json:"isLikedByCreator"`
+	IsPinned         *bool                    `json:"isPinned"`
+	Labels           []TikTokCommentLabel     `json:"labels"`
+	Language         *string                  `json:"language"`
+	Media            []TikTokAsset            `json:"media"`
+	Metrics          TikTokCommentMetrics     `json:"metrics"`
+	ParentID         *string                  `json:"parentId"`
+	PostID           *string                  `json:"postId"`
+	Predictions      TikTokCommentPredictions `json:"predictions"`
+	PreviewReplies   []TikTokCommentReference `json:"previewReplies"`
+	ReplyTo          *TikTokProfileReference  `json:"replyTo"`
+	RootCommentID    *string                  `json:"rootCommentId"`
+	Sticker          *TikTokCommentSticker    `json:"sticker"`
+	Text             *string                  `json:"text"`
+}
+
+type TikTokCommentLabel struct {
+	Text     *string `json:"text"`
+	TypeCode *int64  `json:"typeCode"`
+}
+
+type TikTokCommentMetrics struct {
+	Likes   *int64 `json:"likes"`
+	Replies *int64 `json:"replies"`
+}
+
+type TikTokCommentPredictions struct {
+	HighPurchaseIntent *bool `json:"highPurchaseIntent"`
+}
+
+type TikTokCommentReference struct {
+	Author           *TikTokProfileReference  `json:"author"`
+	CreatedAt        *time.Time               `json:"createdAt"`
+	Entities         []TikTokTextEntity       `json:"entities"`
+	ID               *string                  `json:"id"`
+	IsLikedByCreator *bool                    `json:"isLikedByCreator"`
+	IsPinned         *bool                    `json:"isPinned"`
+	Labels           []TikTokCommentLabel     `json:"labels"`
+	Language         *string                  `json:"language"`
+	Media            []TikTokAsset            `json:"media"`
+	Metrics          TikTokCommentMetrics     `json:"metrics"`
+	ParentID         *string                  `json:"parentId"`
+	PostID           *string                  `json:"postId"`
+	Predictions      TikTokCommentPredictions `json:"predictions"`
+	PreviewReplies   []TikTokCommentReference `json:"previewReplies"`
+	ReplyTo          *TikTokProfileReference  `json:"replyTo"`
+	RootCommentID    *string                  `json:"rootCommentId"`
+	Sticker          *TikTokCommentSticker    `json:"sticker"`
+	Text             *string                  `json:"text"`
+}
+
+type TikTokCommentSticker struct {
+	CreatedAt  *time.Time    `json:"createdAt"`
+	CreatorID  *string       `json:"creatorId"`
+	ID         *string       `json:"id"`
+	Name       *string       `json:"name"`
+	Renditions []TikTokAsset `json:"renditions"`
+	SetID      *string       `json:"setId"`
+	TypeCode   *int64        `json:"typeCode"`
+}
+
+type TikTokCommerceMetrics struct {
+	Products *int64 `json:"products"`
+}
+
+type TikTokCoordinates struct {
+	Geohash   *string  `json:"geohash"`
+	Latitude  *float64 `json:"latitude"`
+	Longitude *float64 `json:"longitude"`
+}
+
+type TikTokDistrict struct {
+	ID         *string `json:"id"`
+	Name       *string `json:"name"`
+	ParentName *string `json:"parentName"`
 }
 
 type TikTokEffect struct {
-	CreatedAt    *time.Time      `json:"createdAt,omitempty"`
-	Description  *string         `json:"description,omitempty"`
-	ID           string          `json:"id"`
-	Image        *MediaReference `json:"image,omitempty"`
-	IsCommercial *bool           `json:"isCommercial,omitempty"`
-	Name         *string         `json:"name,omitempty"`
-	PostCount    *int64          `json:"postCount,omitempty"`
-	Type         *string         `json:"type,omitempty"`
-	URL          *string         `json:"url,omitempty"`
-	ViewCount    *int64          `json:"viewCount,omitempty"`
+	Attributions   []TikTokUnspecified        `json:"attributions"`
+	Children       []TikTokUnspecified        `json:"children"`
+	Classification TikTokEffectClassification `json:"classification"`
+	Creation       TikTokEffectCreation       `json:"creation"`
+	Description    *string                    `json:"description"`
+	EffectID       *string                    `json:"effectId"`
+	Icon           *TikTokAsset               `json:"icon"`
+	ID             string                     `json:"id"`
+	IsTopEffect    *bool                      `json:"isTopEffect"`
+	LinkedAnchors  []TikTokUnspecified        `json:"linkedAnchors"`
+	Metrics        TikTokEffectMetrics        `json:"metrics"`
+	Name           *string                    `json:"name"`
+	Owner          *TikTokEffectOwner         `json:"owner"`
+	PublishedAt    *time.Time                 `json:"publishedAt"`
+	ResourceID     *string                    `json:"resourceId"`
+	Tags           []string                   `json:"tags"`
+	Triggers       []TikTokEffectTrigger      `json:"triggers"`
+	URL            string                     `json:"url"`
 }
 
-type TikTokEntity struct {
-	EntityCore
+type TikTokEffectClassification struct {
+	CreatorTypeCode *int64 `json:"creatorTypeCode"`
+	SourceCode      *int64 `json:"sourceCode"`
+}
+
+type TikTokEffectCreation struct {
+	IsEffectHouse      *bool `json:"isEffectHouse"`
+	IsExternalProducer *bool `json:"isExternalProducer"`
+}
+
+type TikTokEffectMetrics struct {
+	Uses  *int64 `json:"uses"`
+	Views *int64 `json:"views"`
+}
+
+type TikTokEffectOwner struct {
+	Avatar              *TikTokAsset                  `json:"avatar"`
+	DisplayName         *string                       `json:"displayName"`
+	ID                  *string                       `json:"id"`
+	IsTopEffectDesigner *bool                         `json:"isTopEffectDesigner"`
+	SecUid              *string                       `json:"secUid"`
+	Verification        TikTokEffectOwnerVerification `json:"verification"`
+}
+
+type TikTokEffectOwnerVerification struct {
+	TypeCode *int64 `json:"typeCode"`
+}
+
+type TikTokEffectReference struct {
+	Attributions   []TikTokUnspecified        `json:"attributions"`
+	Children       []TikTokUnspecified        `json:"children"`
+	Classification TikTokEffectClassification `json:"classification"`
+	Creation       TikTokEffectCreation       `json:"creation"`
+	Description    *string                    `json:"description"`
+	EffectID       *string                    `json:"effectId"`
+	Icon           *TikTokAsset               `json:"icon"`
+	ID             *string                    `json:"id"`
+	IsTopEffect    *bool                      `json:"isTopEffect"`
+	LinkedAnchors  []TikTokUnspecified        `json:"linkedAnchors"`
+	Metrics        TikTokEffectMetrics        `json:"metrics"`
+	Name           *string                    `json:"name"`
+	Owner          *TikTokEffectOwner         `json:"owner"`
+	PublishedAt    *time.Time                 `json:"publishedAt"`
+	ResourceID     *string                    `json:"resourceId"`
+	Tags           []string                   `json:"tags"`
+	Triggers       []TikTokEffectTrigger      `json:"triggers"`
+	URL            *string                    `json:"url"`
+}
+
+type TikTokEffectTrigger struct {
+	ActionCodes []int64 `json:"actionCodes"`
+	Type        *string `json:"type"`
+}
+
+type TikTokHashtag struct {
+	Avatar         *TikTokAsset                `json:"avatar"`
+	Classification TikTokHashtagClassification `json:"classification"`
+	Cover          *TikTokAsset                `json:"cover"`
+	Description    *string                     `json:"description"`
+	ID             string                      `json:"id"`
+	IsCommerce     *bool                       `json:"isCommerce"`
+	IsStrongMusic  *bool                       `json:"isStrongMusic"`
+	Metrics        TikTokHashtagMetrics        `json:"metrics"`
+	Music          []TikTokMusicReference      `json:"music"`
+	Name           *string                     `json:"name"`
+	SearchContext  TikTokHashtagSearchContext  `json:"searchContext"`
+	URL            string                      `json:"url"`
+}
+
+type TikTokHashtagClassification struct {
+	ChallengeCode *int64 `json:"challengeCode"`
+	SubtypeCode   *int64 `json:"subtypeCode"`
+	TypeCode      *int64 `json:"typeCode"`
+}
+
+type TikTokHashtagMetrics struct {
+	Users *int64 `json:"users"`
+	Uses  *int64 `json:"uses"`
+	Views *int64 `json:"views"`
+}
+
+type TikTokHashtagReference struct {
+	ID   *string `json:"id"`
+	Name *string `json:"name"`
+	URL  *string `json:"url"`
+}
+
+type TikTokHashtagSearchContext struct {
+	Name *string `json:"name"`
+}
+
+type TikTokInteractionSticker struct {
+	Hashtag       *TikTokHashtagReference `json:"hashtag"`
+	Index         *int64                  `json:"index"`
+	IsTextHashtag *bool                   `json:"isTextHashtag"`
+	MaterialIndex *int64                  `json:"materialIndex"`
+	Positions     []TikTokStickerPosition `json:"positions"`
+	Text          *string                 `json:"text"`
+	TypeCode      *int64                  `json:"typeCode"`
+}
+
+type TikTokLocation struct {
+	Address        TikTokLocationAddress        `json:"address"`
+	Category       *string                      `json:"category"`
+	Classification TikTokLocationClassification `json:"classification"`
+	Commerce       TikTokLocationCommerce       `json:"commerce"`
+	Coordinates    TikTokCoordinates            `json:"coordinates"`
+	ExternalURL    *string                      `json:"externalUrl"`
+	ID             string                       `json:"id"`
+	Metrics        TikTokLocationMetrics        `json:"metrics"`
+	Name           *string                      `json:"name"`
+	OpeningHours   TikTokOpeningHours           `json:"openingHours"`
+	Parent         *TikTokLocationParent        `json:"parent"`
+	PriceLevel     *string                      `json:"priceLevel"`
+	Rating         TikTokLocationRating         `json:"rating"`
+	Source         *string                      `json:"source"`
+	URL            *string                      `json:"url"`
+}
+
+type TikTokLocationAddress struct {
+	City        *string         `json:"city"`
+	CityCode    *string         `json:"cityCode"`
+	CountryCode *string         `json:"countryCode"`
+	District    *TikTokDistrict `json:"district"`
+	Fallback    *string         `json:"fallback"`
+	Formatted   *string         `json:"formatted"`
+	RegionCode  *string         `json:"regionCode"`
+}
+
+type TikTokLocationClassification struct {
+	BackendType     *string               `json:"backendType"`
+	ClassName       *string               `json:"className"`
+	Code            *string               `json:"code"`
+	DetailType      *string               `json:"detailType"`
+	Hierarchy       []string              `json:"hierarchy"`
+	LevelCode       *string               `json:"levelCode"`
+	ServiceCategory TikTokServiceCategory `json:"serviceCategory"`
+	SourceCode      *int64                `json:"sourceCode"`
+}
+
+type TikTokLocationCommerce struct {
+	HasProductShelf *bool `json:"hasProductShelf"`
+	IsClaimed       *bool `json:"isClaimed"`
+}
+
+type TikTokLocationMetrics struct {
+	Favorites *int64 `json:"favorites"`
+	Reviews   *int64 `json:"reviews"`
+	Videos    *int64 `json:"videos"`
+}
+
+type TikTokLocationParent struct {
+	ID   *string `json:"id"`
+	Name *string `json:"name"`
+}
+
+type TikTokLocationRating struct {
+	HasRating *bool              `json:"hasRating"`
+	MaxScore  *float64           `json:"maxScore"`
+	Score     *float64           `json:"score"`
+	Source    TikTokRatingSource `json:"source"`
+}
+
+type TikTokLocationReference struct {
+	Address        TikTokLocationAddress        `json:"address"`
+	Category       *string                      `json:"category"`
+	Classification TikTokLocationClassification `json:"classification"`
+	Commerce       TikTokLocationCommerce       `json:"commerce"`
+	Coordinates    TikTokCoordinates            `json:"coordinates"`
+	ExternalURL    *string                      `json:"externalUrl"`
+	ID             *string                      `json:"id"`
+	Metrics        TikTokLocationMetrics        `json:"metrics"`
+	Name           *string                      `json:"name"`
+	OpeningHours   TikTokOpeningHours           `json:"openingHours"`
+	Parent         *TikTokLocationParent        `json:"parent"`
+	PriceLevel     *string                      `json:"priceLevel"`
+	Rating         TikTokLocationRating         `json:"rating"`
+	Source         *string                      `json:"source"`
+	URL            *string                      `json:"url"`
+}
+
+type TikTokLyricAsset struct {
+	ID       *string `json:"id"`
+	TypeCode *int64  `json:"typeCode"`
+	URL      *string `json:"url"`
+}
+
+type TikTokMatchedTrack struct {
+	ArtistName      *string                  `json:"artistName"`
+	Artists         []TikTokProfileReference `json:"artists"`
+	Chorus          TikTokMusicPreview       `json:"chorus"`
+	Cover           *TikTokAsset             `json:"cover"`
+	Duration        *float64                 `json:"duration"`
+	ID              *string                  `json:"id"`
+	MixedArtistName *string                  `json:"mixedArtistName"`
+	MixedTitle      *string                  `json:"mixedTitle"`
+	Release         TikTokMusicRelease       `json:"release"`
+	Title           *string                  `json:"title"`
+	URL             *string                  `json:"url"`
+}
+
+type TikTokMusic struct {
+	Album                    *string                   `json:"album"`
+	AppleMusicSongID         *string                   `json:"appleMusicSongId"`
+	ArtistName               *string                   `json:"artistName"`
+	Artists                  []TikTokProfileReference  `json:"artists"`
+	Audio                    *TikTokAsset              `json:"audio"`
+	BeatData                 *TikTokBeatData           `json:"beatData"`
+	ChartContext             TikTokMusicChartContext   `json:"chartContext"`
+	Classification           TikTokMusicClassification `json:"classification"`
+	Covers                   []TikTokAsset             `json:"covers"`
+	CreatedAt                *time.Time                `json:"createdAt"`
+	Duration                 *float64                  `json:"duration"`
+	Durations                TikTokMusicDurations      `json:"durations"`
+	ExternalSongs            []TikTokUnspecified       `json:"externalSongs"`
+	Grouping                 TikTokMusicGrouping       `json:"grouping"`
+	HasBehindTheSong         *bool                     `json:"hasBehindTheSong"`
+	HasHumanVoice            *bool                     `json:"hasHumanVoice"`
+	HasMatchedMetadata       *bool                     `json:"hasMatchedMetadata"`
+	ID                       string                    `json:"id"`
+	IsAuthorArtist           *bool                     `json:"isAuthorArtist"`
+	IsAuthorDeleted          *bool                     `json:"isAuthorDeleted"`
+	IsOriginal               *bool                     `json:"isOriginal"`
+	IsOriginalSound          *bool                     `json:"isOriginalSound"`
+	IsPgc                    *bool                     `json:"isPgc"`
+	IsPlayMusic              *bool                     `json:"isPlayMusic"`
+	LyricAssets              []TikTokLyricAsset        `json:"lyricAssets"`
+	MatchedCatalogTrack      *TikTokMusicReference     `json:"matchedCatalogTrack"`
+	MatchedSong              *TikTokMatchedTrack       `json:"matchedSong"`
+	MatchedSound             *TikTokMatchedTrack       `json:"matchedSound"`
+	Metrics                  TikTokMusicMetrics        `json:"metrics"`
+	Mid                      *string                   `json:"mid"`
+	Owner                    *TikTokProfileReference   `json:"owner"`
+	Preview                  TikTokMusicPreview        `json:"preview"`
+	RecommendationStatusCode *int64                    `json:"recommendationStatusCode"`
+	Release                  TikTokMusicRelease        `json:"release"`
+	SearchContext            TikTokMusicSearchContext  `json:"searchContext"`
+	SimilarTracks            []TikTokMusicReference    `json:"similarTracks"`
+	Source                   TikTokMusicSource         `json:"source"`
+	StreamingLinks           []TikTokStreamingLink     `json:"streamingLinks"`
+	Title                    *string                   `json:"title"`
+	URL                      *string                   `json:"url"`
+}
+
+type TikTokMusicChartContext struct {
+	ID        *string `json:"id"`
+	Position  *int64  `json:"position"`
+	TrendCode *int64  `json:"trendCode"`
+}
+
+type TikTokMusicClassification struct {
+	LanguageLabel *string  `json:"languageLabel"`
+	StyleCodes    []int64  `json:"styleCodes"`
+	ThemeCodes    []int64  `json:"themeCodes"`
+	Themes        []string `json:"themes"`
+}
+
+type TikTokMusicContext struct {
+	Label *string `json:"label"`
+}
+
+type TikTokMusicDurations struct {
+	Shoot *float64 `json:"shoot"`
+	Video *float64 `json:"video"`
+}
+
+type TikTokMusicGrouping struct {
+	GroupIDs       []string `json:"groupIds"`
+	SameGroupID    *string  `json:"sameGroupId"`
+	SimilarGroupID *string  `json:"similarGroupId"`
+	Ugid           *string  `json:"ugid"`
+}
+
+type TikTokMusicMetrics struct {
+	GroupUses *int64 `json:"groupUses"`
+	Posts     *int64 `json:"posts"`
+	UgidUses  *int64 `json:"ugidUses"`
+}
+
+type TikTokMusicPreview struct {
+	Duration  *float64 `json:"duration"`
+	EndTime   *float64 `json:"endTime"`
+	StartTime *float64 `json:"startTime"`
+}
+
+type TikTokMusicReference struct {
+	Album                    *string                   `json:"album"`
+	AppleMusicSongID         *string                   `json:"appleMusicSongId"`
+	ArtistName               *string                   `json:"artistName"`
+	Artists                  []TikTokProfileReference  `json:"artists"`
+	Audio                    *TikTokAsset              `json:"audio"`
+	BeatData                 *TikTokBeatData           `json:"beatData"`
+	ChartContext             TikTokMusicChartContext   `json:"chartContext"`
+	Classification           TikTokMusicClassification `json:"classification"`
+	Covers                   []TikTokAsset             `json:"covers"`
+	CreatedAt                *time.Time                `json:"createdAt"`
+	Duration                 *float64                  `json:"duration"`
+	Durations                TikTokMusicDurations      `json:"durations"`
+	ExternalSongs            []TikTokUnspecified       `json:"externalSongs"`
+	Grouping                 TikTokMusicGrouping       `json:"grouping"`
+	HasBehindTheSong         *bool                     `json:"hasBehindTheSong"`
+	HasHumanVoice            *bool                     `json:"hasHumanVoice"`
+	HasMatchedMetadata       *bool                     `json:"hasMatchedMetadata"`
+	ID                       *string                   `json:"id"`
+	IsAuthorArtist           *bool                     `json:"isAuthorArtist"`
+	IsAuthorDeleted          *bool                     `json:"isAuthorDeleted"`
+	IsOriginal               *bool                     `json:"isOriginal"`
+	IsOriginalSound          *bool                     `json:"isOriginalSound"`
+	IsPgc                    *bool                     `json:"isPgc"`
+	IsPlayMusic              *bool                     `json:"isPlayMusic"`
+	LyricAssets              []TikTokLyricAsset        `json:"lyricAssets"`
+	MatchedCatalogTrack      *TikTokMusicReference     `json:"matchedCatalogTrack"`
+	MatchedSong              *TikTokMatchedTrack       `json:"matchedSong"`
+	MatchedSound             *TikTokMatchedTrack       `json:"matchedSound"`
+	Metrics                  TikTokMusicMetrics        `json:"metrics"`
+	Mid                      *string                   `json:"mid"`
+	Owner                    *TikTokProfileReference   `json:"owner"`
+	Preview                  TikTokMusicPreview        `json:"preview"`
+	RecommendationStatusCode *int64                    `json:"recommendationStatusCode"`
+	Release                  TikTokMusicRelease        `json:"release"`
+	SearchContext            TikTokMusicSearchContext  `json:"searchContext"`
+	SimilarTracks            []TikTokMusicReference    `json:"similarTracks"`
+	Source                   TikTokMusicSource         `json:"source"`
+	StreamingLinks           []TikTokStreamingLink     `json:"streamingLinks"`
+	Title                    *string                   `json:"title"`
+	URL                      *string                   `json:"url"`
+}
+
+type TikTokMusicRelease struct {
+	Date         *string `json:"date"`
+	IsNewRelease *bool   `json:"isNewRelease"`
+}
+
+type TikTokMusicSearchContext struct {
+	Description  *string `json:"description"`
+	Name         *string `json:"name"`
+	RelatedQuery *string `json:"relatedQuery"`
+}
+
+type TikTokMusicSource struct {
+	AudioAssetID *string `json:"audioAssetId"`
+	SourcePostID *string `json:"sourcePostId"`
+}
+
+type TikTokOpeningHours struct {
+	EndTime   *string                   `json:"endTime"`
+	Entries   []TikTokOpeningHoursEntry `json:"entries"`
+	StartTime *string                   `json:"startTime"`
+	Status    *bool                     `json:"status"`
+	Text      *string                   `json:"text"`
+}
+
+type TikTokOpeningHoursEntry struct {
+	DayCode *int64  `json:"dayCode"`
+	Text    *string `json:"text"`
+}
+
+type TikTokPageContinuation struct {
+	MaxTime   *int64  `json:"maxTime"`
+	MinTime   *int64  `json:"minTime"`
+	Offset    *int64  `json:"offset"`
+	PageToken *string `json:"pageToken"`
+}
+
+type TikTokPageMetadata struct {
+	Chart               *TikTokChartMetadata    `json:"chart"`
+	Continuation        *TikTokPageContinuation `json:"continuation"`
+	HasFilteredComments *bool                   `json:"hasFilteredComments"`
+	HasMore             *bool                   `json:"hasMore"`
+	Metrics             struct {
+		Comments  *int64 `json:"comments"`
+		Followers *int64 `json:"followers"`
+		Following *int64 `json:"following"`
+		Results   *int64 `json:"results"`
+	} `json:"metrics"`
+	Query *string `json:"query"`
 }
 
 type TikTokPlaylist struct {
-	Cover       *MediaReference  `json:"cover,omitempty"`
-	CreatedAt   *time.Time       `json:"createdAt,omitempty"`
-	Description *string          `json:"description,omitempty"`
-	ID          string           `json:"id"`
-	Name        *string          `json:"name,omitempty"`
-	Owner       *EntityReference `json:"owner,omitempty"`
-	PlayCount   *int64           `json:"playCount,omitempty"`
-	PostCount   *int64           `json:"postCount,omitempty"`
-	UpdatedAt   *time.Time       `json:"updatedAt,omitempty"`
-	URL         *string          `json:"url,omitempty"`
+	Author          *TikTokProfileReference `json:"author"`
+	CreatorName     *string                 `json:"creatorName"`
+	ID              string                  `json:"id"`
+	Index           *int64                  `json:"index"`
+	LastPostAddedAt *time.Time              `json:"lastPostAddedAt"`
+	Metrics         TikTokPlaylistMetrics   `json:"metrics"`
+	Name            *string                 `json:"name"`
+	TypeCode        *int64                  `json:"typeCode"`
+	URL             *string                 `json:"url"`
+}
+
+type TikTokPlaylistMetrics struct {
+	Plays *int64 `json:"plays"`
+	Posts *int64 `json:"posts"`
+}
+
+type TikTokPlaylistReference struct {
+	Author          *TikTokProfileReference `json:"author"`
+	CreatorName     *string                 `json:"creatorName"`
+	ID              *string                 `json:"id"`
+	Index           *int64                  `json:"index"`
+	LastPostAddedAt *time.Time              `json:"lastPostAddedAt"`
+	Metrics         TikTokPlaylistMetrics   `json:"metrics"`
+	Name            *string                 `json:"name"`
+	TypeCode        *int64                  `json:"typeCode"`
+	URL             *string                 `json:"url"`
 }
 
 type TikTokPost struct {
-	PostCore
-	Collaborators     []PostAuthor        `json:"collaborators"`
-	Extended          *TikTokPostExtended `json:"extended,omitempty"`
-	IsAd              *bool               `json:"isAd"`
-	IsPaidPartnership *bool               `json:"isPaidPartnership"`
-	Location          *PostLocation       `json:"location"`
-	Metrics           TikTokPostMetrics   `json:"metrics"`
-	Music             *PostMusic          `json:"music"`
-	Sponsors          []PostAuthor        `json:"sponsors"`
-	TaggedUsers       []PostAuthor        `json:"taggedUsers"`
+	Ai                  TikTokPostAI               `json:"ai"`
+	Audio               TikTokPostAudio            `json:"audio"`
+	Author              *TikTokProfileReference    `json:"author"`
+	AuthorID            *string                    `json:"authorId"`
+	Caption             TikTokPostCaption          `json:"caption"`
+	Collaborators       []TikTokCollaborator       `json:"collaborators"`
+	Commerce            TikTokPostCommerce         `json:"commerce"`
+	Cover               *TikTokAsset               `json:"cover"`
+	CreatedAt           time.Time                  `json:"createdAt"`
+	Description         *string                    `json:"description"`
+	Effects             []TikTokEffectReference    `json:"effects"`
+	Entities            []TikTokTextEntity         `json:"entities"`
+	HasDanmaku          *bool                      `json:"hasDanmaku"`
+	HasPromotionalMusic *bool                      `json:"hasPromotionalMusic"`
+	Hashtags            []TikTokHashtagReference   `json:"hashtags"`
+	ID                  string                     `json:"id"`
+	IsAd                *bool                      `json:"isAd"`
+	IsMeme              *bool                      `json:"isMeme"`
+	IsPaidContent       *bool                      `json:"isPaidContent"`
+	IsPinned            *bool                      `json:"isPinned"`
+	IsVr                *bool                      `json:"isVr"`
+	Language            *string                    `json:"language"`
+	Locations           []TikTokLocationReference  `json:"locations"`
+	Media               []TikTokAsset              `json:"media"`
+	Metrics             TikTokPostMetrics          `json:"metrics"`
+	MusicContext        TikTokMusicContext         `json:"musicContext"`
+	OnScreenText        []TikTokUnspecified        `json:"onScreenText"`
+	PaidCollectionID    *string                    `json:"paidCollectionId"`
+	Playlist            *TikTokPlaylistReference   `json:"playlist"`
+	Region              *string                    `json:"region"`
+	SearchContext       TikTokPostSearchContext    `json:"searchContext"`
+	Status              TikTokPostStatus           `json:"status"`
+	Stickers            []TikTokInteractionSticker `json:"stickers"`
+	Template            *TikTokPostTemplate        `json:"template"`
+	Text                *string                    `json:"text"`
+	Title               *string                    `json:"title"`
+	Type                *string                    `json:"type"`
+	URL                 string                     `json:"url"`
 }
 
-type TikTokPostExtended struct {
-	AiLabelType          *int64 `json:"aiLabelType,omitempty"`
-	AllowsDuet           *bool  `json:"allowsDuet,omitempty"`
-	AllowsStitch         *bool  `json:"allowsStitch,omitempty"`
-	IsAiGenerated        *bool  `json:"isAiGenerated,omitempty"`
-	IsDownloadable       *bool  `json:"isDownloadable,omitempty"`
-	UsesPromotionalMusic *bool  `json:"usesPromotionalMusic,omitempty"`
+type TikTokPostAI struct {
+	IsCreatedByAi *bool  `json:"isCreatedByAi"`
+	LabelType     *int64 `json:"labelType"`
+}
+
+type TikTokPostAudio struct {
+	AddedTrack     *TikTokMusicReference `json:"addedTrack"`
+	AddedVolume    *float64              `json:"addedVolume"`
+	EndTime        *float64              `json:"endTime"`
+	OriginalVolume *float64              `json:"originalVolume"`
+	StartTime      *float64              `json:"startTime"`
+	Track          *TikTokMusicReference `json:"track"`
+	UsesFullSong   *bool                 `json:"usesFullSong"`
+}
+
+type TikTokPostCaption struct {
+	Entities []TikTokTextEntity `json:"entities"`
+	Markup   *string            `json:"markup"`
+}
+
+type TikTokPostCommerce struct {
+	BrandedContentType *int64                `json:"brandedContentType"`
+	DisclosureLabel    *string               `json:"disclosureLabel"`
+	IsDiversionAd      *bool                 `json:"isDiversionAd"`
+	IsEcommerce        *bool                 `json:"isEcommerce"`
+	Metrics            TikTokCommerceMetrics `json:"metrics"`
+	Products           []TikTokProduct       `json:"products"`
+	SellerIDs          []string              `json:"sellerIds"`
 }
 
 type TikTokPostMetrics struct {
-	PostMetrics
-	Downloads *int64 `json:"downloads"`
+	Comments  *int64                `json:"comments"`
+	Downloads *int64                `json:"downloads"`
+	Likes     *int64                `json:"likes"`
+	Reposts   *int64                `json:"reposts"`
+	Saves     *int64                `json:"saves"`
+	Shares    *int64                `json:"shares"`
+	Views     *int64                `json:"views"`
+	Whatsapp  TikTokWhatsAppMetrics `json:"whatsapp"`
+}
+
+type TikTokPostReference struct {
+	Ai                  TikTokPostAI               `json:"ai"`
+	Audio               TikTokPostAudio            `json:"audio"`
+	Author              *TikTokProfileReference    `json:"author"`
+	AuthorID            *string                    `json:"authorId"`
+	Caption             TikTokPostCaption          `json:"caption"`
+	Collaborators       []TikTokCollaborator       `json:"collaborators"`
+	Commerce            TikTokPostCommerce         `json:"commerce"`
+	Cover               *TikTokAsset               `json:"cover"`
+	CreatedAt           *time.Time                 `json:"createdAt"`
+	Description         *string                    `json:"description"`
+	Effects             []TikTokEffectReference    `json:"effects"`
+	Entities            []TikTokTextEntity         `json:"entities"`
+	HasDanmaku          *bool                      `json:"hasDanmaku"`
+	HasPromotionalMusic *bool                      `json:"hasPromotionalMusic"`
+	Hashtags            []TikTokHashtagReference   `json:"hashtags"`
+	ID                  *string                    `json:"id"`
+	IsAd                *bool                      `json:"isAd"`
+	IsMeme              *bool                      `json:"isMeme"`
+	IsPaidContent       *bool                      `json:"isPaidContent"`
+	IsPinned            *bool                      `json:"isPinned"`
+	IsVr                *bool                      `json:"isVr"`
+	Language            *string                    `json:"language"`
+	Locations           []TikTokLocationReference  `json:"locations"`
+	Media               []TikTokAsset              `json:"media"`
+	Metrics             TikTokPostMetrics          `json:"metrics"`
+	MusicContext        TikTokMusicContext         `json:"musicContext"`
+	OnScreenText        []TikTokUnspecified        `json:"onScreenText"`
+	PaidCollectionID    *string                    `json:"paidCollectionId"`
+	Playlist            *TikTokPlaylistReference   `json:"playlist"`
+	Region              *string                    `json:"region"`
+	SearchContext       TikTokPostSearchContext    `json:"searchContext"`
+	Status              TikTokPostStatus           `json:"status"`
+	Stickers            []TikTokInteractionSticker `json:"stickers"`
+	Template            *TikTokPostTemplate        `json:"template"`
+	Text                *string                    `json:"text"`
+	Title               *string                    `json:"title"`
+	Type                *string                    `json:"type"`
+	URL                 *string                    `json:"url"`
+}
+
+type TikTokPostSearchContext struct {
+	Description *string                 `json:"description"`
+	Highlights  []TikTokSearchHighlight `json:"highlights"`
+}
+
+type TikTokPostStatus struct {
+	IsDeleted     *bool  `json:"isDeleted"`
+	IsProhibited  *bool  `json:"isProhibited"`
+	IsUnderReview *bool  `json:"isUnderReview"`
+	PrivacyCode   *int64 `json:"privacyCode"`
+	ReviewedCode  *int64 `json:"reviewedCode"`
+}
+
+type TikTokPostTemplate struct {
+	AuthorName  *string               `json:"authorName"`
+	Description *string               `json:"description"`
+	Duration    *float64              `json:"duration"`
+	ID          *string               `json:"id"`
+	Metrics     TikTokTemplateMetrics `json:"metrics"`
+	MusicID     *string               `json:"musicId"`
+}
+
+type TikTokPreviewThumbnails struct {
+	Columns    *int64        `json:"columns"`
+	Duration   *float64      `json:"duration"`
+	Format     *string       `json:"format"`
+	ImageCount *int64        `json:"imageCount"`
+	ImageIDs   []string      `json:"imageIds"`
+	Images     []TikTokAsset `json:"images"`
+	Interval   *float64      `json:"interval"`
+	Rows       *int64        `json:"rows"`
+	TileHeight *int64        `json:"tileHeight"`
+	TileWidth  *int64        `json:"tileWidth"`
+}
+
+type TikTokProduct struct {
+	Categories        []TikTokProductCategory `json:"categories"`
+	Cover             *TikTokAsset            `json:"cover"`
+	DisclosureLabel   *string                 `json:"disclosureLabel"`
+	ID                *string                 `json:"id"`
+	Images            []TikTokAsset           `json:"images"`
+	InShop            *bool                   `json:"inShop"`
+	IsPlatformProduct *bool                   `json:"isPlatformProduct"`
+	Label             *string                 `json:"label"`
+	Name              *string                 `json:"name"`
+	PlatformCode      *int64                  `json:"platformCode"`
+	Pricing           TikTokProductPricing    `json:"pricing"`
+	SellerID          *string                 `json:"sellerId"`
+	ShortName         *string                 `json:"shortName"`
+	Skus              []TikTokProductSKU      `json:"skus"`
+	Source            *string                 `json:"source"`
+	StatusCode        *int64                  `json:"statusCode"`
+}
+
+type TikTokProductCategory struct {
+	ID       *string `json:"id"`
+	IsLeaf   *bool   `json:"isLeaf"`
+	Level    *int64  `json:"level"`
+	Name     *string `json:"name"`
+	ParentID *string `json:"parentId"`
+}
+
+type TikTokProductPricing struct {
+	Currency    *string `json:"currency"`
+	MarketPrice *int64  `json:"marketPrice"`
+	Price       *int64  `json:"price"`
+}
+
+type TikTokProductSKU struct {
+	ExternalID        *string `json:"externalId"`
+	ExternalProductID *string `json:"externalProductId"`
+	ID                *string `json:"id"`
 }
 
 type TikTokProfile struct {
-	ProfileCore
-	Extended *TikTokProfileExtended `json:"extended,omitempty"`
+	AccountType *int64       `json:"accountType"`
+	Avatar      *TikTokAsset `json:"avatar"`
+	Bio         *string      `json:"bio"`
+	Category    *string      `json:"category"`
+	Commerce    struct {
+		HasLiveCommerce *bool  `json:"hasLiveCommerce"`
+		HasNewProducts  *bool  `json:"hasNewProducts"`
+		Level           *int64 `json:"level"`
+	} `json:"commerce"`
+	CreatedAt          *time.Time           `json:"createdAt"`
+	DisplayName        *string              `json:"displayName"`
+	Handle             string               `json:"handle"`
+	ID                 string               `json:"id"`
+	IsAdVirtual        *bool                `json:"isAdVirtual"`
+	IsCanceled         *bool                `json:"isCanceled"`
+	IsDisciplineMember *bool                `json:"isDisciplineMember"`
+	IsEffectArtist     *bool                `json:"isEffectArtist"`
+	IsPrivate          *bool                `json:"isPrivate"`
+	IsStar             *bool                `json:"isStar"`
+	IsVerified         *bool                `json:"isVerified"`
+	Language           *string              `json:"language"`
+	Metrics            TikTokProfileMetrics `json:"metrics"`
+	Music              struct {
+		Metrics struct {
+			Likes  *int64 `json:"likes"`
+			Tracks *int64 `json:"tracks"`
+			Uses   *int64 `json:"uses"`
+		} `json:"metrics"`
+		NewReleaseIDs []string `json:"newReleaseIds"`
+	} `json:"music"`
+	Predictions struct {
+		AgeGroup *string `json:"ageGroup"`
+	} `json:"predictions"`
+	Privacy struct {
+		FollowingVisibility *int64 `json:"followingVisibility"`
+	} `json:"privacy"`
+	RegionCode    *string `json:"regionCode"`
+	SearchContext struct {
+		Description *string `json:"description"`
+		Name        *string `json:"name"`
+		NameField   *string `json:"nameField"`
+	} `json:"searchContext"`
+	SecUid      *string            `json:"secUid"`
+	SocialLinks []TikTokSocialLink `json:"socialLinks"`
+	Stories     struct {
+		ChangedAt *time.Time             `json:"changedAt"`
+		Items     []TikTokStoryReference `json:"items"`
+		Metrics   struct {
+			CountsByPostType []TikTokStoryCount `json:"countsByPostType"`
+		} `json:"metrics"`
+	} `json:"stories"`
+	StoryStatus  *int64 `json:"storyStatus"`
+	URL          string `json:"url"`
+	Verification struct {
+		BadgeType   *int64  `json:"badgeType"`
+		CustomLabel *string `json:"customLabel"`
+		Label       *string `json:"label"`
+		Type        *int64  `json:"type"`
+	} `json:"verification"`
 }
 
-type TikTokProfileExtended struct {
-	HasCommerce       *bool   `json:"hasCommerce"`
-	IsProAccount      *bool   `json:"isProAccount"`
-	VerificationLabel *string `json:"verificationLabel"`
-	VerificationType  *int64  `json:"verificationType"`
+type TikTokProfileMetrics struct {
+	Followers    *int64 `json:"followers"`
+	Following    *int64 `json:"following"`
+	LikedPosts   *int64 `json:"likedPosts"`
+	Likes        *int64 `json:"likes"`
+	Posts        *int64 `json:"posts"`
+	VisiblePosts *int64 `json:"visiblePosts"`
 }
 
-type TrendingCategory struct {
-	Description *string `json:"description"`
-	ID          string  `json:"id"`
-	Metrics     struct {
-		Posts *int64 `json:"posts"`
-		Views *int64 `json:"views"`
-	} `json:"metrics"`
-	Name string `json:"name"`
+type TikTokProfileReference struct {
+	AccountType *int64       `json:"accountType"`
+	Avatar      *TikTokAsset `json:"avatar"`
+	Bio         *string      `json:"bio"`
+	Category    *string      `json:"category"`
+	Commerce    struct {
+		HasLiveCommerce *bool  `json:"hasLiveCommerce"`
+		HasNewProducts  *bool  `json:"hasNewProducts"`
+		Level           *int64 `json:"level"`
+	} `json:"commerce"`
+	CreatedAt          *time.Time           `json:"createdAt"`
+	DisplayName        *string              `json:"displayName"`
+	Handle             *string              `json:"handle"`
+	ID                 *string              `json:"id"`
+	IsAdVirtual        *bool                `json:"isAdVirtual"`
+	IsCanceled         *bool                `json:"isCanceled"`
+	IsDisciplineMember *bool                `json:"isDisciplineMember"`
+	IsEffectArtist     *bool                `json:"isEffectArtist"`
+	IsPrivate          *bool                `json:"isPrivate"`
+	IsStar             *bool                `json:"isStar"`
+	IsVerified         *bool                `json:"isVerified"`
+	Language           *string              `json:"language"`
+	Metrics            TikTokProfileMetrics `json:"metrics"`
+	Music              struct {
+		Metrics struct {
+			Likes  *int64 `json:"likes"`
+			Tracks *int64 `json:"tracks"`
+			Uses   *int64 `json:"uses"`
+		} `json:"metrics"`
+		NewReleaseIDs []string `json:"newReleaseIds"`
+	} `json:"music"`
+	Predictions struct {
+		AgeGroup *string `json:"ageGroup"`
+	} `json:"predictions"`
+	Privacy struct {
+		FollowingVisibility *int64 `json:"followingVisibility"`
+	} `json:"privacy"`
+	RegionCode    *string `json:"regionCode"`
+	SearchContext struct {
+		Description *string `json:"description"`
+		Name        *string `json:"name"`
+		NameField   *string `json:"nameField"`
+	} `json:"searchContext"`
+	SecUid      *string            `json:"secUid"`
+	SocialLinks []TikTokSocialLink `json:"socialLinks"`
+	Stories     struct {
+		ChangedAt *time.Time             `json:"changedAt"`
+		Items     []TikTokStoryReference `json:"items"`
+		Metrics   struct {
+			CountsByPostType []TikTokStoryCount `json:"countsByPostType"`
+		} `json:"metrics"`
+	} `json:"stories"`
+	StoryStatus  *int64  `json:"storyStatus"`
+	URL          *string `json:"url"`
+	Verification struct {
+		BadgeType   *int64  `json:"badgeType"`
+		CustomLabel *string `json:"customLabel"`
+		Label       *string `json:"label"`
+		Type        *int64  `json:"type"`
+	} `json:"verification"`
 }
 
-type TwitterComment struct {
-	CommentCore
+type TikTokRatingSource struct {
+	Code *int64  `json:"code"`
+	Name *string `json:"name"`
+}
+
+type TikTokSearchHighlight struct {
+	Field  *string           `json:"field"`
+	Ranges []TikTokTextRange `json:"ranges"`
+}
+
+type TikTokServiceCategory struct {
+	Code *int64  `json:"code"`
+	Name *string `json:"name"`
+}
+
+type TikTokSocialLink struct {
+	DisplayName *string `json:"displayName"`
+	Handle      *string `json:"handle"`
+	ID          *string `json:"id"`
+	Platform    *string `json:"platform"`
+	URL         *string `json:"url"`
+}
+
+type TikTokStickerPosition struct {
+	EndTime    *float64 `json:"endTime"`
+	Height     *float64 `json:"height"`
+	IsRelative *bool    `json:"isRelative"`
+	Rotation   *float64 `json:"rotation"`
+	Scale      *float64 `json:"scale"`
+	StartTime  *float64 `json:"startTime"`
+	Width      *float64 `json:"width"`
+	X          *float64 `json:"x"`
+	Y          *float64 `json:"y"`
+}
+
+type TikTokStoryCount struct {
+	Count        *int64 `json:"count"`
+	PostTypeCode *int64 `json:"postTypeCode"`
+}
+
+type TikTokStoryReference struct {
+	ExpiresAt     *time.Time `json:"expiresAt"`
+	ID            *string    `json:"id"`
+	MediaTypeCode *int64     `json:"mediaTypeCode"`
+	PostTypeCode  *int64     `json:"postTypeCode"`
+}
+
+type TikTokStreamingLink struct {
+	PlatformCode *int64  `json:"platformCode"`
+	SongID       *string `json:"songId"`
+}
+
+type TikTokTemplateMetrics struct {
+	Clips *int64 `json:"clips"`
+}
+
+type TikTokTextEntity struct {
+	End      *int64                  `json:"end"`
+	Hashtag  *TikTokHashtagReference `json:"hashtag"`
+	Start    *int64                  `json:"start"`
+	TagID    *string                 `json:"tagId"`
+	Type     *string                 `json:"type"`
+	TypeCode *int64                  `json:"typeCode"`
+	User     *TikTokProfileReference `json:"user"`
+}
+
+type TikTokTextRange struct {
+	End   *int64 `json:"end"`
+	Start *int64 `json:"start"`
+}
+
+type TikTokUnspecified struct{}
+
+type TikTokVolumeInfo struct {
+	Loudness                 *float64 `json:"loudness"`
+	LoudnessRange            *float64 `json:"loudnessRange"`
+	LoudnessRangeEnd         *float64 `json:"loudnessRangeEnd"`
+	LoudnessRangeStart       *float64 `json:"loudnessRangeStart"`
+	MaxVolume                *float64 `json:"maxVolume"`
+	MaximumMomentaryLoudness *float64 `json:"maximumMomentaryLoudness"`
+	MaximumShortTermLoudness *float64 `json:"maximumShortTermLoudness"`
+	MeanVolume               *float64 `json:"meanVolume"`
+	Peak                     *float64 `json:"peak"`
+	Version                  *float64 `json:"version"`
+}
+
+type TikTokWhatsAppMetrics struct {
+	Shares *int64 `json:"shares"`
+}
+
+type TwitterAppMetrics struct {
+	Rating  *float64 `json:"rating"`
+	Ratings *int64   `json:"ratings"`
+}
+
+type TwitterArticle struct {
+	Cover       *TwitterMedia `json:"cover"`
+	ID          *string       `json:"id"`
+	PreviewText *string       `json:"previewText"`
+	Title       *string       `json:"title"`
+}
+
+type TwitterAspectRatio struct {
+	Height int64 `json:"height"`
+	Width  int64 `json:"width"`
+}
+
+type TwitterBroadcast struct {
+	Broadcaster           *TwitterBroadcaster    `json:"broadcaster"`
+	Height                *int64                 `json:"height"`
+	ID                    *string                `json:"id"`
+	IsHighLatency         *bool                  `json:"isHighLatency"`
+	Media                 *TwitterBroadcastMedia `json:"media"`
+	OrientationCode       *int64                 `json:"orientationCode"`
+	ReplayEditedStartTime *string                `json:"replayEditedStartTime"`
+	ScheduledStartAt      *time.Time             `json:"scheduledStartAt"`
+	Source                *string                `json:"source"`
+	State                 *string                `json:"state"`
+	Title                 *string                `json:"title"`
+	URL                   *string                `json:"url"`
+	Width                 *int64                 `json:"width"`
+}
+
+type TwitterBroadcastMedia struct {
+	ID  *string `json:"id"`
+	Key *string `json:"key"`
+}
+
+type TwitterBroadcaster struct {
+	DisplayName *string `json:"displayName"`
+	Handle      *string `json:"handle"`
+	ID          *string `json:"id"`
+}
+
+type TwitterCard struct {
+	Apps         []TwitterCardApp          `json:"apps"`
+	Broadcast    *TwitterBroadcast         `json:"broadcast"`
+	Components   []TwitterCardComponent    `json:"components"`
+	Description  *string                   `json:"description"`
+	Destinations []TwitterCardDestination  `json:"destinations"`
+	DisplayURL   *string                   `json:"displayUrl"`
+	Domain       *string                   `json:"domain"`
+	Event        *TwitterEvent             `json:"event"`
+	ImageAltText []TwitterImageAltText     `json:"imageAltText"`
+	Images       []TwitterImage            `json:"images"`
+	LayoutType   *string                   `json:"layoutType"`
+	Media        []TwitterMedia            `json:"media"`
+	MediaType    *string                   `json:"mediaType"`
+	Poll         *TwitterPoll              `json:"poll"`
+	Profiles     []TwitterProfileReference `json:"profiles"`
+	PublisherID  *string                   `json:"publisherId"`
+	Title        *string                   `json:"title"`
+	Type         *string                   `json:"type"`
+	URL          *string                   `json:"url"`
+}
+
+type TwitterCardApp struct {
+	Category          *TwitterCardText   `json:"category"`
+	CountryCode       *string            `json:"countryCode"`
+	Description       *TwitterCardText   `json:"description"`
+	GroupID           *string            `json:"groupId"`
+	HasInAppPurchases *bool              `json:"hasInAppPurchases"`
+	IconKey           *string            `json:"iconKey"`
+	ID                *string            `json:"id"`
+	IsEditorsChoice   *bool              `json:"isEditorsChoice"`
+	IsFree            *bool              `json:"isFree"`
+	Metrics           *TwitterAppMetrics `json:"metrics"`
+	ResolvedURL       *string            `json:"resolvedUrl"`
+	SizeBytes         *int64             `json:"sizeBytes"`
+	Title             *TwitterCardText   `json:"title"`
+	Type              *string            `json:"type"`
+	URL               *string            `json:"url"`
+}
+
+type TwitterCardButton struct {
+	Action        *string `json:"action"`
+	DestinationID *string `json:"destinationId"`
+	Style         *string `json:"style"`
+	Type          *string `json:"type"`
+}
+
+type TwitterCardComponent struct {
+	AppGroupID    *string               `json:"appGroupId"`
+	Buttons       []TwitterCardButton   `json:"buttons"`
+	DestinationID *string               `json:"destinationId"`
+	ID            *string               `json:"id"`
+	Media         []TwitterCardMediaRef `json:"media"`
+	MediaKey      *string               `json:"mediaKey"`
+	Subtitle      *TwitterCardText      `json:"subtitle"`
+	Title         *TwitterCardText      `json:"title"`
+	Type          *string               `json:"type"`
+}
+
+type TwitterCardDestination struct {
+	AppGroupID *string `json:"appGroupId"`
+	DisplayURL *string `json:"displayUrl"`
+	ID         *string `json:"id"`
+	MediaKey   *string `json:"mediaKey"`
+	Type       *string `json:"type"`
+	URL        *string `json:"url"`
+}
+
+type TwitterCardMediaRef struct {
+	DestinationID *string `json:"destinationId"`
+	Key           *string `json:"key"`
+}
+
+type TwitterCardText struct {
+	IsRightToLeft *bool   `json:"isRightToLeft"`
+	Text          *string `json:"text"`
+}
+
+type TwitterColor struct {
+	Percentage float64    `json:"percentage"`
+	Rgb        TwitterRGB `json:"rgb"`
+}
+
+type TwitterCommunityNote struct {
+	ID           *string                  `json:"id"`
+	Presentation *TwitterNotePresentation `json:"presentation"`
+	Preview      *TwitterRichText         `json:"preview"`
+	ShortTitle   *string                  `json:"shortTitle"`
+	Summary      *TwitterRichText         `json:"summary"`
+	Title        *string                  `json:"title"`
+	URL          *string                  `json:"url"`
+}
+
+type TwitterConversationContext struct {
+	Ancestors     []TwitterPostReference `json:"ancestors"`
+	OtherPosts    []TwitterPostReference `json:"otherPosts"`
+	RequestedPost *TwitterPostReference  `json:"requestedPost"`
+}
+
+type TwitterEdit struct {
+	EditableUntil *string  `json:"editableUntil"`
+	HistoryIDs    []string `json:"historyIds"`
+	InitialPostID *string  `json:"initialPostId"`
+	Remaining     *int64   `json:"remaining"`
 }
 
 type TwitterEntity struct {
-	EntityCore
+	DisplayName *string       `json:"displayName"`
+	DisplayURL  *string       `json:"displayUrl"`
+	Handle      *string       `json:"handle"`
+	ID          *string       `json:"id"`
+	MediaID     *string       `json:"mediaId"`
+	Range       *TwitterRange `json:"range"`
+	ShortURL    *string       `json:"shortUrl"`
+	Text        *string       `json:"text"`
+	Type        *string       `json:"type"`
+	URL         *string       `json:"url"`
+}
+
+type TwitterEvent struct {
+	Category   *string `json:"category"`
+	ID         *string `json:"id"`
+	Subtitle   *string `json:"subtitle"`
+	TimelineID *string `json:"timelineId"`
+	Title      *string `json:"title"`
+}
+
+type TwitterFormatting struct {
+	Range TwitterRange `json:"range"`
+	Types []string     `json:"types"`
+}
+
+type TwitterImage struct {
+	AltText *string `json:"altText"`
+	Height  *int64  `json:"height"`
+	IsNft   *bool   `json:"isNft"`
+	Role    *string `json:"role"`
+	Shape   *string `json:"shape"`
+	Type    *string `json:"type"`
+	URL     *string `json:"url"`
+	Width   *int64  `json:"width"`
+}
+
+type TwitterImageAltText struct {
+	Role *string `json:"role"`
+	Text *string `json:"text"`
+}
+
+type TwitterLabel struct {
+	Description *TwitterRichText `json:"description"`
+	Icon        *TwitterImage    `json:"icon"`
+	Text        *string          `json:"text"`
+	Type        *string          `json:"type"`
+	URL         *string          `json:"url"`
 }
 
 type TwitterList struct {
-	CreatedAt   *time.Time `json:"createdAt"`
-	Description *string    `json:"description"`
-	ID          string     `json:"id"`
-	IsPrivate   *bool      `json:"isPrivate"`
-	Metrics     struct {
-		Followers *int64 `json:"followers"`
-		Members   *int64 `json:"members"`
+	Banner      *TwitterImage            `json:"banner"`
+	Description *string                  `json:"description"`
+	ID          string                   `json:"id"`
+	Metrics     TwitterListMetrics       `json:"metrics"`
+	Name        *string                  `json:"name"`
+	Owner       *TwitterProfileReference `json:"owner"`
+}
+
+type TwitterListMetrics struct {
+	Members     *int64 `json:"members"`
+	Subscribers *int64 `json:"subscribers"`
+}
+
+type TwitterLongText struct {
+	Formatting   []TwitterFormatting `json:"formatting"`
+	ID           *string             `json:"id"`
+	InlineMedia  []any               `json:"inlineMedia"`
+	IsExpandable *bool               `json:"isExpandable"`
+	Timestamps   []any               `json:"timestamps"`
+}
+
+type TwitterMedia struct {
+	AltText       *string                   `json:"altText"`
+	AspectRatio   *TwitterAspectRatio       `json:"aspectRatio"`
+	Availability  *TwitterMediaAvailability `json:"availability"`
+	Duration      *float64                  `json:"duration"`
+	Features      []TwitterMediaFeature     `json:"features"`
+	FocusRegions  []TwitterRectangle        `json:"focusRegions"`
+	Height        *int64                    `json:"height"`
+	ID            *string                   `json:"id"`
+	IsAnimated    *bool                     `json:"isAnimated"`
+	IsMonetizable *bool                     `json:"isMonetizable"`
+	Key           *string                   `json:"key"`
+	Palette       []TwitterColor            `json:"palette"`
+	Restrictions  *TwitterMediaRestrictions `json:"restrictions"`
+	Sizes         []TwitterMediaSize        `json:"sizes"`
+	Source        *TwitterMediaSource       `json:"source"`
+	Thumbnail     *TwitterImage             `json:"thumbnail"`
+	Type          *string                   `json:"type"`
+	URL           *string                   `json:"url"`
+	Variants      []TwitterMediaVariant     `json:"variants"`
+	Width         *int64                    `json:"width"`
+}
+
+type TwitterMediaAvailability struct {
+	Status *string `json:"status"`
+}
+
+type TwitterMediaFeature struct {
+	FaceRegions    []TwitterRectangle        `json:"faceRegions"`
+	Size           *string                   `json:"size"`
+	TaggedProfiles []TwitterProfileReference `json:"taggedProfiles"`
+}
+
+type TwitterMediaRestrictions struct {
+	IsDmca *bool `json:"isDmca"`
+}
+
+type TwitterMediaSize struct {
+	Height     *int64  `json:"height"`
+	Name       *string `json:"name"`
+	ResizeMode *string `json:"resizeMode"`
+	Width      *int64  `json:"width"`
+}
+
+type TwitterMediaSource struct {
+	AuthorID *string `json:"authorId"`
+	PostID   *string `json:"postId"`
+}
+
+type TwitterMediaVariant struct {
+	Bitrate     *int64  `json:"bitrate"`
+	ContentType *string `json:"contentType"`
+	URL         *string `json:"url"`
+}
+
+type TwitterNotePresentation struct {
+	IconType *string `json:"iconType"`
+	Style    *string `json:"style"`
+}
+
+type TwitterPageMetadata struct {
+	Cashtags []any                       `json:"cashtags"`
+	Context  *TwitterConversationContext `json:"context"`
+	Events   []any                       `json:"events"`
+	Hashtags []any                       `json:"hashtags"`
+	Lists    []any                       `json:"lists"`
+	Metrics  struct {
+		Suggestions *int64 `json:"suggestions"`
 	} `json:"metrics"`
-	Name  string      `json:"name"`
-	Owner *PostAuthor `json:"owner"`
+	NextCursorLabel *string                 `json:"nextCursorLabel"`
+	NextCursorType  *string                 `json:"nextCursorType"`
+	Promoted        []TwitterPostReference  `json:"promoted"`
+	Queries         []TwitterSuggestedQuery `json:"queries"`
+	Query           *string                 `json:"query"`
+}
+
+type TwitterPlace struct {
+	Country     *string `json:"country"`
+	CountryCode *string `json:"countryCode"`
+	FullName    *string `json:"fullName"`
+	ID          *string `json:"id"`
+	Name        *string `json:"name"`
+	Type        *string `json:"type"`
+}
+
+type TwitterPoll struct {
+	Choices        []TwitterPollChoice `json:"choices"`
+	CountsAreFinal *bool               `json:"countsAreFinal"`
+	Duration       *int64              `json:"duration"`
+	EndsAt         *time.Time          `json:"endsAt"`
+	Metrics        struct {
+		Choices int64 `json:"choices"`
+	} `json:"metrics"`
+	UpdatedAt *time.Time `json:"updatedAt"`
+}
+
+type TwitterPollChoice struct {
+	Images  []TwitterImage `json:"images"`
+	Label   *string        `json:"label"`
+	Metrics *struct {
+		Votes int64 `json:"votes"`
+	} `json:"metrics"`
+	Position int64 `json:"position"`
 }
 
 type TwitterPost struct {
-	PostCore
-	Extended     *TwitterPostExtended `json:"extended,omitempty"`
-	Metrics      TwitterPostMetrics   `json:"metrics"`
-	QuotedPost   *TwitterPost         `json:"quotedPost,omitempty"`
-	RepostedPost *TwitterPost         `json:"repostedPost,omitempty"`
-}
-
-type TwitterPostExtended struct {
-	ConversationID  *string `json:"conversationId,omitempty"`
-	InReplyToPostID *string `json:"inReplyToPostId,omitempty"`
-	InReplyToUserID *string `json:"inReplyToUserId,omitempty"`
-	Language        *string `json:"language,omitempty"`
-	QuotedPostID    *string `json:"quotedPostId,omitempty"`
-	RepostedPostID  *string `json:"repostedPostId,omitempty"`
+	Article               *TwitterArticle           `json:"article"`
+	Author                *TwitterProfileReference  `json:"author"`
+	AuthorID              *string                   `json:"authorId"`
+	Card                  *TwitterCard              `json:"card"`
+	CommunityNote         *TwitterCommunityNote     `json:"communityNote"`
+	ConversationID        *string                   `json:"conversationId"`
+	CreatedAt             time.Time                 `json:"createdAt"`
+	DisplayTextRange      *TwitterRange             `json:"displayTextRange"`
+	Edit                  *TwitterEdit              `json:"edit"`
+	Entities              []TwitterEntity           `json:"entities"`
+	HasGrokAnalysisButton *bool                     `json:"hasGrokAnalysisButton"`
+	ID                    string                    `json:"id"`
+	InReplyToHandle       *string                   `json:"inReplyToHandle"`
+	InReplyToPostID       *string                   `json:"inReplyToPostId"`
+	InReplyToUserID       *string                   `json:"inReplyToUserId"`
+	IsPromoted            *bool                     `json:"isPromoted"`
+	IsQuote               *bool                     `json:"isQuote"`
+	IsRepost              *bool                     `json:"isRepost"`
+	IsSensitive           *bool                     `json:"isSensitive"`
+	Language              *string                   `json:"language"`
+	LongText              *TwitterLongText          `json:"longText"`
+	Media                 []TwitterMedia            `json:"media"`
+	Metrics               TwitterPostMetrics        `json:"metrics"`
+	Preview               *TwitterPreview           `json:"preview"`
+	PreviousMetrics       *TwitterPreviousMetrics   `json:"previousMetrics"`
+	Promotion             *TwitterPromotion         `json:"promotion"`
+	QuotedPost            *TwitterPostReference     `json:"quotedPost"`
+	QuotedPostID          *string                   `json:"quotedPostId"`
+	RepostedPost          *TwitterPostReference     `json:"repostedPost"`
+	Restrictions          []TwitterRestriction      `json:"restrictions"`
+	Text                  *string                   `json:"text"`
+	Timeline              *TwitterTimelinePlacement `json:"timeline"`
+	URL                   string                    `json:"url"`
 }
 
 type TwitterPostMetrics struct {
-	PostMetrics
-	Bookmarks *int64 `json:"bookmarks"`
-	Quotes    *int64 `json:"quotes"`
+	Comments   *int64  `json:"comments"`
+	Likes      *int64  `json:"likes"`
+	Quotes     *int64  `json:"quotes"`
+	Reposts    *int64  `json:"reposts"`
+	Saves      *int64  `json:"saves"`
+	Views      *int64  `json:"views"`
+	ViewsState *string `json:"viewsState"`
+}
+
+type TwitterPostReference struct {
+	Article               *TwitterArticle           `json:"article"`
+	Author                *TwitterProfileReference  `json:"author"`
+	AuthorID              *string                   `json:"authorId"`
+	Card                  *TwitterCard              `json:"card"`
+	CommunityNote         *TwitterCommunityNote     `json:"communityNote"`
+	ConversationID        *string                   `json:"conversationId"`
+	CreatedAt             *time.Time                `json:"createdAt"`
+	DisplayTextRange      *TwitterRange             `json:"displayTextRange"`
+	Edit                  *TwitterEdit              `json:"edit"`
+	Entities              []TwitterEntity           `json:"entities"`
+	HasGrokAnalysisButton *bool                     `json:"hasGrokAnalysisButton"`
+	ID                    *string                   `json:"id"`
+	InReplyToHandle       *string                   `json:"inReplyToHandle"`
+	InReplyToPostID       *string                   `json:"inReplyToPostId"`
+	InReplyToUserID       *string                   `json:"inReplyToUserId"`
+	IsPromoted            *bool                     `json:"isPromoted"`
+	IsQuote               *bool                     `json:"isQuote"`
+	IsRepost              *bool                     `json:"isRepost"`
+	IsSensitive           *bool                     `json:"isSensitive"`
+	Language              *string                   `json:"language"`
+	LongText              *TwitterLongText          `json:"longText"`
+	Media                 []TwitterMedia            `json:"media"`
+	Metrics               TwitterPostMetrics        `json:"metrics"`
+	Preview               *TwitterPreview           `json:"preview"`
+	PreviousMetrics       *TwitterPreviousMetrics   `json:"previousMetrics"`
+	Promotion             *TwitterPromotion         `json:"promotion"`
+	QuotedPost            *TwitterPostReference     `json:"quotedPost"`
+	QuotedPostID          *string                   `json:"quotedPostId"`
+	RepostedPost          *TwitterPostReference     `json:"repostedPost"`
+	Restrictions          []TwitterRestriction      `json:"restrictions"`
+	Text                  *string                   `json:"text"`
+	Timeline              *TwitterTimelinePlacement `json:"timeline"`
+	URL                   *string                   `json:"url"`
+}
+
+type TwitterPreview struct {
+	DisplayTextRange *TwitterRange   `json:"displayTextRange"`
+	Entities         []TwitterEntity `json:"entities"`
+	Text             *string         `json:"text"`
+}
+
+type TwitterPreviousMetrics struct {
+	Comments *int64 `json:"comments"`
+	Likes    *int64 `json:"likes"`
+	Quotes   *int64 `json:"quotes"`
+}
+
+type TwitterProfessional struct {
+	Categories []TwitterProfessionalCategory `json:"categories"`
+	Type       *string                       `json:"type"`
+}
+
+type TwitterProfessionalCategory struct {
+	ID   *string `json:"id"`
+	Name *string `json:"name"`
 }
 
 type TwitterProfile struct {
-	ProfileCore
-	Extended *TwitterProfileExtended `json:"extended,omitempty"`
+	Avatar                *TwitterImage           `json:"avatar"`
+	Banner                *TwitterImage           `json:"banner"`
+	Bio                   *string                 `json:"bio"`
+	CreatedAt             *time.Time              `json:"createdAt"`
+	DisplayName           *string                 `json:"displayName"`
+	Entities              TwitterProfileEntities  `json:"entities"`
+	ExternalURL           *string                 `json:"externalUrl"`
+	Handle                string                  `json:"handle"`
+	HasCustomTimelines    *bool                   `json:"hasCustomTimelines"`
+	ID                    string                  `json:"id"`
+	IsLifelineInstitution *bool                   `json:"isLifelineInstitution"`
+	IsPrivate             *bool                   `json:"isPrivate"`
+	IsSuspended           *bool                   `json:"isSuspended"`
+	IsVerified            *bool                   `json:"isVerified"`
+	Labels                []TwitterLabel          `json:"labels"`
+	Location              *TwitterProfileLocation `json:"location"`
+	Metrics               TwitterProfileMetrics   `json:"metrics"`
+	PinnedPostIDs         []string                `json:"pinnedPostIds"`
+	Professional          *TwitterProfessional    `json:"professional"`
+	Subscriptions         TwitterSubscriptions    `json:"subscriptions"`
+	URL                   string                  `json:"url"`
+	Verification          TwitterVerification     `json:"verification"`
+	Visibility            TwitterVisibility       `json:"visibility"`
+	Withheld              TwitterWithheld         `json:"withheld"`
 }
 
-type TwitterProfileExtended struct {
-	Banner            *MediaReference `json:"banner"`
-	CreatedAt         *time.Time      `json:"createdAt"`
-	Likes             *int64          `json:"likes"`
-	Location          *string         `json:"location"`
-	Media             *int64          `json:"media"`
-	PinnedPostIDs     []string        `json:"pinnedPostIds"`
-	WithheldCountries []string        `json:"withheldCountries"`
+type TwitterProfileEntities struct {
+	Bio         []TwitterEntity `json:"bio"`
+	ExternalURL []TwitterEntity `json:"externalUrl"`
 }
 
-type TwitterSuggestion struct {
-	Highlighted *string          `json:"highlighted,omitempty"`
-	ID          string           `json:"id"`
-	Score       *float64         `json:"score,omitempty"`
-	Text        string           `json:"text"`
-	Type        *string          `json:"type,omitempty"`
-	User        *EntityReference `json:"user,omitempty"`
+type TwitterProfileLocation struct {
+	Place *TwitterPlace `json:"place"`
+	Text  *string       `json:"text"`
+}
+
+type TwitterProfileMetrics struct {
+	Affiliates           *int64 `json:"affiliates"`
+	CreatorSubscriptions *int64 `json:"creatorSubscriptions"`
+	Followers            *int64 `json:"followers"`
+	Following            *int64 `json:"following"`
+	LikedPosts           *int64 `json:"likedPosts"`
+	MediaPosts           *int64 `json:"mediaPosts"`
+	Posts                *int64 `json:"posts"`
+}
+
+type TwitterProfileReference struct {
+	Avatar                *TwitterImage           `json:"avatar"`
+	Banner                *TwitterImage           `json:"banner"`
+	Bio                   *string                 `json:"bio"`
+	CreatedAt             *time.Time              `json:"createdAt"`
+	DisplayName           *string                 `json:"displayName"`
+	Entities              TwitterProfileEntities  `json:"entities"`
+	ExternalURL           *string                 `json:"externalUrl"`
+	Handle                *string                 `json:"handle"`
+	HasCustomTimelines    *bool                   `json:"hasCustomTimelines"`
+	ID                    *string                 `json:"id"`
+	IsLifelineInstitution *bool                   `json:"isLifelineInstitution"`
+	IsPrivate             *bool                   `json:"isPrivate"`
+	IsSuspended           *bool                   `json:"isSuspended"`
+	IsVerified            *bool                   `json:"isVerified"`
+	Labels                []TwitterLabel          `json:"labels"`
+	Location              *TwitterProfileLocation `json:"location"`
+	Metrics               TwitterProfileMetrics   `json:"metrics"`
+	PinnedPostIDs         []string                `json:"pinnedPostIds"`
+	Professional          *TwitterProfessional    `json:"professional"`
+	Subscriptions         TwitterSubscriptions    `json:"subscriptions"`
+	URL                   *string                 `json:"url"`
+	Verification          TwitterVerification     `json:"verification"`
+	Visibility            TwitterVisibility       `json:"visibility"`
+	Withheld              TwitterWithheld         `json:"withheld"`
+}
+
+type TwitterPromotion struct {
+	Advertiser *TwitterProfileReference `json:"advertiser"`
+}
+
+type TwitterRGB struct {
+	Blue  int64 `json:"blue"`
+	Green int64 `json:"green"`
+	Red   int64 `json:"red"`
+}
+
+type TwitterRange struct {
+	End   int64 `json:"end"`
+	Start int64 `json:"start"`
+}
+
+type TwitterRectangle struct {
+	Height *int64 `json:"height"`
+	Width  *int64 `json:"width"`
+	X      *int64 `json:"x"`
+	Y      *int64 `json:"y"`
+}
+
+type TwitterRestriction struct {
+	Action  *string `json:"action"`
+	Message *string `json:"message"`
+}
+
+type TwitterRichText struct {
+	Entities []TwitterEntity `json:"entities"`
+	Text     *string         `json:"text"`
+}
+
+type TwitterSubscriptions struct {
+	IsEligible *bool `json:"isEligible"`
+}
+
+type TwitterSuggestedQuery struct {
+	Text *string `json:"text"`
+}
+
+type TwitterTimelinePlacement struct {
+	ConversationSection *string `json:"conversationSection"`
+	DisplayType         *string `json:"displayType"`
+	ModuleDisplayType   *string `json:"moduleDisplayType"`
+	Position            *int64  `json:"position"`
+}
+
+type TwitterVerification struct {
+	IsBlueVerified *bool   `json:"isBlueVerified"`
+	LegacyVerified *bool   `json:"legacyVerified"`
+	Type           *string `json:"type"`
+}
+
+type TwitterVisibility struct {
+	HasHiddenLikesOnProfile         *bool `json:"hasHiddenLikesOnProfile"`
+	HasHiddenSubscriptionsOnProfile *bool `json:"hasHiddenSubscriptionsOnProfile"`
+}
+
+type TwitterWithheld struct {
+	Copyright   *bool   `json:"copyright"`
+	Description *string `json:"description"`
+	Scope       *string `json:"scope"`
 }

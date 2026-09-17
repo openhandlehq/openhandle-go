@@ -18,12 +18,13 @@ type Billing struct {
 
 // ResponseMetadata is shared by singular responses and pages.
 type ResponseMetadata struct {
-	Platform   Platform  `json:"platform"`
-	Resource   Resource  `json:"resource"`
-	CapturedAt time.Time `json:"capturedAt"`
-	Source     string    `json:"source"`
-	RequestID  string    `json:"-"`
-	Billing    Billing   `json:"-"`
+	Meta       *ResponseMeta `json:"meta,omitempty"`
+	Platform   Platform      `json:"platform"`
+	Resource   Resource      `json:"resource"`
+	CapturedAt time.Time     `json:"capturedAt"`
+	Source     string        `json:"source"`
+	RequestID  string        `json:"-"`
+	Billing    Billing       `json:"-"`
 }
 
 func (m *ResponseMetadata) setResponseMetadata(requestID string, billing Billing) {
@@ -36,13 +37,9 @@ type responseMetadataSetter interface {
 }
 
 // PageMeta contains the opaque pagination cursor returned by the API.
-type PageMeta struct {
-	Cursors PageCursors `json:"cursors"`
-}
+type PageMeta = ResponseMeta
 
-type PageCursors struct {
-	Next *string `json:"next"`
-}
+type PageCursors = ResponseCursors
 
 // Page is a typed page returned by a list or search operation.
 type Page[T any] struct {

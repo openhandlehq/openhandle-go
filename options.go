@@ -32,6 +32,7 @@ type SortOrder string
 type Platform string
 
 const (
+	PlatformReddit    Platform = "reddit"
 	PlatformInstagram Platform = "instagram"
 	PlatformTikTok    Platform = "tiktok"
 	PlatformTwitter   Platform = "twitter"
