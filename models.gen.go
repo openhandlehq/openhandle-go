@@ -130,6 +130,7 @@ type InstagramComment struct {
 	} `json:"ai"`
 	Author              *InstagramProfileReference  `json:"author"`
 	CreatedAt           time.Time                   `json:"createdAt"`
+	Extracted           InstagramExtracted          `json:"extracted"`
 	ID                  string                      `json:"id"`
 	IsByPostAuthor      *bool                       `json:"isByPostAuthor"`
 	IsCovered           *bool                       `json:"isCovered"`
@@ -182,6 +183,7 @@ type InstagramCommentReference struct {
 	} `json:"ai"`
 	Author              *InstagramProfileReference  `json:"author"`
 	CreatedAt           *time.Time                  `json:"createdAt"`
+	Extracted           InstagramExtracted          `json:"extracted"`
 	ID                  *string                     `json:"id"`
 	IsByPostAuthor      *bool                       `json:"isByPostAuthor"`
 	IsCovered           *bool                       `json:"isCovered"`
@@ -236,6 +238,18 @@ type InstagramDASH struct {
 	Manifest     *string                  `json:"manifest"`
 	QualityCount *int64                   `json:"qualityCount"`
 	Variants     []InstagramStreamVariant `json:"variants"`
+}
+
+type InstagramExtracted struct {
+	Emails  []string                   `json:"emails"`
+	Handles []InstagramExtractedHandle `json:"handles"`
+	Links   []string                   `json:"links"`
+	Phones  []string                   `json:"phones"`
+}
+
+type InstagramExtractedHandle struct {
+	Handle   *string `json:"handle"`
+	Platform *string `json:"platform"`
 }
 
 type InstagramHashtag struct {
@@ -536,6 +550,7 @@ type InstagramPost struct {
 		IsFeedbackAggregated *bool `json:"isFeedbackAggregated"`
 		IsSharedToFacebook   *bool `json:"isSharedToFacebook"`
 	} `json:"crossposting"`
+	Extracted                InstagramExtracted          `json:"extracted"`
 	Fbid                     *string                     `json:"fbid"`
 	HasDelayedMetadata       *bool                       `json:"hasDelayedMetadata"`
 	HasTaggedUsers           *bool                       `json:"hasTaggedUsers"`
@@ -657,6 +672,7 @@ type InstagramPostReference struct {
 		IsFeedbackAggregated *bool `json:"isFeedbackAggregated"`
 		IsSharedToFacebook   *bool `json:"isSharedToFacebook"`
 	} `json:"crossposting"`
+	Extracted                InstagramExtracted          `json:"extracted"`
 	Fbid                     *string                     `json:"fbid"`
 	HasDelayedMetadata       *bool                       `json:"hasDelayedMetadata"`
 	HasTaggedUsers           *bool                       `json:"hasTaggedUsers"`
@@ -752,6 +768,7 @@ type InstagramProfile struct {
 	DisplayName                  *string                           `json:"displayName"`
 	DisplaySettings              InstagramProfileDisplaySettings   `json:"displaySettings"`
 	ExternalURL                  *string                           `json:"externalUrl"`
+	Extracted                    InstagramExtracted                `json:"extracted"`
 	FanClub                      InstagramProfileFanClub           `json:"fanClub"`
 	Fbid                         *string                           `json:"fbid"`
 	Fundraisers                  InstagramProfileFundraisers       `json:"fundraisers"`
@@ -896,6 +913,7 @@ type InstagramProfileReference struct {
 	DisplayName                  *string                           `json:"displayName"`
 	DisplaySettings              InstagramProfileDisplaySettings   `json:"displaySettings"`
 	ExternalURL                  *string                           `json:"externalUrl"`
+	Extracted                    InstagramExtracted                `json:"extracted"`
 	FanClub                      InstagramProfileFanClub           `json:"fanClub"`
 	Fbid                         *string                           `json:"fbid"`
 	Fundraisers                  InstagramProfileFundraisers       `json:"fundraisers"`
@@ -1011,6 +1029,7 @@ type InstagramStory struct {
 		IsSharedToFacebook   *bool `json:"isSharedToFacebook"`
 	} `json:"crossposting"`
 	ExpiresAt                *time.Time                    `json:"expiresAt"`
+	Extracted                InstagramExtracted            `json:"extracted"`
 	Fbid                     *string                       `json:"fbid"`
 	HasDelayedMetadata       *bool                         `json:"hasDelayedMetadata"`
 	HasTaggedUsers           *bool                         `json:"hasTaggedUsers"`
@@ -1102,6 +1121,7 @@ type InstagramStoryReference struct {
 		IsSharedToFacebook   *bool `json:"isSharedToFacebook"`
 	} `json:"crossposting"`
 	ExpiresAt                *time.Time                    `json:"expiresAt"`
+	Extracted                InstagramExtracted            `json:"extracted"`
 	Fbid                     *string                       `json:"fbid"`
 	HasDelayedMetadata       *bool                         `json:"hasDelayedMetadata"`
 	HasTaggedUsers           *bool                         `json:"hasTaggedUsers"`
@@ -1244,6 +1264,7 @@ type RedditComment struct {
 	Display         RedditCommentDisplay     `json:"display"`
 	DistinguishedBy *string                  `json:"distinguishedBy"`
 	EditedAt        *time.Time               `json:"editedAt"`
+	Extracted       RedditExtracted          `json:"extracted"`
 	ID              string                   `json:"id"`
 	IsArchived      *bool                    `json:"isArchived"`
 	IsByPostAuthor  *bool                    `json:"isByPostAuthor"`
@@ -1281,6 +1302,7 @@ type RedditCommentReference struct {
 	Display         RedditCommentDisplay     `json:"display"`
 	DistinguishedBy *string                  `json:"distinguishedBy"`
 	EditedAt        *time.Time               `json:"editedAt"`
+	Extracted       RedditExtracted          `json:"extracted"`
 	ID              *string                  `json:"id"`
 	IsArchived      *bool                    `json:"isArchived"`
 	IsByPostAuthor  *bool                    `json:"isByPostAuthor"`
@@ -1356,6 +1378,18 @@ type RedditEmbedAuthor struct {
 type RedditEmbedSource struct {
 	Name *string `json:"name"`
 	URL  *string `json:"url"`
+}
+
+type RedditExtracted struct {
+	Emails  []string                `json:"emails"`
+	Handles []RedditExtractedHandle `json:"handles"`
+	Links   []string                `json:"links"`
+	Phones  []string                `json:"phones"`
+}
+
+type RedditExtractedHandle struct {
+	Handle   *string `json:"handle"`
+	Platform *string `json:"platform"`
 }
 
 type RedditFlair struct {
@@ -1436,6 +1470,7 @@ type RedditPost struct {
 	Domain              *string               `json:"domain"`
 	EditedAt            *time.Time            `json:"editedAt"`
 	Embed               *RedditEmbed          `json:"embed"`
+	Extracted           RedditExtracted       `json:"extracted"`
 	Flair               *RedditFlair          `json:"flair"`
 	ID                  string                `json:"id"`
 	IsArchived          *bool                 `json:"isArchived"`
@@ -1490,6 +1525,7 @@ type RedditPostReference struct {
 	Domain              *string               `json:"domain"`
 	EditedAt            *time.Time            `json:"editedAt"`
 	Embed               *RedditEmbed          `json:"embed"`
+	Extracted           RedditExtracted       `json:"extracted"`
 	Flair               *RedditFlair          `json:"flair"`
 	ID                  *string               `json:"id"`
 	IsArchived          *bool                 `json:"isArchived"`
@@ -1552,6 +1588,7 @@ type RedditProfile struct {
 	CreatedAt        *time.Time              `json:"createdAt"`
 	DisplayHandle    *string                 `json:"displayHandle"`
 	DisplayName      *string                 `json:"displayName"`
+	Extracted        RedditExtracted         `json:"extracted"`
 	Handle           string                  `json:"handle"`
 	ID               string                  `json:"id"`
 	IsEmployee       *bool                   `json:"isEmployee"`
@@ -1913,6 +1950,7 @@ type TikTokComment struct {
 	Author           *TikTokProfileReference  `json:"author"`
 	CreatedAt        time.Time                `json:"createdAt"`
 	Entities         []TikTokTextEntity       `json:"entities"`
+	Extracted        TikTokExtracted          `json:"extracted"`
 	ID               string                   `json:"id"`
 	IsLikedByCreator *bool                    `json:"isLikedByCreator"`
 	IsPinned         *bool                    `json:"isPinned"`
@@ -1948,6 +1986,7 @@ type TikTokCommentReference struct {
 	Author           *TikTokProfileReference  `json:"author"`
 	CreatedAt        *time.Time               `json:"createdAt"`
 	Entities         []TikTokTextEntity       `json:"entities"`
+	Extracted        TikTokExtracted          `json:"extracted"`
 	ID               *string                  `json:"id"`
 	IsLikedByCreator *bool                    `json:"isLikedByCreator"`
 	IsPinned         *bool                    `json:"isPinned"`
@@ -2064,6 +2103,18 @@ type TikTokEffectReference struct {
 type TikTokEffectTrigger struct {
 	ActionCodes []int64 `json:"actionCodes"`
 	Type        *string `json:"type"`
+}
+
+type TikTokExtracted struct {
+	Emails  []string                `json:"emails"`
+	Handles []TikTokExtractedHandle `json:"handles"`
+	Links   []string                `json:"links"`
+	Phones  []string                `json:"phones"`
+}
+
+type TikTokExtractedHandle struct {
+	Handle   *string `json:"handle"`
+	Platform *string `json:"platform"`
 }
 
 type TikTokHashtag struct {
@@ -2432,6 +2483,7 @@ type TikTokPost struct {
 	Description         *string                    `json:"description"`
 	Effects             []TikTokEffectReference    `json:"effects"`
 	Entities            []TikTokTextEntity         `json:"entities"`
+	Extracted           TikTokExtracted            `json:"extracted"`
 	HasDanmaku          *bool                      `json:"hasDanmaku"`
 	HasPromotionalMusic *bool                      `json:"hasPromotionalMusic"`
 	Hashtags            []TikTokHashtagReference   `json:"hashtags"`
@@ -2514,6 +2566,7 @@ type TikTokPostReference struct {
 	Description         *string                    `json:"description"`
 	Effects             []TikTokEffectReference    `json:"effects"`
 	Entities            []TikTokTextEntity         `json:"entities"`
+	Extracted           TikTokExtracted            `json:"extracted"`
 	HasDanmaku          *bool                      `json:"hasDanmaku"`
 	HasPromotionalMusic *bool                      `json:"hasPromotionalMusic"`
 	Hashtags            []TikTokHashtagReference   `json:"hashtags"`
@@ -2628,6 +2681,7 @@ type TikTokProfile struct {
 	} `json:"commerce"`
 	CreatedAt          *time.Time           `json:"createdAt"`
 	DisplayName        *string              `json:"displayName"`
+	Extracted          TikTokExtracted      `json:"extracted"`
 	Handle             string               `json:"handle"`
 	ID                 string               `json:"id"`
 	IsAdVirtual        *bool                `json:"isAdVirtual"`
@@ -2699,6 +2753,7 @@ type TikTokProfileReference struct {
 	} `json:"commerce"`
 	CreatedAt          *time.Time           `json:"createdAt"`
 	DisplayName        *string              `json:"displayName"`
+	Extracted          TikTokExtracted      `json:"extracted"`
 	Handle             *string              `json:"handle"`
 	ID                 *string              `json:"id"`
 	IsAdVirtual        *bool                `json:"isAdVirtual"`
@@ -3010,6 +3065,18 @@ type TwitterEvent struct {
 	Title      *string `json:"title"`
 }
 
+type TwitterExtracted struct {
+	Emails  []string                 `json:"emails"`
+	Handles []TwitterExtractedHandle `json:"handles"`
+	Links   []string                 `json:"links"`
+	Phones  []string                 `json:"phones"`
+}
+
+type TwitterExtractedHandle struct {
+	Handle   *string `json:"handle"`
+	Platform *string `json:"platform"`
+}
+
 type TwitterFormatting struct {
 	Range TwitterRange `json:"range"`
 	Types []string     `json:"types"`
@@ -3177,6 +3244,7 @@ type TwitterPost struct {
 	DisplayTextRange      *TwitterRange             `json:"displayTextRange"`
 	Edit                  *TwitterEdit              `json:"edit"`
 	Entities              []TwitterEntity           `json:"entities"`
+	Extracted             TwitterExtracted          `json:"extracted"`
 	HasGrokAnalysisButton *bool                     `json:"hasGrokAnalysisButton"`
 	ID                    string                    `json:"id"`
 	InReplyToHandle       *string                   `json:"inReplyToHandle"`
@@ -3223,6 +3291,7 @@ type TwitterPostReference struct {
 	DisplayTextRange      *TwitterRange             `json:"displayTextRange"`
 	Edit                  *TwitterEdit              `json:"edit"`
 	Entities              []TwitterEntity           `json:"entities"`
+	Extracted             TwitterExtracted          `json:"extracted"`
 	HasGrokAnalysisButton *bool                     `json:"hasGrokAnalysisButton"`
 	ID                    *string                   `json:"id"`
 	InReplyToHandle       *string                   `json:"inReplyToHandle"`
@@ -3278,6 +3347,7 @@ type TwitterProfile struct {
 	DisplayName           *string                 `json:"displayName"`
 	Entities              TwitterProfileEntities  `json:"entities"`
 	ExternalURL           *string                 `json:"externalUrl"`
+	Extracted             TwitterExtracted        `json:"extracted"`
 	Handle                string                  `json:"handle"`
 	HasCustomTimelines    *bool                   `json:"hasCustomTimelines"`
 	ID                    string                  `json:"id"`
@@ -3325,6 +3395,7 @@ type TwitterProfileReference struct {
 	DisplayName           *string                 `json:"displayName"`
 	Entities              TwitterProfileEntities  `json:"entities"`
 	ExternalURL           *string                 `json:"externalUrl"`
+	Extracted             TwitterExtracted        `json:"extracted"`
 	Handle                *string                 `json:"handle"`
 	HasCustomTimelines    *bool                   `json:"hasCustomTimelines"`
 	ID                    *string                 `json:"id"`
