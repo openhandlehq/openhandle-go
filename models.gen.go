@@ -118,6 +118,21 @@ type InstagramBioLink struct {
 	URL        *string         `json:"url"`
 }
 
+type InstagramCaptionReference struct {
+	CreatedAt *time.Time `json:"createdAt"`
+	ID        *string    `json:"id"`
+	IsCovered *bool      `json:"isCovered"`
+	IsEdited  *bool      `json:"isEdited"`
+	Ranking   struct {
+		IsRanked *bool `json:"isRanked"`
+	} `json:"ranking"`
+	SharingEnabled *bool   `json:"sharingEnabled"`
+	Status         *string `json:"status"`
+	Translation    struct {
+		Text *string `json:"text"`
+	} `json:"translation"`
+}
+
 type InstagramClipMetadata struct {
 	Audio   *InstagramAudioReference `json:"audio"`
 	Partial *InstagramPartialData    `json:"partial"`
@@ -535,7 +550,7 @@ type InstagramPost struct {
 		OriginalPost *InstagramPostReference `json:"originalPost"`
 	} `json:"attribution"`
 	Author   *InstagramProfileReference `json:"author"`
-	Caption  *InstagramCommentReference `json:"caption"`
+	Caption  *InstagramCaptionReference `json:"caption"`
 	Carousel struct {
 		ItemCount          *int64                      `json:"itemCount"`
 		PendingItemCount   *int64                      `json:"pendingItemCount"`
@@ -657,7 +672,7 @@ type InstagramPostReference struct {
 		OriginalPost *InstagramPostReference `json:"originalPost"`
 	} `json:"attribution"`
 	Author   *InstagramProfileReference `json:"author"`
-	Caption  *InstagramCommentReference `json:"caption"`
+	Caption  *InstagramCaptionReference `json:"caption"`
 	Carousel struct {
 		ItemCount          *int64                      `json:"itemCount"`
 		PendingItemCount   *int64                      `json:"pendingItemCount"`
@@ -1013,7 +1028,7 @@ type InstagramStory struct {
 		OriginalPost *InstagramPostReference `json:"originalPost"`
 	} `json:"attribution"`
 	Author   *InstagramProfileReference `json:"author"`
-	Caption  *InstagramCommentReference `json:"caption"`
+	Caption  *InstagramCaptionReference `json:"caption"`
 	Carousel struct {
 		ItemCount          *int64                      `json:"itemCount"`
 		PendingItemCount   *int64                      `json:"pendingItemCount"`
@@ -1105,7 +1120,7 @@ type InstagramStoryReference struct {
 		OriginalPost *InstagramPostReference `json:"originalPost"`
 	} `json:"attribution"`
 	Author   *InstagramProfileReference `json:"author"`
-	Caption  *InstagramCommentReference `json:"caption"`
+	Caption  *InstagramCaptionReference `json:"caption"`
 	Carousel struct {
 		ItemCount          *int64                      `json:"itemCount"`
 		PendingItemCount   *int64                      `json:"pendingItemCount"`
