@@ -785,6 +785,93 @@
         ],
         "type": "object"
       },
+      "InstagramCaptionReference": {
+        "additionalProperties": false,
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "minLength": 1,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "minLength": 1,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isCovered": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "isEdited": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "ranking": {
+            "additionalProperties": false,
+            "properties": {
+              "isRanked": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "isRanked"
+            ],
+            "type": "object"
+          },
+          "sharingEnabled": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "status": {
+            "minLength": 1,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "translation": {
+            "additionalProperties": false,
+            "properties": {
+              "text": {
+                "minLength": 1,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "text"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "status",
+          "isCovered",
+          "isEdited",
+          "sharingEnabled",
+          "ranking",
+          "translation"
+        ],
+        "type": "object"
+      },
       "InstagramClipMetadata": {
         "additionalProperties": false,
         "properties": {
@@ -3428,7 +3515,7 @@
           "caption": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/InstagramCommentReference"
+                "$ref": "#/components/schemas/InstagramCaptionReference"
               },
               {
                 "type": "null"
@@ -4232,7 +4319,7 @@
           "caption": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/InstagramCommentReference"
+                "$ref": "#/components/schemas/InstagramCaptionReference"
               },
               {
                 "type": "null"
@@ -6479,7 +6566,7 @@
           "caption": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/InstagramCommentReference"
+                "$ref": "#/components/schemas/InstagramCaptionReference"
               },
               {
                 "type": "null"
@@ -7104,7 +7191,7 @@
           "caption": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/InstagramCommentReference"
+                "$ref": "#/components/schemas/InstagramCaptionReference"
               },
               {
                 "type": "null"
@@ -22065,7 +22152,7 @@
   "info": {
     "description": "Read public social data through one API contract. API keys starting with oh_test_ use the deterministic synthetic dataset and record a $0.000 actual charge. Keys starting with oh_live_, plus legacy oh_ keys, use real public data and normal billing. Do not send an environment parameter or header.",
     "title": "Openhandle API",
-    "version": "1.2.3"
+    "version": "1.2.4"
   },
   "openapi": "3.1.0",
   "paths": {
