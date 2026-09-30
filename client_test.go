@@ -305,6 +305,45 @@ func TestFetchDecodesConcreteVariant(t *testing.T) {
 	}
 }
 
+func TestFetchTellsAnInstagramHighlightFromAStory(t *testing.T) {
+	t.Parallel()
+
+	cases := []struct {
+		name string
+		data string
+		want string
+	}{
+		{"highlight with only its always-present fields", `{"id":"17900000000000001","url":"https://www.instagram.com/stories/highlights/17900000000000001/"}`, "highlight"},
+		{"highlight with stories", `{"id":"17900000000000001","url":"https://www.instagram.com/stories/highlights/17900000000000001/","stories":[]}`, "highlight"},
+		{"story", `{"id":"3100000000000000001","url":"https://www.instagram.com/stories/openai/3100000000000000001/","code":"DSTORY"}`, "story"},
+	}
+	for _, testCase := range cases {
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+			server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, _ *http.Request) {
+				writer.Header().Set("Content-Type", "application/json")
+				_, _ = fmt.Fprintf(writer, `{"platform":"instagram","resource":"entity","capturedAt":"2026-08-27T12:00:00Z","source":"live","data":%s}`, testCase.data)
+			}))
+			defer server.Close()
+			client, err := New("oh_test_key", WithBaseURL(server.URL), WithMaxRetries(0))
+			if err != nil {
+				t.Fatal(err)
+			}
+			response, err := client.Fetch(t.Context(), "https://www.instagram.com/stories/highlights/17900000000000001/", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			got := "story"
+			if _, ok := response.Data.(*InstagramHighlight); ok {
+				got = "highlight"
+			}
+			if got != testCase.want {
+				t.Fatalf("fetch decoded a %s as %T", testCase.want, response.Data)
+			}
+		})
+	}
+}
+
 func pageJSON(id, cursor, requestID string) string {
 	next := "null"
 	if cursor != "" {

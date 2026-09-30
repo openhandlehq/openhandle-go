@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"strings"
 	"time"
 )
 
@@ -6353,11 +6354,14 @@ func (r *FetchResponse) UnmarshalJSON(data []byte) error {
 	case wire.Platform == PlatformInstagram && wire.Resource == Resource("post"):
 		target = &InstagramPost{}
 	case wire.Platform == PlatformInstagram && wire.Resource == Resource("entity"):
-		var probe map[string]json.RawMessage
+		var probe struct {
+			URL     string          `json:"url"`
+			Stories json.RawMessage `json:"stories"`
+		}
 		if err := json.Unmarshal(wire.Data, &probe); err != nil {
 			return err
 		}
-		if _, ok := probe["items"]; ok {
+		if strings.Contains(probe.URL, "/stories/highlights/") || probe.Stories != nil {
 			target = &InstagramHighlight{}
 		} else {
 			target = &InstagramStory{}
