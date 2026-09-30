@@ -305,24 +305,29 @@ func TestFetchDecodesConcreteVariant(t *testing.T) {
 	}
 }
 
-func TestFetchTellsAnInstagramHighlightFromAStory(t *testing.T) {
+func TestFetchDecodesInstagramStoriesAndHighlightsByResource(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
-		name string
-		data string
-		want string
+		resource string
+		data     string
+		check    func(FetchResource) bool
 	}{
-		{"highlight with only its always-present fields", `{"id":"17900000000000001","url":"https://www.instagram.com/stories/highlights/17900000000000001/"}`, "highlight"},
-		{"highlight with stories", `{"id":"17900000000000001","url":"https://www.instagram.com/stories/highlights/17900000000000001/","stories":[]}`, "highlight"},
-		{"story", `{"id":"3100000000000000001","url":"https://www.instagram.com/stories/openai/3100000000000000001/","code":"DSTORY"}`, "story"},
+		{"highlight", `{"id":"17900000000000001","url":"https://www.instagram.com/stories/highlights/17900000000000001/","stories":null}`, func(data FetchResource) bool {
+			highlight, ok := data.(*InstagramHighlight)
+			return ok && highlight.ID == "17900000000000001"
+		}},
+		{"story", `{"id":"3100000000000000001","url":"https://www.instagram.com/stories/openai/3100000000000000001/"}`, func(data FetchResource) bool {
+			story, ok := data.(*InstagramStory)
+			return ok && story.ID == "3100000000000000001"
+		}},
 	}
 	for _, testCase := range cases {
-		t.Run(testCase.name, func(t *testing.T) {
+		t.Run(testCase.resource, func(t *testing.T) {
 			t.Parallel()
 			server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, _ *http.Request) {
 				writer.Header().Set("Content-Type", "application/json")
-				_, _ = fmt.Fprintf(writer, `{"platform":"instagram","resource":"entity","capturedAt":"2026-08-27T12:00:00Z","source":"live","data":%s}`, testCase.data)
+				_, _ = fmt.Fprintf(writer, `{"platform":"instagram","resource":%q,"capturedAt":"2026-08-27T12:00:00Z","source":"live","data":%s}`, testCase.resource, testCase.data)
 			}))
 			defer server.Close()
 			client, err := New("oh_test_key", WithBaseURL(server.URL), WithMaxRetries(0))
@@ -333,12 +338,8 @@ func TestFetchTellsAnInstagramHighlightFromAStory(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			got := "story"
-			if _, ok := response.Data.(*InstagramHighlight); ok {
-				got = "highlight"
-			}
-			if got != testCase.want {
-				t.Fatalf("fetch decoded a %s as %T", testCase.want, response.Data)
+			if !testCase.check(response.Data) {
+				t.Fatalf("fetch decoded a %s as %T", testCase.resource, response.Data)
 			}
 		})
 	}

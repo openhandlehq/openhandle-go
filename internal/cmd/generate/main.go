@@ -319,7 +319,7 @@ func generateResources(definitions []operationDefinition) []byte {
 	var output strings.Builder
 	output.WriteString(generatedHeader())
 	output.WriteString("package openhandle\n\n")
-	output.WriteString("import (\n\t\"context\"\n\t\"encoding/json\"\n\t\"errors\"\n\t\"strings\"\n\t\"time\"\n)\n\n")
+	output.WriteString("import (\n\t\"context\"\n\t\"encoding/json\"\n\t\"errors\"\n\t\"time\"\n)\n\n")
 	generateClient(&output, root)
 	var nodes []*treeNode
 	collectNodes(root, &nodes)
@@ -501,7 +501,8 @@ func generateFetchTypes(output *strings.Builder) {
 	output.WriteString("\tvar target FetchResource\n\tswitch {\n")
 	output.WriteString("\tcase wire.Platform == PlatformInstagram && wire.Resource == Resource(\"profile\"):\n\t\ttarget = &InstagramProfile{}\n")
 	output.WriteString("\tcase wire.Platform == PlatformInstagram && wire.Resource == Resource(\"post\"):\n\t\ttarget = &InstagramPost{}\n")
-	output.WriteString("\tcase wire.Platform == PlatformInstagram && wire.Resource == Resource(\"entity\"):\n\t\tvar probe struct { URL string `json:\"url\"`; Stories json.RawMessage `json:\"stories\"` }\n\t\tif err := json.Unmarshal(wire.Data, &probe); err != nil { return err }\n\t\tif strings.Contains(probe.URL, \"/stories/highlights/\") || probe.Stories != nil { target = &InstagramHighlight{} } else { target = &InstagramStory{} }\n")
+	output.WriteString("\tcase wire.Platform == PlatformInstagram && wire.Resource == Resource(\"story\"):\n\t\ttarget = &InstagramStory{}\n")
+	output.WriteString("\tcase wire.Platform == PlatformInstagram && wire.Resource == Resource(\"highlight\"):\n\t\ttarget = &InstagramHighlight{}\n")
 	output.WriteString("\tcase wire.Platform == PlatformTikTok && wire.Resource == Resource(\"profile\"):\n\t\ttarget = &TikTokProfile{}\n")
 	output.WriteString("\tcase wire.Platform == PlatformTikTok && wire.Resource == Resource(\"post\"):\n\t\ttarget = &TikTokPost{}\n")
 	output.WriteString("\tcase wire.Platform == PlatformTwitter && wire.Resource == Resource(\"profile\"):\n\t\ttarget = &TwitterProfile{}\n")
