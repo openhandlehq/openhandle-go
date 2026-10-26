@@ -31,6 +31,7 @@ type URL string
 
 var (
 	redditName    = regexp.MustCompile(`^[A-Za-z0-9_-]{1,100}$`)
+	youTubeHandle = regexp.MustCompile(`^[\p{L}\p{N}._-]{1,100}$`)
 	numericID     = regexp.MustCompile(`^[0-9]+$`)
 	instagramName = regexp.MustCompile(`^[A-Za-z0-9._]{1,30}$`)
 	tikTokName    = regexp.MustCompile(`^[A-Za-z0-9._]{2,24}$`)
@@ -117,7 +118,7 @@ func looksLikeSupportedSocialURL(value string) bool {
 
 func supportedSocialHost(host string) bool {
 	switch host {
-	case "reddit.com", "old.reddit.com", "new.reddit.com", "m.reddit.com", "redd.it", "instagram.com", "tiktok.com", "m.tiktok.com", "vm.tiktok.com", "vt.tiktok.com", "x.com", "twitter.com", "mobile.twitter.com":
+	case "youtube.com", "m.youtube.com", "music.youtube.com", "youtu.be", "reddit.com", "old.reddit.com", "new.reddit.com", "m.reddit.com", "redd.it", "instagram.com", "tiktok.com", "m.tiktok.com", "vm.tiktok.com", "vt.tiktok.com", "x.com", "twitter.com", "mobile.twitter.com":
 		return true
 	default:
 		return false
@@ -128,6 +129,8 @@ func usernameReference(value, platform string) (string, error) {
 	username := strings.TrimPrefix(value, "@")
 	var valid bool
 	switch platform {
+	case "youtube":
+		valid = youTubeHandle.MatchString(username)
 	case "reddit":
 		valid = redditName.MatchString(username)
 	case "instagram":
@@ -161,6 +164,8 @@ func resolveSocialURL(input string) (socialURLResolution, error) {
 		return socialURLResolution{}, &ReferenceError{Message: "TikTok short links are not resolved locally. Use Fetch instead."}
 	}
 	switch host {
+	case "youtube.com", "m.youtube.com", "music.youtube.com", "youtu.be":
+		return resolveYouTubeURL(host, parsed, parts)
 	case "reddit.com", "old.reddit.com", "new.reddit.com", "m.reddit.com", "redd.it":
 		return resolveRedditURL(host, parts)
 	case "instagram.com":

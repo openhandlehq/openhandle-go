@@ -487,7 +487,7 @@ func generateOperationTypes(output *strings.Builder, definition operationDefinit
 }
 
 func generateFetchTypes(output *strings.Builder) {
-	variants := []string{"InstagramProfile", "InstagramPost", "InstagramStory", "InstagramHighlight", "TikTokProfile", "TikTokPost", "TwitterProfile", "TwitterPost", "RedditProfile", "RedditPost", "RedditSubreddit"}
+	variants := []string{"InstagramProfile", "InstagramPost", "InstagramStory", "InstagramHighlight", "TikTokProfile", "TikTokPost", "TwitterProfile", "TwitterPost", "RedditProfile", "RedditPost", "RedditSubreddit", "YouTubeProfile", "YouTubePost"}
 	output.WriteString("// FetchResource is one of the concrete resources returned by Client.Fetch.\n")
 	output.WriteString("type FetchResource interface { isFetchResource() }\n\n")
 	for _, variant := range variants {
@@ -510,6 +510,8 @@ func generateFetchTypes(output *strings.Builder) {
 	output.WriteString("\tcase wire.Platform == PlatformReddit && wire.Resource == Resource(\"profile\"):\n\t\ttarget = &RedditProfile{}\n")
 	output.WriteString("\tcase wire.Platform == PlatformReddit && wire.Resource == Resource(\"post\"):\n\t\ttarget = &RedditPost{}\n")
 	output.WriteString("\tcase wire.Platform == PlatformReddit && wire.Resource == Resource(\"subreddit\"):\n\t\ttarget = &RedditSubreddit{}\n")
+	output.WriteString("\tcase wire.Platform == PlatformYouTube && wire.Resource == Resource(\"profile\"):\n\t\ttarget = &YouTubeProfile{}\n")
+	output.WriteString("\tcase wire.Platform == PlatformYouTube && wire.Resource == Resource(\"post\"):\n\t\ttarget = &YouTubePost{}\n")
 	output.WriteString("\tdefault:\n\t\treturn errors.New(\"openhandle: unsupported fetch response variant\")\n\t}\n")
 	output.WriteString("\tif err := json.Unmarshal(wire.Data, target); err != nil { return err }\n\tr.Data = target\n\treturn nil\n}\n\n")
 }
@@ -626,7 +628,7 @@ func referenceName(ref string) string {
 
 func pascalCase(value string) string {
 	initialisms := map[string]string{
-		"id": "ID", "ids": "IDs", "oembed": "OEmbed", "qrCode": "QRCode", "tiktok": "TikTok", "url": "URL",
+		"id": "ID", "ids": "IDs", "oembed": "OEmbed", "qrCode": "QRCode", "tiktok": "TikTok", "url": "URL", "youtube": "YouTube",
 	}
 	if result := initialisms[value]; result != "" {
 		return result
@@ -646,7 +648,7 @@ func pascalCase(value string) string {
 		}
 	}
 	name := result.String()
-	for _, replacement := range [][2]string{{"Id", "ID"}, {"Url", "URL"}, {"QrCode", "QRCode"}, {"Oembed", "OEmbed"}, {"Tiktok", "TikTok"}} {
+	for _, replacement := range [][2]string{{"Id", "ID"}, {"Url", "URL"}, {"QrCode", "QRCode"}, {"Oembed", "OEmbed"}, {"Tiktok", "TikTok"}, {"Youtube", "YouTube"}} {
 		name = strings.ReplaceAll(name, replacement[0], replacement[1])
 	}
 	return name
