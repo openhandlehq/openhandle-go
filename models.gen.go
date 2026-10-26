@@ -1753,20 +1753,26 @@ type ResponseCursors struct {
 
 type ResponseMeta struct {
 	Cashtags            []any                     `json:"cashtags,omitempty"`
+	Category            *string                   `json:"category,omitempty"`
 	Chart               *TikTokChartMetadata      `json:"chart,omitempty"`
+	ChartWeek           *YouTubeChartWeek         `json:"chartWeek,omitempty"`
 	Collection          *InstagramStoryCollection `json:"collection,omitempty"`
+	Comments            *int64                    `json:"comments,omitempty"`
 	Community           *RedditCommunityHandle    `json:"community,omitempty"`
 	Context             *RedditListingContext     `json:"context,omitempty"`
 	Continuation        *TikTokPageContinuation   `json:"continuation,omitempty"`
 	Count               *int64                    `json:"count,omitempty"`
+	Country             *string                   `json:"country,omitempty"`
 	Cursors             ResponseCursors           `json:"cursors"`
 	Domain              *string                   `json:"domain,omitempty"`
+	EstimatedResults    *int64                    `json:"estimatedResults,omitempty"`
 	Events              []any                     `json:"events,omitempty"`
 	Handle              *string                   `json:"handle,omitempty"`
 	HasFilteredComments *bool                     `json:"hasFilteredComments,omitempty"`
 	HasMore             *bool                     `json:"hasMore,omitempty"`
 	HasMoreAfter        *bool                     `json:"hasMoreAfter,omitempty"`
 	HasMoreBefore       *bool                     `json:"hasMoreBefore,omitempty"`
+	Hashtag             *YouTubeHashtag           `json:"hashtag,omitempty"`
 	Hashtags            []any                     `json:"hashtags,omitempty"`
 	IsLimited           *bool                     `json:"isLimited,omitempty"`
 	LikesEnabled        *bool                     `json:"likesEnabled,omitempty"`
@@ -1784,6 +1790,7 @@ type ResponseMeta struct {
 	NextCursorLabel  *string                    `json:"nextCursorLabel,omitempty"`
 	NextCursorType   *string                    `json:"nextCursorType,omitempty"`
 	Parent           *InstagramCommentReference `json:"parent,omitempty"`
+	Playlist         *YouTubePlaylistReference  `json:"playlist,omitempty"`
 	PreviousCursor   *string                    `json:"previousCursor,omitempty"`
 	Promoted         []TwitterPostReference     `json:"promoted,omitempty"`
 	Queries          []TwitterSuggestedQuery    `json:"queries,omitempty"`
@@ -3513,4 +3520,284 @@ type TwitterWithheld struct {
 	Copyright   *bool   `json:"copyright"`
 	Description *string `json:"description"`
 	Scope       *string `json:"scope"`
+}
+
+type YouTubeAudioTrack struct {
+	Language *string `json:"language"`
+	Name     *string `json:"name"`
+}
+
+type YouTubeAuthor struct {
+	Avatar      *YouTubeImage `json:"avatar"`
+	DisplayName *string       `json:"displayName"`
+	Handle      *string       `json:"handle"`
+	ID          *string       `json:"id"`
+	IsArtist    *bool         `json:"isArtist"`
+	IsVerified  *bool         `json:"isVerified"`
+}
+
+type YouTubeChartArtist struct {
+	ID   *string `json:"id"`
+	Name *string `json:"name"`
+}
+
+type YouTubeChartEntry struct {
+	Artists     []YouTubeChartArtist `json:"artists"`
+	Channel     *YouTubeAuthor       `json:"channel"`
+	Duration    *int64               `json:"duration"`
+	ID          string               `json:"id"`
+	Label       *string              `json:"label"`
+	Metrics     YouTubeChartMetrics  `json:"metrics"`
+	PostID      *string              `json:"postId"`
+	Rank        YouTubeChartRank     `json:"rank"`
+	ReleaseDate *string              `json:"releaseDate"`
+	Thumbnail   *YouTubeImage        `json:"thumbnail"`
+	Title       *string              `json:"title"`
+	Type        *string              `json:"type"`
+	URL         *string              `json:"url"`
+}
+
+type YouTubeChartMetrics struct {
+	Views *int64 `json:"views"`
+}
+
+type YouTubeChartRank struct {
+	Position         *int64   `json:"position"`
+	PreviousPosition *int64   `json:"previousPosition"`
+	ViewsChange      *float64 `json:"viewsChange"`
+	WeeksOnChart     *int64   `json:"weeksOnChart"`
+}
+
+type YouTubeChartWeek struct {
+	Country   *string `json:"country"`
+	EndDate   *string `json:"endDate"`
+	StartDate *string `json:"startDate"`
+}
+
+type YouTubeComment struct {
+	ApproximateCreatedAt *time.Time            `json:"approximateCreatedAt"`
+	Author               *YouTubeAuthor        `json:"author"`
+	CreatedAt            *time.Time            `json:"createdAt"`
+	CreatedAtLabel       *string               `json:"createdAtLabel"`
+	Extracted            YouTubeExtracted      `json:"extracted"`
+	ID                   string                `json:"id"`
+	IsByPostAuthor       *bool                 `json:"isByPostAuthor"`
+	IsEdited             *bool                 `json:"isEdited"`
+	Metrics              YouTubeCommentMetrics `json:"metrics"`
+	ParentID             *string               `json:"parentId"`
+	PostID               *string               `json:"postId"`
+	RepliesToken         *string               `json:"repliesToken"`
+	Text                 *string               `json:"text"`
+	URL                  string                `json:"url"`
+}
+
+type YouTubeCommentMetrics struct {
+	IsApproximate *bool  `json:"isApproximate"`
+	Likes         *int64 `json:"likes"`
+	Replies       *int64 `json:"replies"`
+}
+
+type YouTubeCommunityPost struct {
+	ApproximateCreatedAt *time.Time                  `json:"approximateCreatedAt"`
+	Author               *YouTubeAuthor              `json:"author"`
+	CreatedAt            *time.Time                  `json:"createdAt"`
+	CreatedAtLabel       *string                     `json:"createdAtLabel"`
+	Extracted            YouTubeExtracted            `json:"extracted"`
+	ID                   string                      `json:"id"`
+	Images               []YouTubeImage              `json:"images"`
+	Metrics              YouTubeCommunityPostMetrics `json:"metrics"`
+	Poll                 *YouTubePoll                `json:"poll"`
+	Text                 *string                     `json:"text"`
+	URL                  string                      `json:"url"`
+}
+
+type YouTubeCommunityPostMetrics struct {
+	Comments      *int64 `json:"comments"`
+	IsApproximate *bool  `json:"isApproximate"`
+	Likes         *int64 `json:"likes"`
+}
+
+type YouTubeExtracted struct {
+	Emails  []string                 `json:"emails"`
+	Handles []YouTubeExtractedHandle `json:"handles"`
+	Links   []string                 `json:"links"`
+	Phones  []string                 `json:"phones"`
+}
+
+type YouTubeExtractedHandle struct {
+	Handle   *string `json:"handle"`
+	Platform *string `json:"platform"`
+}
+
+type YouTubeHashtag struct {
+	Label *string `json:"label"`
+	Name  *string `json:"name"`
+}
+
+type YouTubeImage struct {
+	Height     *int64         `json:"height"`
+	Renditions []YouTubeImage `json:"renditions"`
+	URL        *string        `json:"url"`
+	Width      *int64         `json:"width"`
+}
+
+type YouTubeLink struct {
+	Title *string `json:"title"`
+	URL   *string `json:"url"`
+}
+
+type YouTubeMusicCredit struct {
+	Album   *string  `json:"album"`
+	Artists []string `json:"artists"`
+	Title   *string  `json:"title"`
+}
+
+type YouTubePageMetadata struct {
+	Category         *string                   `json:"category"`
+	ChartWeek        *YouTubeChartWeek         `json:"chartWeek"`
+	Comments         *int64                    `json:"comments"`
+	Country          *string                   `json:"country"`
+	EstimatedResults *int64                    `json:"estimatedResults"`
+	Hashtag          *YouTubeHashtag           `json:"hashtag"`
+	Playlist         *YouTubePlaylistReference `json:"playlist"`
+	Query            *string                   `json:"query"`
+}
+
+type YouTubePlaylist struct {
+	ApproximateUpdatedAt *time.Time             `json:"approximateUpdatedAt"`
+	Author               *YouTubeAuthor         `json:"author"`
+	FirstPostID          *string                `json:"firstPostId"`
+	ID                   string                 `json:"id"`
+	Metrics              YouTubePlaylistMetrics `json:"metrics"`
+	Text                 *string                `json:"text"`
+	Thumbnail            *YouTubeImage          `json:"thumbnail"`
+	Title                *string                `json:"title"`
+	Type                 *string                `json:"type"`
+	UpdatedAtLabel       *string                `json:"updatedAtLabel"`
+	URL                  string                 `json:"url"`
+}
+
+type YouTubePlaylistMetrics struct {
+	IsApproximate *bool  `json:"isApproximate"`
+	Videos        *int64 `json:"videos"`
+	Views         *int64 `json:"views"`
+}
+
+type YouTubePlaylistReference struct {
+	ApproximateUpdatedAt *time.Time             `json:"approximateUpdatedAt"`
+	Author               *YouTubeAuthor         `json:"author"`
+	FirstPostID          *string                `json:"firstPostId"`
+	ID                   *string                `json:"id"`
+	Metrics              YouTubePlaylistMetrics `json:"metrics"`
+	Text                 *string                `json:"text"`
+	Thumbnail            *YouTubeImage          `json:"thumbnail"`
+	Title                *string                `json:"title"`
+	Type                 *string                `json:"type"`
+	UpdatedAtLabel       *string                `json:"updatedAtLabel"`
+	URL                  *string                `json:"url"`
+}
+
+type YouTubePoll struct {
+	Choices []string `json:"choices"`
+	Votes   *int64   `json:"votes"`
+}
+
+type YouTubePost struct {
+	ApproximateCreatedAt *time.Time           `json:"approximateCreatedAt"`
+	AudioTracks          []YouTubeAudioTrack  `json:"audioTracks"`
+	Author               *YouTubeAuthor       `json:"author"`
+	Category             *string              `json:"category"`
+	CreatedAt            *time.Time           `json:"createdAt"`
+	CreatedAtLabel       *string              `json:"createdAtLabel"`
+	Duration             *int64               `json:"duration"`
+	Extracted            YouTubeExtracted     `json:"extracted"`
+	HasCaptions          *bool                `json:"hasCaptions"`
+	Hashtags             []string             `json:"hashtags"`
+	ID                   string               `json:"id"`
+	IsEmbeddable         *bool                `json:"isEmbeddable"`
+	IsFamilySafe         *bool                `json:"isFamilySafe"`
+	IsLiveNow            *bool                `json:"isLiveNow"`
+	IsLiveStream         *bool                `json:"isLiveStream"`
+	IsUnlisted           *bool                `json:"isUnlisted"`
+	Keywords             []string             `json:"keywords"`
+	Language             *string              `json:"language"`
+	LiveStartedAt        *time.Time           `json:"liveStartedAt"`
+	Metrics              YouTubePostMetrics   `json:"metrics"`
+	Music                []YouTubeMusicCredit `json:"music"`
+	Preview              *YouTubeImage        `json:"preview"`
+	Subtitles            []YouTubeSubtitle    `json:"subtitles"`
+	Text                 *string              `json:"text"`
+	Thumbnail            *YouTubeImage        `json:"thumbnail"`
+	Title                *string              `json:"title"`
+	Type                 *string              `json:"type"`
+	URL                  string               `json:"url"`
+}
+
+type YouTubePostMetrics struct {
+	Comments      *int64 `json:"comments"`
+	IsApproximate *bool  `json:"isApproximate"`
+	Likes         *int64 `json:"likes"`
+	Views         *int64 `json:"views"`
+	Watching      *int64 `json:"watching"`
+}
+
+type YouTubeProduct struct {
+	Image      *YouTubeImage `json:"image"`
+	Merchant   *string       `json:"merchant"`
+	Price      *string       `json:"price"`
+	PriceLabel *string       `json:"priceLabel"`
+	Shelf      *string       `json:"shelf"`
+	Title      *string       `json:"title"`
+	URL        string        `json:"url"`
+}
+
+type YouTubeProfile struct {
+	Avatar           *YouTubeImage         `json:"avatar"`
+	Banner           *YouTubeImage         `json:"banner"`
+	Bio              *string               `json:"bio"`
+	Country          *string               `json:"country"`
+	DisplayName      *string               `json:"displayName"`
+	Extracted        YouTubeExtracted      `json:"extracted"`
+	Handle           string                `json:"handle"`
+	HasBusinessEmail *bool                 `json:"hasBusinessEmail"`
+	ID               string                `json:"id"`
+	IsFamilySafe     *bool                 `json:"isFamilySafe"`
+	JoinedAt         *time.Time            `json:"joinedAt"`
+	Keywords         []string              `json:"keywords"`
+	Links            []YouTubeLink         `json:"links"`
+	Metrics          YouTubeProfileMetrics `json:"metrics"`
+	URL              string                `json:"url"`
+}
+
+type YouTubeProfileMetrics struct {
+	IsApproximate *bool  `json:"isApproximate"`
+	Subscribers   *int64 `json:"subscribers"`
+	Videos        *int64 `json:"videos"`
+	Views         *int64 `json:"views"`
+}
+
+type YouTubeSegment struct {
+	End   int64   `json:"end"`
+	Start int64   `json:"start"`
+	Text  *string `json:"text"`
+}
+
+type YouTubeSubtitle struct {
+	IsAutoGenerated *bool   `json:"isAutoGenerated"`
+	IsTranslatable  *bool   `json:"isTranslatable"`
+	Language        *string `json:"language"`
+	Name            *string `json:"name"`
+}
+
+type YouTubeSuggestion struct {
+	Text string `json:"text"`
+}
+
+type YouTubeTranscript struct {
+	IsAutoGenerated *bool             `json:"isAutoGenerated"`
+	Language        *string           `json:"language"`
+	LanguageName    *string           `json:"languageName"`
+	Languages       []YouTubeSubtitle `json:"languages"`
+	PostID          string            `json:"postId"`
+	Segments        []YouTubeSegment  `json:"segments"`
 }

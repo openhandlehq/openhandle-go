@@ -36,6 +36,7 @@ const (
 	PlatformInstagram Platform = "instagram"
 	PlatformTikTok    Platform = "tiktok"
 	PlatformTwitter   Platform = "twitter"
+	PlatformYouTube   Platform = "youtube"
 )
 
 // Resource identifies an Openhandle resource family.

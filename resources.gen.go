@@ -17,6 +17,7 @@ type Client struct {
 	TestData  *TestDataResource
 	TikTok    *TikTokResource
 	Twitter   *TwitterResource
+	YouTube   *YouTubeResource
 }
 
 func newGeneratedClient(core *clientCore) *Client {
@@ -26,6 +27,7 @@ func newGeneratedClient(core *clientCore) *Client {
 	client.TestData = newTestDataResource(client, nil, nil)
 	client.TikTok = newTikTokResource(client, nil, nil)
 	client.Twitter = newTwitterResource(client, nil, nil)
+	client.YouTube = newYouTubeResource(client, nil, nil)
 	return client
 }
 
@@ -5213,6 +5215,1273 @@ func (r *TwitterSearchUsersResource) Items(options *TwitterSearchUsersOptions) *
 	return newIterator(func(ctx context.Context) (*Page[TwitterProfile], error) { return r.List(ctx, iteratorOptions) })
 }
 
+type YouTubeResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Charts       *YouTubeChartsResource
+	Search       *YouTubeSearchResource
+	Trending     *YouTubeTrendingResource
+}
+
+func newYouTubeResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeResource {
+	value := &YouTubeResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Charts = newYouTubeChartsResource(client, bindings, referenceErr)
+	value.Search = newYouTubeSearchResource(client, bindings, referenceErr)
+	value.Trending = newYouTubeTrendingResource(client, bindings, referenceErr)
+	return value
+}
+
+func (r *YouTubeResource) CommunityPost[T ResourceReference](reference T) *YouTubeCommunityPostResource {
+	bindings := cloneBindings(r.bindings)
+	referenceErr := r.referenceErr
+	resolved, err := resolveReference(reference, "youtube", "communityPost")
+	if referenceErr == nil && err != nil {
+		referenceErr = err
+	}
+	if err == nil {
+		bindings["identifier"] = resolved
+	}
+	return newYouTubeCommunityPostResource(r.client, bindings, referenceErr)
+}
+
+func (r *YouTubeResource) Hashtag[T ResourceReference](reference T) *YouTubeHashtagResource {
+	bindings := cloneBindings(r.bindings)
+	referenceErr := r.referenceErr
+	resolved, err := resolveReference(reference, "youtube", "hashtag")
+	if referenceErr == nil && err != nil {
+		referenceErr = err
+	}
+	if err == nil {
+		bindings["identifier"] = resolved
+	}
+	return newYouTubeHashtagResource(r.client, bindings, referenceErr)
+}
+
+func (r *YouTubeResource) Playlist[T ResourceReference](reference T) *YouTubePlaylistResource {
+	bindings := cloneBindings(r.bindings)
+	referenceErr := r.referenceErr
+	resolved, err := resolveReference(reference, "youtube", "playlist")
+	if referenceErr == nil && err != nil {
+		referenceErr = err
+	}
+	if err == nil {
+		bindings["identifier"] = resolved
+	}
+	return newYouTubePlaylistResource(r.client, bindings, referenceErr)
+}
+
+func (r *YouTubeResource) Post[T ResourceReference](reference T) *YouTubePostResource {
+	bindings := cloneBindings(r.bindings)
+	referenceErr := r.referenceErr
+	resolved, err := resolveReference(reference, "youtube", "post")
+	if referenceErr == nil && err != nil {
+		referenceErr = err
+	}
+	if err == nil {
+		bindings["identifier"] = resolved
+	}
+	return newYouTubePostResource(r.client, bindings, referenceErr)
+}
+
+func (r *YouTubeResource) Profile[T ProfileReference](reference T) *YouTubeProfileResource {
+	bindings := cloneBindings(r.bindings)
+	referenceErr := r.referenceErr
+	resolved, err := resolveReference(reference, "youtube", "profile")
+	if referenceErr == nil && err != nil {
+		referenceErr = err
+	}
+	if err == nil {
+		bindings["identifier"] = resolved
+	}
+	return newYouTubeProfileResource(r.client, bindings, referenceErr)
+}
+
+type YouTubeChartsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Artists      *YouTubeChartsArtistsResource
+	Tracks       *YouTubeChartsTracksResource
+	Videos       *YouTubeChartsVideosResource
+}
+
+func newYouTubeChartsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeChartsResource {
+	value := &YouTubeChartsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Artists = newYouTubeChartsArtistsResource(client, bindings, referenceErr)
+	value.Tracks = newYouTubeChartsTracksResource(client, bindings, referenceErr)
+	value.Videos = newYouTubeChartsVideosResource(client, bindings, referenceErr)
+	return value
+}
+
+type YouTubeChartsArtistsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeChartsArtistsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeChartsArtistsResource {
+	value := &YouTubeChartsArtistsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeChartsArtistsResource) List(ctx context.Context, options *YouTubeChartsArtistsOptions) (*YouTubeChartsArtistsResponse, error) {
+	path, err := bindPath("/v1/youtube/charts/artists", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeChartsArtistsResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type YouTubeChartsTracksResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeChartsTracksResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeChartsTracksResource {
+	value := &YouTubeChartsTracksResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeChartsTracksResource) List(ctx context.Context, options *YouTubeChartsTracksOptions) (*YouTubeChartsTracksResponse, error) {
+	path, err := bindPath("/v1/youtube/charts/tracks", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeChartsTracksResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type YouTubeChartsVideosResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeChartsVideosResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeChartsVideosResource {
+	value := &YouTubeChartsVideosResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeChartsVideosResource) List(ctx context.Context, options *YouTubeChartsVideosOptions) (*YouTubeChartsVideosResponse, error) {
+	path, err := bindPath("/v1/youtube/charts/videos", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeChartsVideosResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type YouTubeCommunityPostResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Comments     *YouTubeCommunityPostCommentsResource
+}
+
+func newYouTubeCommunityPostResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeCommunityPostResource {
+	value := &YouTubeCommunityPostResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Comments = newYouTubeCommunityPostCommentsResource(client, bindings, referenceErr)
+	return value
+}
+
+func (r *YouTubeCommunityPostResource) Get(ctx context.Context, options *YouTubeCommunityPostOptions) (*YouTubeCommunityPostResponse, error) {
+	path, err := bindPath("/v1/youtube/community-posts/{identifier}", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeCommunityPostResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type YouTubeCommunityPostCommentsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeCommunityPostCommentsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeCommunityPostCommentsResource {
+	value := &YouTubeCommunityPostCommentsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeCommunityPostCommentsResource) List(ctx context.Context, options *YouTubeCommunityPostCommentsOptions) (*YouTubeCommunityPostCommentsPage, error) {
+	path, err := bindPath("/v1/youtube/community-posts/{identifier}/comments", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeCommunityPostCommentsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubeCommunityPostCommentsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubeComment], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubeCommunityPostCommentsResource) Items(options *YouTubeCommunityPostCommentsOptions) *Iterator[YouTubeComment] {
+	iteratorOptions := &YouTubeCommunityPostCommentsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubeComment], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubeHashtagResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Posts        *YouTubeHashtagPostsResource
+}
+
+func newYouTubeHashtagResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeHashtagResource {
+	value := &YouTubeHashtagResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Posts = newYouTubeHashtagPostsResource(client, bindings, referenceErr)
+	return value
+}
+
+type YouTubeHashtagPostsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeHashtagPostsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeHashtagPostsResource {
+	value := &YouTubeHashtagPostsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeHashtagPostsResource) List(ctx context.Context, options *YouTubeHashtagPostsOptions) (*YouTubeHashtagPostsPage, error) {
+	path, err := bindPath("/v1/youtube/hashtags/{identifier}/posts", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeHashtagPostsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubeHashtagPostsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubePost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubeHashtagPostsResource) Items(options *YouTubeHashtagPostsOptions) *Iterator[YouTubePost] {
+	iteratorOptions := &YouTubeHashtagPostsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubePost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubePlaylistResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Posts        *YouTubePlaylistPostsResource
+}
+
+func newYouTubePlaylistResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePlaylistResource {
+	value := &YouTubePlaylistResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Posts = newYouTubePlaylistPostsResource(client, bindings, referenceErr)
+	return value
+}
+
+type YouTubePlaylistPostsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubePlaylistPostsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePlaylistPostsResource {
+	value := &YouTubePlaylistPostsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubePlaylistPostsResource) List(ctx context.Context, options *YouTubePlaylistPostsOptions) (*YouTubePlaylistPostsPage, error) {
+	path, err := bindPath("/v1/youtube/playlists/{identifier}/posts", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubePlaylistPostsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubePlaylistPostsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubePost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubePlaylistPostsResource) Items(options *YouTubePlaylistPostsOptions) *Iterator[YouTubePost] {
+	iteratorOptions := &YouTubePlaylistPostsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubePost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubePostResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Comments     *YouTubePostCommentsResource
+	Related      *YouTubePostRelatedResource
+	SoundPosts   *YouTubePostSoundPostsResource
+	Transcript   *YouTubePostTranscriptResource
+}
+
+func newYouTubePostResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePostResource {
+	value := &YouTubePostResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Comments = newYouTubePostCommentsResource(client, bindings, referenceErr)
+	value.Related = newYouTubePostRelatedResource(client, bindings, referenceErr)
+	value.SoundPosts = newYouTubePostSoundPostsResource(client, bindings, referenceErr)
+	value.Transcript = newYouTubePostTranscriptResource(client, bindings, referenceErr)
+	return value
+}
+
+func (r *YouTubePostResource) Comment[T ResourceReference](reference T) *YouTubePostCommentResource {
+	bindings := cloneBindings(r.bindings)
+	referenceErr := r.referenceErr
+	resolved, err := resolveReference(reference, "youtube", "comment")
+	if referenceErr == nil && err != nil {
+		referenceErr = err
+	}
+	if err == nil {
+		bindings["comment_id"] = resolved
+	}
+	return newYouTubePostCommentResource(r.client, bindings, referenceErr)
+}
+
+func (r *YouTubePostResource) Get(ctx context.Context, options *YouTubePostOptions) (*YouTubePostResponse, error) {
+	path, err := bindPath("/v1/youtube/posts/{identifier}", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubePostResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type YouTubePostCommentResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Replies      *YouTubePostCommentRepliesResource
+}
+
+func newYouTubePostCommentResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePostCommentResource {
+	value := &YouTubePostCommentResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Replies = newYouTubePostCommentRepliesResource(client, bindings, referenceErr)
+	return value
+}
+
+type YouTubePostCommentRepliesResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubePostCommentRepliesResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePostCommentRepliesResource {
+	value := &YouTubePostCommentRepliesResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubePostCommentRepliesResource) List(ctx context.Context, options *YouTubePostCommentRepliesOptions) (*YouTubePostCommentRepliesPage, error) {
+	if options == nil {
+		return nil, errors.New("openhandle: operation options are required")
+	}
+	path, err := bindPath("/v1/youtube/posts/{identifier}/comments/{comment_id}/replies", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubePostCommentRepliesPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubePostCommentRepliesOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubeComment], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubePostCommentRepliesResource) Items(options *YouTubePostCommentRepliesOptions) *Iterator[YouTubeComment] {
+	iteratorOptions := &YouTubePostCommentRepliesOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubeComment], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubePostCommentsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubePostCommentsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePostCommentsResource {
+	value := &YouTubePostCommentsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubePostCommentsResource) List(ctx context.Context, options *YouTubePostCommentsOptions) (*YouTubePostCommentsPage, error) {
+	path, err := bindPath("/v1/youtube/posts/{identifier}/comments", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubePostCommentsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubePostCommentsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubeComment], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubePostCommentsResource) Items(options *YouTubePostCommentsOptions) *Iterator[YouTubeComment] {
+	iteratorOptions := &YouTubePostCommentsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubeComment], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubePostRelatedResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubePostRelatedResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePostRelatedResource {
+	value := &YouTubePostRelatedResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubePostRelatedResource) List(ctx context.Context, options *YouTubePostRelatedOptions) (*YouTubePostRelatedPage, error) {
+	path, err := bindPath("/v1/youtube/posts/{identifier}/related", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubePostRelatedPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubePostRelatedOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubePost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubePostRelatedResource) Items(options *YouTubePostRelatedOptions) *Iterator[YouTubePost] {
+	iteratorOptions := &YouTubePostRelatedOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubePost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubePostSoundPostsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubePostSoundPostsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePostSoundPostsResource {
+	value := &YouTubePostSoundPostsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubePostSoundPostsResource) List(ctx context.Context, options *YouTubePostSoundPostsOptions) (*YouTubePostSoundPostsPage, error) {
+	path, err := bindPath("/v1/youtube/posts/{identifier}/sound-posts", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubePostSoundPostsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubePostSoundPostsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubePost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubePostSoundPostsResource) Items(options *YouTubePostSoundPostsOptions) *Iterator[YouTubePost] {
+	iteratorOptions := &YouTubePostSoundPostsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubePost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubePostTranscriptResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubePostTranscriptResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePostTranscriptResource {
+	value := &YouTubePostTranscriptResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubePostTranscriptResource) Get(ctx context.Context, options *YouTubePostTranscriptOptions) (*YouTubePostTranscriptResponse, error) {
+	path, err := bindPath("/v1/youtube/posts/{identifier}/transcript", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubePostTranscriptResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type YouTubeProfileResource struct {
+	client         *Client
+	bindings       map[string]string
+	referenceErr   error
+	CommunityPosts *YouTubeProfileCommunityPostsResource
+	Livestreams    *YouTubeProfileLivestreamsResource
+	Playlists      *YouTubeProfilePlaylistsResource
+	Products       *YouTubeProfileProductsResource
+	Search         *YouTubeProfileSearchResource
+	Shorts         *YouTubeProfileShortsResource
+	Videos         *YouTubeProfileVideosResource
+}
+
+func newYouTubeProfileResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeProfileResource {
+	value := &YouTubeProfileResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.CommunityPosts = newYouTubeProfileCommunityPostsResource(client, bindings, referenceErr)
+	value.Livestreams = newYouTubeProfileLivestreamsResource(client, bindings, referenceErr)
+	value.Playlists = newYouTubeProfilePlaylistsResource(client, bindings, referenceErr)
+	value.Products = newYouTubeProfileProductsResource(client, bindings, referenceErr)
+	value.Search = newYouTubeProfileSearchResource(client, bindings, referenceErr)
+	value.Shorts = newYouTubeProfileShortsResource(client, bindings, referenceErr)
+	value.Videos = newYouTubeProfileVideosResource(client, bindings, referenceErr)
+	return value
+}
+
+func (r *YouTubeProfileResource) Get(ctx context.Context, options *YouTubeProfileOptions) (*YouTubeProfileResponse, error) {
+	path, err := bindPath("/v1/youtube/profiles/{identifier}", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeProfileResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type YouTubeProfileCommunityPostsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeProfileCommunityPostsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeProfileCommunityPostsResource {
+	value := &YouTubeProfileCommunityPostsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeProfileCommunityPostsResource) List(ctx context.Context, options *YouTubeProfileCommunityPostsOptions) (*YouTubeProfileCommunityPostsPage, error) {
+	path, err := bindPath("/v1/youtube/profiles/{identifier}/community-posts", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeProfileCommunityPostsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubeProfileCommunityPostsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubeCommunityPost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubeProfileCommunityPostsResource) Items(options *YouTubeProfileCommunityPostsOptions) *Iterator[YouTubeCommunityPost] {
+	iteratorOptions := &YouTubeProfileCommunityPostsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubeCommunityPost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubeProfileLivestreamsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeProfileLivestreamsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeProfileLivestreamsResource {
+	value := &YouTubeProfileLivestreamsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeProfileLivestreamsResource) List(ctx context.Context, options *YouTubeProfileLivestreamsOptions) (*YouTubeProfileLivestreamsPage, error) {
+	path, err := bindPath("/v1/youtube/profiles/{identifier}/livestreams", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeProfileLivestreamsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubeProfileLivestreamsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubePost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubeProfileLivestreamsResource) Items(options *YouTubeProfileLivestreamsOptions) *Iterator[YouTubePost] {
+	iteratorOptions := &YouTubeProfileLivestreamsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubePost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubeProfilePlaylistsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeProfilePlaylistsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeProfilePlaylistsResource {
+	value := &YouTubeProfilePlaylistsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeProfilePlaylistsResource) List(ctx context.Context, options *YouTubeProfilePlaylistsOptions) (*YouTubeProfilePlaylistsPage, error) {
+	path, err := bindPath("/v1/youtube/profiles/{identifier}/playlists", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeProfilePlaylistsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubeProfilePlaylistsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubePlaylist], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubeProfilePlaylistsResource) Items(options *YouTubeProfilePlaylistsOptions) *Iterator[YouTubePlaylist] {
+	iteratorOptions := &YouTubeProfilePlaylistsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubePlaylist], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubeProfileProductsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeProfileProductsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeProfileProductsResource {
+	value := &YouTubeProfileProductsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeProfileProductsResource) List(ctx context.Context, options *YouTubeProfileProductsOptions) (*YouTubeProfileProductsPage, error) {
+	path, err := bindPath("/v1/youtube/profiles/{identifier}/products", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeProfileProductsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubeProfileProductsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubeProduct], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubeProfileProductsResource) Items(options *YouTubeProfileProductsOptions) *Iterator[YouTubeProduct] {
+	iteratorOptions := &YouTubeProfileProductsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubeProduct], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubeProfileSearchResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeProfileSearchResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeProfileSearchResource {
+	value := &YouTubeProfileSearchResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeProfileSearchResource) List(ctx context.Context, options *YouTubeProfileSearchOptions) (*YouTubeProfileSearchPage, error) {
+	if options == nil {
+		return nil, errors.New("openhandle: operation options are required")
+	}
+	path, err := bindPath("/v1/youtube/profiles/{identifier}/search", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeProfileSearchPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubeProfileSearchOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubePost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubeProfileSearchResource) Items(options *YouTubeProfileSearchOptions) *Iterator[YouTubePost] {
+	iteratorOptions := &YouTubeProfileSearchOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubePost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubeProfileShortsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeProfileShortsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeProfileShortsResource {
+	value := &YouTubeProfileShortsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeProfileShortsResource) List(ctx context.Context, options *YouTubeProfileShortsOptions) (*YouTubeProfileShortsPage, error) {
+	path, err := bindPath("/v1/youtube/profiles/{identifier}/shorts", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeProfileShortsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubeProfileShortsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubePost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubeProfileShortsResource) Items(options *YouTubeProfileShortsOptions) *Iterator[YouTubePost] {
+	iteratorOptions := &YouTubeProfileShortsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubePost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubeProfileVideosResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeProfileVideosResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeProfileVideosResource {
+	value := &YouTubeProfileVideosResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeProfileVideosResource) List(ctx context.Context, options *YouTubeProfileVideosOptions) (*YouTubeProfileVideosPage, error) {
+	path, err := bindPath("/v1/youtube/profiles/{identifier}/videos", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeProfileVideosPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubeProfileVideosOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubePost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubeProfileVideosResource) Items(options *YouTubeProfileVideosOptions) *Iterator[YouTubePost] {
+	iteratorOptions := &YouTubeProfileVideosOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubePost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubeSearchResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Playlists    *YouTubeSearchPlaylistsResource
+	Posts        *YouTubeSearchPostsResource
+	Profiles     *YouTubeSearchProfilesResource
+	Suggestions  *YouTubeSearchSuggestionsResource
+}
+
+func newYouTubeSearchResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeSearchResource {
+	value := &YouTubeSearchResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Playlists = newYouTubeSearchPlaylistsResource(client, bindings, referenceErr)
+	value.Posts = newYouTubeSearchPostsResource(client, bindings, referenceErr)
+	value.Profiles = newYouTubeSearchProfilesResource(client, bindings, referenceErr)
+	value.Suggestions = newYouTubeSearchSuggestionsResource(client, bindings, referenceErr)
+	return value
+}
+
+type YouTubeSearchPlaylistsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeSearchPlaylistsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeSearchPlaylistsResource {
+	value := &YouTubeSearchPlaylistsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeSearchPlaylistsResource) List(ctx context.Context, options *YouTubeSearchPlaylistsOptions) (*YouTubeSearchPlaylistsPage, error) {
+	if options == nil {
+		return nil, errors.New("openhandle: operation options are required")
+	}
+	path, err := bindPath("/v1/youtube/search/playlists", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeSearchPlaylistsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubeSearchPlaylistsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubePlaylist], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubeSearchPlaylistsResource) Items(options *YouTubeSearchPlaylistsOptions) *Iterator[YouTubePlaylist] {
+	iteratorOptions := &YouTubeSearchPlaylistsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubePlaylist], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubeSearchPostsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeSearchPostsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeSearchPostsResource {
+	value := &YouTubeSearchPostsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeSearchPostsResource) List(ctx context.Context, options *YouTubeSearchPostsOptions) (*YouTubeSearchPostsPage, error) {
+	if options == nil {
+		return nil, errors.New("openhandle: operation options are required")
+	}
+	path, err := bindPath("/v1/youtube/search/posts", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeSearchPostsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubeSearchPostsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubePost], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubeSearchPostsResource) Items(options *YouTubeSearchPostsOptions) *Iterator[YouTubePost] {
+	iteratorOptions := &YouTubeSearchPostsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubePost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubeSearchProfilesResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeSearchProfilesResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeSearchProfilesResource {
+	value := &YouTubeSearchProfilesResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeSearchProfilesResource) List(ctx context.Context, options *YouTubeSearchProfilesOptions) (*YouTubeSearchProfilesPage, error) {
+	if options == nil {
+		return nil, errors.New("openhandle: operation options are required")
+	}
+	path, err := bindPath("/v1/youtube/search/profiles", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeSearchProfilesPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &YouTubeSearchProfilesOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[YouTubeProfile], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *YouTubeSearchProfilesResource) Items(options *YouTubeSearchProfilesOptions) *Iterator[YouTubeProfile] {
+	iteratorOptions := &YouTubeSearchProfilesOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[YouTubeProfile], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubeSearchSuggestionsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeSearchSuggestionsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeSearchSuggestionsResource {
+	value := &YouTubeSearchSuggestionsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeSearchSuggestionsResource) List(ctx context.Context, options *YouTubeSearchSuggestionsOptions) (*YouTubeSearchSuggestionsResponse, error) {
+	if options == nil {
+		return nil, errors.New("openhandle: operation options are required")
+	}
+	path, err := bindPath("/v1/youtube/search/suggestions", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeSearchSuggestionsResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+type YouTubeTrendingResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+	Posts        *YouTubeTrendingPostsResource
+}
+
+func newYouTubeTrendingResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeTrendingResource {
+	value := &YouTubeTrendingResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	value.Posts = newYouTubeTrendingPostsResource(client, bindings, referenceErr)
+	return value
+}
+
+type YouTubeTrendingPostsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubeTrendingPostsResource(client *Client, bindings map[string]string, referenceErr error) *YouTubeTrendingPostsResource {
+	value := &YouTubeTrendingPostsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubeTrendingPostsResource) List(ctx context.Context, options *YouTubeTrendingPostsOptions) (*YouTubeTrendingPostsResponse, error) {
+	path, err := bindPath("/v1/youtube/trending/posts", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubeTrendingPostsResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 // InstagramCommentLikersOptions configures instagram.comment.likers.list.
 type InstagramCommentLikersOptions struct {
 	RequestOptions
@@ -6316,6 +7585,280 @@ type TwitterSearchUsersOptions struct {
 
 type TwitterSearchUsersPage = Page[TwitterProfile]
 
+// YouTubeChartsArtistsOptions configures youtube.charts.artists.list.
+type YouTubeChartsArtistsOptions struct {
+	RequestOptions
+	Country   *string   `query:"country"`
+	Freshness Freshness `query:"freshness"`
+}
+
+type YouTubeChartsArtistsResponse struct {
+	ResponseMetadata
+	Data []YouTubeChartEntry `json:"data"`
+}
+
+// YouTubeChartsTracksOptions configures youtube.charts.tracks.list.
+type YouTubeChartsTracksOptions struct {
+	RequestOptions
+	Country   *string   `query:"country"`
+	Freshness Freshness `query:"freshness"`
+}
+
+type YouTubeChartsTracksResponse struct {
+	ResponseMetadata
+	Data []YouTubeChartEntry `json:"data"`
+}
+
+// YouTubeChartsVideosOptions configures youtube.charts.videos.list.
+type YouTubeChartsVideosOptions struct {
+	RequestOptions
+	Country   *string   `query:"country"`
+	Freshness Freshness `query:"freshness"`
+}
+
+type YouTubeChartsVideosResponse struct {
+	ResponseMetadata
+	Data []YouTubeChartEntry `json:"data"`
+}
+
+// YouTubeCommunityPostCommentsOptions configures youtube.communityPost.comments.list.
+type YouTubeCommunityPostCommentsOptions struct {
+	RequestOptions
+	Sort      SortOrder `query:"sort"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubeCommunityPostCommentsPage = Page[YouTubeComment]
+
+// YouTubeCommunityPostOptions configures youtube.communityPost.get.
+type YouTubeCommunityPostOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+}
+
+type YouTubeCommunityPostResponse struct {
+	ResponseMetadata
+	Data YouTubeCommunityPost `json:"data"`
+}
+
+// YouTubeHashtagPostsOptions configures youtube.hashtag.posts.list.
+type YouTubeHashtagPostsOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubeHashtagPostsPage = Page[YouTubePost]
+
+// YouTubePlaylistPostsOptions configures youtube.playlist.posts.list.
+type YouTubePlaylistPostsOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubePlaylistPostsPage = Page[YouTubePost]
+
+// YouTubePostCommentRepliesOptions configures youtube.post.comment.replies.list.
+type YouTubePostCommentRepliesOptions struct {
+	RequestOptions
+	Token     string    `query:"token" required:"true"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubePostCommentRepliesPage = Page[YouTubeComment]
+
+// YouTubePostCommentsOptions configures youtube.post.comments.list.
+type YouTubePostCommentsOptions struct {
+	RequestOptions
+	Sort      SortOrder `query:"sort"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubePostCommentsPage = Page[YouTubeComment]
+
+// YouTubePostOptions configures youtube.post.get.
+type YouTubePostOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+}
+
+type YouTubePostResponse struct {
+	ResponseMetadata
+	Data YouTubePost `json:"data"`
+}
+
+// YouTubePostRelatedOptions configures youtube.post.related.list.
+type YouTubePostRelatedOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubePostRelatedPage = Page[YouTubePost]
+
+// YouTubePostSoundPostsOptions configures youtube.post.soundPosts.list.
+type YouTubePostSoundPostsOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubePostSoundPostsPage = Page[YouTubePost]
+
+// YouTubePostTranscriptOptions configures youtube.post.transcript.get.
+type YouTubePostTranscriptOptions struct {
+	RequestOptions
+	Language  *string   `query:"language"`
+	Freshness Freshness `query:"freshness"`
+}
+
+type YouTubePostTranscriptResponse struct {
+	ResponseMetadata
+	Data YouTubeTranscript `json:"data"`
+}
+
+// YouTubeProfileCommunityPostsOptions configures youtube.profile.communityPosts.list.
+type YouTubeProfileCommunityPostsOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubeProfileCommunityPostsPage = Page[YouTubeCommunityPost]
+
+// YouTubeProfileOptions configures youtube.profile.get.
+type YouTubeProfileOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+}
+
+type YouTubeProfileResponse struct {
+	ResponseMetadata
+	Data YouTubeProfile `json:"data"`
+}
+
+// YouTubeProfileLivestreamsOptions configures youtube.profile.livestreams.list.
+type YouTubeProfileLivestreamsOptions struct {
+	RequestOptions
+	Sort      SortOrder `query:"sort"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubeProfileLivestreamsPage = Page[YouTubePost]
+
+// YouTubeProfilePlaylistsOptions configures youtube.profile.playlists.list.
+type YouTubeProfilePlaylistsOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubeProfilePlaylistsPage = Page[YouTubePlaylist]
+
+// YouTubeProfileProductsOptions configures youtube.profile.products.list.
+type YouTubeProfileProductsOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubeProfileProductsPage = Page[YouTubeProduct]
+
+// YouTubeProfileSearchOptions configures youtube.profile.search.list.
+type YouTubeProfileSearchOptions struct {
+	RequestOptions
+	Q         string    `query:"q" required:"true"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubeProfileSearchPage = Page[YouTubePost]
+
+// YouTubeProfileShortsOptions configures youtube.profile.shorts.list.
+type YouTubeProfileShortsOptions struct {
+	RequestOptions
+	Sort      SortOrder `query:"sort"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubeProfileShortsPage = Page[YouTubePost]
+
+// YouTubeProfileVideosOptions configures youtube.profile.videos.list.
+type YouTubeProfileVideosOptions struct {
+	RequestOptions
+	Sort      SortOrder  `query:"sort"`
+	Since     *time.Time `query:"since"`
+	Freshness Freshness  `query:"freshness"`
+	Cursor    *string    `query:"cursor"`
+}
+
+type YouTubeProfileVideosPage = Page[YouTubePost]
+
+// YouTubeSearchPlaylistsOptions configures youtube.search.playlists.list.
+type YouTubeSearchPlaylistsOptions struct {
+	RequestOptions
+	Q         string    `query:"q" required:"true"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubeSearchPlaylistsPage = Page[YouTubePlaylist]
+
+// YouTubeSearchPostsOptions configures youtube.search.posts.list.
+type YouTubeSearchPostsOptions struct {
+	RequestOptions
+	Q         string    `query:"q" required:"true"`
+	Sort      SortOrder `query:"sort"`
+	Type      *string   `query:"type"`
+	Duration  *string   `query:"duration"`
+	Uploaded  *string   `query:"uploaded"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubeSearchPostsPage = Page[YouTubePost]
+
+// YouTubeSearchProfilesOptions configures youtube.search.profiles.list.
+type YouTubeSearchProfilesOptions struct {
+	RequestOptions
+	Q         string    `query:"q" required:"true"`
+	Freshness Freshness `query:"freshness"`
+	Cursor    *string   `query:"cursor"`
+}
+
+type YouTubeSearchProfilesPage = Page[YouTubeProfile]
+
+// YouTubeSearchSuggestionsOptions configures youtube.search.suggestions.list.
+type YouTubeSearchSuggestionsOptions struct {
+	RequestOptions
+	Q         string    `query:"q" required:"true"`
+	Freshness Freshness `query:"freshness"`
+}
+
+type YouTubeSearchSuggestionsResponse struct {
+	ResponseMetadata
+	Data []YouTubeSuggestion `json:"data"`
+}
+
+// YouTubeTrendingPostsOptions configures youtube.trending.posts.list.
+type YouTubeTrendingPostsOptions struct {
+	RequestOptions
+	Country   *string   `query:"country"`
+	Category  *string   `query:"category"`
+	Freshness Freshness `query:"freshness"`
+}
+
+type YouTubeTrendingPostsResponse struct {
+	ResponseMetadata
+	Data []YouTubePost `json:"data"`
+}
+
 // FetchResource is one of the concrete resources returned by Client.Fetch.
 type FetchResource interface{ isFetchResource() }
 
@@ -6330,6 +7873,8 @@ func (*TwitterPost) isFetchResource()        {}
 func (*RedditProfile) isFetchResource()      {}
 func (*RedditPost) isFetchResource()         {}
 func (*RedditSubreddit) isFetchResource()    {}
+func (*YouTubeProfile) isFetchResource()     {}
+func (*YouTubePost) isFetchResource()        {}
 
 // FetchResponse is the polymorphic response returned by Client.Fetch.
 type FetchResponse struct {
@@ -6370,6 +7915,10 @@ func (r *FetchResponse) UnmarshalJSON(data []byte) error {
 		target = &RedditPost{}
 	case wire.Platform == PlatformReddit && wire.Resource == Resource("subreddit"):
 		target = &RedditSubreddit{}
+	case wire.Platform == PlatformYouTube && wire.Resource == Resource("profile"):
+		target = &YouTubeProfile{}
+	case wire.Platform == PlatformYouTube && wire.Resource == Resource("post"):
+		target = &YouTubePost{}
 	default:
 		return errors.New("openhandle: unsupported fetch response variant")
 	}
