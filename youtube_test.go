@@ -127,3 +127,49 @@ func TestYouTubePostFilesDecodeEveryStream(t *testing.T) {
 		t.Fatalf("unexpected audio stream: %#v", audio)
 	}
 }
+
+func TestYouTubePostStoryboardDecodesSheetsAndFramePositions(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if request.URL.Path != "/v1/youtube/posts/dQw4w9WgXcQ/storyboard" {
+			t.Errorf("unexpected request: %s", request.URL.Path)
+		}
+		writer.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprint(writer, `{"platform":"youtube","resource":"storyboard","data":{"postId":"dQw4w9WgXcQ","author":null,"intervalMs":2000,"frameWidth":160,"frameHeight":90,"columns":5,"rows":5,"frameCount":2,`+
+			`"sheets":[{"index":0,"url":"https://media.openhandle.dev/s","width":800,"height":90,"startMs":0,"frameCount":2}],`+
+			`"frames":[{"timeMs":0,"sheet":0,"x":0,"y":0},{"timeMs":2000,"sheet":0,"x":160,"y":0}]}}`)
+	}))
+	defer server.Close()
+	client, err := New("oh_test_sdk", WithBaseURL(server.URL), WithMaxRetries(0))
+	if err != nil {
+		t.Fatal(err)
+	}
+	storyboard, err := client.YouTube.Post("dQw4w9WgXcQ").Storyboard.Get(t.Context(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(storyboard.Data.Sheets) != 1 || len(storyboard.Data.Frames) != 2 || storyboard.Data.Frames[1].X != 160 {
+		t.Fatalf("unexpected storyboard: %#v", storyboard.Data)
+	}
+}
+
+func TestYouTubePostFrameSendsTheMomentInSeconds(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if request.URL.Path != "/v1/youtube/posts/dQw4w9WgXcQ/frame" || request.URL.Query().Get("at") != "43" {
+			t.Errorf("unexpected request: %s", request.URL.String())
+		}
+		writer.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprint(writer, `{"platform":"youtube","resource":"frame","data":{"postId":"dQw4w9WgXcQ","at":43,"renditions":[{"quality":"1080p","height":1080,"url":"https://media.openhandle.dev/f"}]}}`)
+	}))
+	defer server.Close()
+	client, err := New("oh_test_sdk", WithBaseURL(server.URL), WithMaxRetries(0))
+	if err != nil {
+		t.Fatal(err)
+	}
+	frame, err := client.YouTube.Post("dQw4w9WgXcQ").Frame.Get(t.Context(), &YouTubePostFrameOptions{At: 43})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if frame.Data.At != 43 || len(frame.Data.Renditions) != 1 || frame.Data.Renditions[0].Quality == nil || *frame.Data.Renditions[0].Quality != "1080p" {
+		t.Fatalf("unexpected frame: %#v", frame.Data)
+	}
+}

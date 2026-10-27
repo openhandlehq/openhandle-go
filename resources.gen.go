@@ -5597,8 +5597,10 @@ type YouTubePostResource struct {
 	referenceErr error
 	Comments     *YouTubePostCommentsResource
 	Files        *YouTubePostFilesResource
+	Frame        *YouTubePostFrameResource
 	Related      *YouTubePostRelatedResource
 	SoundPosts   *YouTubePostSoundPostsResource
+	Storyboard   *YouTubePostStoryboardResource
 	Transcript   *YouTubePostTranscriptResource
 }
 
@@ -5606,8 +5608,10 @@ func newYouTubePostResource(client *Client, bindings map[string]string, referenc
 	value := &YouTubePostResource{client: client, bindings: bindings, referenceErr: referenceErr}
 	value.Comments = newYouTubePostCommentsResource(client, bindings, referenceErr)
 	value.Files = newYouTubePostFilesResource(client, bindings, referenceErr)
+	value.Frame = newYouTubePostFrameResource(client, bindings, referenceErr)
 	value.Related = newYouTubePostRelatedResource(client, bindings, referenceErr)
 	value.SoundPosts = newYouTubePostSoundPostsResource(client, bindings, referenceErr)
+	value.Storyboard = newYouTubePostStoryboardResource(client, bindings, referenceErr)
 	value.Transcript = newYouTubePostTranscriptResource(client, bindings, referenceErr)
 	return value
 }
@@ -5778,6 +5782,36 @@ func (r *YouTubePostFilesResource) Get(ctx context.Context, options *YouTubePost
 	return result, nil
 }
 
+type YouTubePostFrameResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubePostFrameResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePostFrameResource {
+	value := &YouTubePostFrameResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubePostFrameResource) Get(ctx context.Context, options *YouTubePostFrameOptions) (*YouTubePostFrameResponse, error) {
+	if options == nil {
+		return nil, errors.New("openhandle: operation options are required")
+	}
+	path, err := bindPath("/v1/youtube/posts/{identifier}/frame", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubePostFrameResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 type YouTubePostRelatedResource struct {
 	client       *Client
 	bindings     map[string]string
@@ -5870,6 +5904,33 @@ func (r *YouTubePostSoundPostsResource) Items(options *YouTubePostSoundPostsOpti
 		*iteratorOptions = *options
 	}
 	return newIterator(func(ctx context.Context) (*Page[YouTubePost], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubePostStoryboardResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubePostStoryboardResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePostStoryboardResource {
+	value := &YouTubePostStoryboardResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubePostStoryboardResource) Get(ctx context.Context, options *YouTubePostStoryboardOptions) (*YouTubePostStoryboardResponse, error) {
+	path, err := bindPath("/v1/youtube/posts/{identifier}/storyboard", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubePostStoryboardResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 type YouTubePostTranscriptResource struct {
@@ -7720,6 +7781,18 @@ type YouTubePostFilesResponse struct {
 	Data YouTubeFiles `json:"data"`
 }
 
+// YouTubePostFrameOptions configures youtube.post.frame.get.
+type YouTubePostFrameOptions struct {
+	RequestOptions
+	At        int64     `query:"at" required:"true"`
+	Freshness Freshness `query:"freshness"`
+}
+
+type YouTubePostFrameResponse struct {
+	ResponseMetadata
+	Data YouTubeFrame `json:"data"`
+}
+
 // YouTubePostOptions configures youtube.post.get.
 type YouTubePostOptions struct {
 	RequestOptions
@@ -7748,6 +7821,17 @@ type YouTubePostSoundPostsOptions struct {
 }
 
 type YouTubePostSoundPostsPage = Page[YouTubePost]
+
+// YouTubePostStoryboardOptions configures youtube.post.storyboard.get.
+type YouTubePostStoryboardOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+}
+
+type YouTubePostStoryboardResponse struct {
+	ResponseMetadata
+	Data YouTubeStoryboard `json:"data"`
+}
 
 // YouTubePostTranscriptOptions configures youtube.post.transcript.get.
 type YouTubePostTranscriptOptions struct {
