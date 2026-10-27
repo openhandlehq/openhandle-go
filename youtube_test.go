@@ -99,3 +99,31 @@ func TestFetchDecodesYouTubeProfileAndPost(t *testing.T) {
 		t.Fatalf("unexpected post: %#v", postResponse.Data)
 	}
 }
+
+func TestYouTubePostFilesDecodeEveryStream(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if request.URL.Path != "/v1/youtube/posts/dQw4w9WgXcQ/files" {
+			t.Errorf("unexpected request: %s", request.URL.Path)
+		}
+		writer.Header().Set("Content-Type", "application/json")
+		_, _ = fmt.Fprint(writer, `{"platform":"youtube","resource":"files","data":{"postId":"dQw4w9WgXcQ","author":null,"duration":213,"renditions":[`+
+			`{"itag":18,"quality":"360p","mimeType":"video/mp4","codecs":"avc1.42001E, mp4a.40.2","width":640,"height":360,"fps":25,"bitrate":443000,"size":null,"audioQuality":"low","audioLanguage":null,"hasVideo":true,"hasAudio":true,"url":"https://media.openhandle.dev/a"},`+
+			`{"itag":140,"quality":"audio","mimeType":"audio/mp4","codecs":"mp4a.40.2","width":null,"height":null,"fps":null,"bitrate":130677,"size":3449447,"audioQuality":"medium","audioLanguage":null,"hasVideo":false,"hasAudio":true,"url":"https://media.openhandle.dev/b"}]}}`)
+	}))
+	defer server.Close()
+	client, err := New("oh_test_sdk", WithBaseURL(server.URL), WithMaxRetries(0))
+	if err != nil {
+		t.Fatal(err)
+	}
+	files, err := client.YouTube.Post("https://www.youtube.com/shorts/dQw4w9WgXcQ").Files.Get(t.Context(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if files.Data.PostID != "dQw4w9WgXcQ" || len(files.Data.Renditions) != 2 {
+		t.Fatalf("unexpected files: %#v", files.Data)
+	}
+	audio := files.Data.Renditions[1]
+	if audio.Itag != 140 || audio.HasVideo || !audio.HasAudio || audio.Size == nil || *audio.Size != 3449447 {
+		t.Fatalf("unexpected audio stream: %#v", audio)
+	}
+}

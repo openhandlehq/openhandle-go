@@ -5596,6 +5596,7 @@ type YouTubePostResource struct {
 	bindings     map[string]string
 	referenceErr error
 	Comments     *YouTubePostCommentsResource
+	Files        *YouTubePostFilesResource
 	Related      *YouTubePostRelatedResource
 	SoundPosts   *YouTubePostSoundPostsResource
 	Transcript   *YouTubePostTranscriptResource
@@ -5604,6 +5605,7 @@ type YouTubePostResource struct {
 func newYouTubePostResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePostResource {
 	value := &YouTubePostResource{client: client, bindings: bindings, referenceErr: referenceErr}
 	value.Comments = newYouTubePostCommentsResource(client, bindings, referenceErr)
+	value.Files = newYouTubePostFilesResource(client, bindings, referenceErr)
 	value.Related = newYouTubePostRelatedResource(client, bindings, referenceErr)
 	value.SoundPosts = newYouTubePostSoundPostsResource(client, bindings, referenceErr)
 	value.Transcript = newYouTubePostTranscriptResource(client, bindings, referenceErr)
@@ -5747,6 +5749,33 @@ func (r *YouTubePostCommentsResource) Items(options *YouTubePostCommentsOptions)
 		*iteratorOptions = *options
 	}
 	return newIterator(func(ctx context.Context) (*Page[YouTubeComment], error) { return r.List(ctx, iteratorOptions) })
+}
+
+type YouTubePostFilesResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newYouTubePostFilesResource(client *Client, bindings map[string]string, referenceErr error) *YouTubePostFilesResource {
+	value := &YouTubePostFilesResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *YouTubePostFilesResource) Get(ctx context.Context, options *YouTubePostFilesOptions) (*YouTubePostFilesResponse, error) {
+	path, err := bindPath("/v1/youtube/posts/{identifier}/files", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &YouTubePostFilesResponse{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 type YouTubePostRelatedResource struct {
@@ -7679,6 +7708,17 @@ type YouTubePostCommentsOptions struct {
 }
 
 type YouTubePostCommentsPage = Page[YouTubeComment]
+
+// YouTubePostFilesOptions configures youtube.post.files.get.
+type YouTubePostFilesOptions struct {
+	RequestOptions
+	Freshness Freshness `query:"freshness"`
+}
+
+type YouTubePostFilesResponse struct {
+	ResponseMetadata
+	Data YouTubeFiles `json:"data"`
+}
 
 // YouTubePostOptions configures youtube.post.get.
 type YouTubePostOptions struct {

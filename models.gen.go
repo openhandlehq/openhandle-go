@@ -3629,6 +3629,30 @@ type YouTubeExtractedHandle struct {
 	Platform *string `json:"platform"`
 }
 
+type YouTubeFileRendition struct {
+	AudioLanguage *string `json:"audioLanguage"`
+	AudioQuality  *string `json:"audioQuality"`
+	Bitrate       *int64  `json:"bitrate"`
+	Codecs        *string `json:"codecs"`
+	Fps           *int64  `json:"fps"`
+	HasAudio      bool    `json:"hasAudio"`
+	HasVideo      bool    `json:"hasVideo"`
+	Height        *int64  `json:"height"`
+	Itag          int64   `json:"itag"`
+	MimeType      *string `json:"mimeType"`
+	Quality       *string `json:"quality"`
+	Size          *int64  `json:"size"`
+	URL           *string `json:"url"`
+	Width         *int64  `json:"width"`
+}
+
+type YouTubeFiles struct {
+	Author     *YouTubeAuthor         `json:"author"`
+	Duration   *int64                 `json:"duration"`
+	PostID     string                 `json:"postId"`
+	Renditions []YouTubeFileRendition `json:"renditions"`
+}
+
 type YouTubeHashtag struct {
 	Label *string `json:"label"`
 	Name  *string `json:"name"`
