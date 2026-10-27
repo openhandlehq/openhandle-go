@@ -3653,6 +3653,18 @@ type YouTubeFiles struct {
 	Renditions []YouTubeFileRendition `json:"renditions"`
 }
 
+type YouTubeFrame struct {
+	At         int64                   `json:"at"`
+	PostID     string                  `json:"postId"`
+	Renditions []YouTubeFrameRendition `json:"renditions"`
+}
+
+type YouTubeFrameRendition struct {
+	Height  *int64  `json:"height"`
+	Quality *string `json:"quality"`
+	URL     *string `json:"url"`
+}
+
 type YouTubeHashtag struct {
 	Label *string `json:"label"`
 	Name  *string `json:"name"`
@@ -3804,6 +3816,35 @@ type YouTubeSegment struct {
 	End   int64   `json:"end"`
 	Start int64   `json:"start"`
 	Text  *string `json:"text"`
+}
+
+type YouTubeStoryboard struct {
+	Author      *YouTubeAuthor           `json:"author"`
+	Columns     int64                    `json:"columns"`
+	FrameCount  int64                    `json:"frameCount"`
+	FrameHeight int64                    `json:"frameHeight"`
+	FrameWidth  int64                    `json:"frameWidth"`
+	Frames      []YouTubeStoryboardFrame `json:"frames"`
+	IntervalMs  int64                    `json:"intervalMs"`
+	PostID      string                   `json:"postId"`
+	Rows        int64                    `json:"rows"`
+	Sheets      []YouTubeStoryboardSheet `json:"sheets"`
+}
+
+type YouTubeStoryboardFrame struct {
+	Sheet  int64 `json:"sheet"`
+	TimeMs int64 `json:"timeMs"`
+	X      int64 `json:"x"`
+	Y      int64 `json:"y"`
+}
+
+type YouTubeStoryboardSheet struct {
+	FrameCount int64   `json:"frameCount"`
+	Height     int64   `json:"height"`
+	Index      int64   `json:"index"`
+	StartMs    int64   `json:"startMs"`
+	URL        *string `json:"url"`
+	Width      int64   `json:"width"`
 }
 
 type YouTubeSubtitle struct {
