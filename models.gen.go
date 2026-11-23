@@ -3522,6 +3522,21 @@ type TwitterWithheld struct {
 	Scope       *string `json:"scope"`
 }
 
+type WebhookEvent struct {
+	CreatedAt   time.Time                 `json:"createdAt"`
+	Data        WebhookProfileBlockedData `json:"data"`
+	Environment string                    `json:"environment"`
+	ID          string                    `json:"id"`
+	Type        string                    `json:"type"`
+}
+
+type WebhookProfileBlockedData struct {
+	BlockedAt  time.Time `json:"blockedAt"`
+	Handle     *string   `json:"handle"`
+	Platform   string    `json:"platform"`
+	PlatformID *string   `json:"platformId"`
+}
+
 type YouTubeAudioTrack struct {
 	Language *string `json:"language"`
 	Name     *string `json:"name"`
