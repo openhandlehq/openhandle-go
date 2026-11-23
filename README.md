@@ -137,6 +137,46 @@ if err := iterator.Err(); err != nil {
 }
 ```
 
+## Verify webhooks
+
+`VerifyWebhook` checks the signature and timestamp of a pushed webhook and
+returns the typed event. It needs no API key and performs no I/O. Pass the raw
+body exactly as received; never decode and re-encode it first:
+
+```go
+http.HandleFunc("/webhooks/openhandle", func(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "unreadable body", http.StatusBadRequest)
+		return
+	}
+
+	event, err := openhandle.VerifyWebhook(body, r.Header, os.Getenv("OPENHANDLE_WEBHOOK_SECRET"), nil)
+	var verificationError *openhandle.WebhookVerificationError
+	if errors.As(err, &verificationError) {
+		http.Error(w, string(verificationError.Code), http.StatusBadRequest)
+		return
+	}
+
+	if event.Environment == "test" {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	switch event.Type {
+	case "profile.blocked":
+		log.Printf("blocked on %s: %s", event.Data.Platform, event.ID)
+	}
+	w.WriteHeader(http.StatusNoContent)
+})
+```
+
+Failures return `*openhandle.WebhookVerificationError`. Branch on `Code`, such
+as `openhandle.WebhookInvalidSignature` or
+`openhandle.WebhookTimestampOutOfTolerance`. Timestamps more than 300 seconds
+from the current time are rejected; set `VerifyWebhookOptions.Tolerance` to
+change that. Skip `test` environment events in production.
+
 ## Errors and retries
 
 API and transport failures return `*openhandle.Error`. Branch on `Code`, never

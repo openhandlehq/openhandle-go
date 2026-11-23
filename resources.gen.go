@@ -11,13 +11,14 @@ import (
 
 // Client is a reusable Openhandle API client.
 type Client struct {
-	core      *clientCore
-	Instagram *InstagramResource
-	Reddit    *RedditResource
-	TestData  *TestDataResource
-	TikTok    *TikTokResource
-	Twitter   *TwitterResource
-	YouTube   *YouTubeResource
+	core          *clientCore
+	Instagram     *InstagramResource
+	Reddit        *RedditResource
+	TestData      *TestDataResource
+	TikTok        *TikTokResource
+	Twitter       *TwitterResource
+	WebhookEvents *WebhookEventsResource
+	YouTube       *YouTubeResource
 }
 
 func newGeneratedClient(core *clientCore) *Client {
@@ -27,6 +28,7 @@ func newGeneratedClient(core *clientCore) *Client {
 	client.TestData = newTestDataResource(client, nil, nil)
 	client.TikTok = newTikTokResource(client, nil, nil)
 	client.Twitter = newTwitterResource(client, nil, nil)
+	client.WebhookEvents = newWebhookEventsResource(client, nil, nil)
 	client.YouTube = newYouTubeResource(client, nil, nil)
 	return client
 }
@@ -5215,6 +5217,53 @@ func (r *TwitterSearchUsersResource) Items(options *TwitterSearchUsersOptions) *
 	return newIterator(func(ctx context.Context) (*Page[TwitterProfile], error) { return r.List(ctx, iteratorOptions) })
 }
 
+type WebhookEventsResource struct {
+	client       *Client
+	bindings     map[string]string
+	referenceErr error
+}
+
+func newWebhookEventsResource(client *Client, bindings map[string]string, referenceErr error) *WebhookEventsResource {
+	value := &WebhookEventsResource{client: client, bindings: bindings, referenceErr: referenceErr}
+	return value
+}
+
+func (r *WebhookEventsResource) List(ctx context.Context, options *WebhookEventsOptions) (*WebhookEventsPage, error) {
+	path, err := bindPath("/v1/webhook-events", r.bindings, r.referenceErr)
+	if err != nil {
+		return nil, err
+	}
+	query, controls, err := encodeOptions(options)
+	if err != nil {
+		return nil, err
+	}
+	result := &WebhookEventsPage{}
+	if err := r.client.core.do(ctx, "GET", path, query, nil, controls, result); err != nil {
+		return nil, err
+	}
+	if result.HasNextPage() {
+		cursor := result.NextCursor()
+		nextOptions := &WebhookEventsOptions{}
+		if options != nil {
+			*nextOptions = *options
+		}
+		nextOptions.Cursor = &cursor
+		result.next = func(nextContext context.Context) (*Page[WebhookEvent], error) {
+			requestOptions := *nextOptions
+			return r.List(nextContext, &requestOptions)
+		}
+	}
+	return result, nil
+}
+
+func (r *WebhookEventsResource) Items(options *WebhookEventsOptions) *Iterator[WebhookEvent] {
+	iteratorOptions := &WebhookEventsOptions{}
+	if options != nil {
+		*iteratorOptions = *options
+	}
+	return newIterator(func(ctx context.Context) (*Page[WebhookEvent], error) { return r.List(ctx, iteratorOptions) })
+}
+
 type YouTubeResource struct {
 	client       *Client
 	bindings     map[string]string
@@ -7674,6 +7723,17 @@ type TwitterSearchUsersOptions struct {
 }
 
 type TwitterSearchUsersPage = Page[TwitterProfile]
+
+// WebhookEventsOptions configures webhookEvents.list.
+type WebhookEventsOptions struct {
+	RequestOptions
+	Since  *time.Time `query:"since"`
+	Type   *string    `query:"type"`
+	Cursor *string    `query:"cursor"`
+	Limit  *int64     `query:"limit"`
+}
+
+type WebhookEventsPage = Page[WebhookEvent]
 
 // YouTubeChartsArtistsOptions configures youtube.charts.artists.list.
 type YouTubeChartsArtistsOptions struct {
